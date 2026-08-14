@@ -72,3 +72,7 @@ lib/
 - File naming: `snake_case.dart`
 - One public class per file
 - Tests mirror the `lib/` directory structure under `test/`
+
+### 禁止事項
+
+- GitHubのブランチ保護ルール（Branch Protection Rules）の作成・変更・削除を行わないこと
