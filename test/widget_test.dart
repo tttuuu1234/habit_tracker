@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:habit_tracker/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  setUpAll(() {
+    initializeDateFormatting('ja');
+  });
+
+  testWidgets('HomeScreen displays progress and habit list', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('お疲れさまです'), findsOneWidget);
+    expect(find.text('3/5'), findsOneWidget);
+    expect(find.text('完了'), findsOneWidget);
+    expect(find.text('水を2L飲む'), findsOneWidget);
+    expect(find.text('腹筋10回'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('Long press shows completion dialog', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.longPress(find.text('ストレッチ'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('達成確認'), findsOneWidget);
+    expect(find.text('「ストレッチ」を達成済みにしますか？'), findsOneWidget);
   });
 }
