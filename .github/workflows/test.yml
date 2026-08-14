@@ -1,43 +1,15 @@
 name: Flutter Test
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
   workflow_dispatch:
-
-permissions:
-  contents: read
-  pull-requests: read
-  statuses: write
 
 jobs:
   test:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.issue.pull_request && github.event.comment.body == '/test')
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Checkout PR branch
-        if: github.event_name == 'issue_comment'
-        id: pr
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr checkout ${{ github.event.issue.number }}
-          echo "sha=$(gh pr view ${{ github.event.issue.number }} --json headRefOid -q .headRefOid)" >> "$GITHUB_OUTPUT"
-
-      - name: Set pending status
-        if: github.event_name == 'issue_comment'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
-            -f state=pending \
-            -f context="Flutter Test" \
-            -f description="Tests running..."
 
       - uses: subosito/flutter-action@v2
         with:
@@ -52,23 +24,3 @@ jobs:
 
       - name: Test
         run: flutter test
-
-      - name: Set success status
-        if: github.event_name == 'issue_comment'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
-            -f state=success \
-            -f context="Flutter Test" \
-            -f description="All checks passed"
-
-      - name: Set failure status
-        if: failure() && github.event_name == 'issue_comment'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
-            -f state=failure \
-            -f context="Flutter Test" \
-            -f description="Checks failed"
