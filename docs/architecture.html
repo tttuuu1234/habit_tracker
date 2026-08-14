@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Tracker - アーキテクチャ図</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 40px 24px;
+    line-height: 1.5;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #f8fafc;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 48px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #f8fafc;
+    padding-left: 12px;
+    border-left: 3px solid #6366f1;
+  }
+
+  .diagram-container {
+    max-width: 900px;
+    margin: 0 auto 64px;
+  }
+
+  /* ── Layer Diagram ── */
+  .layers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }
+
+  .layer-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .layer {
+    border-radius: 12px;
+    padding: 20px 28px;
+    min-width: 220px;
+    text-align: center;
+    position: relative;
+  }
+
+  .layer-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .layer-path {
+    font-size: 13px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .layer-desc {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .layer-presentation {
+    background: linear-gradient(135deg, #1e3a5f, #1e3a8a);
+    border: 1px solid #3b82f6;
+  }
+
+  .layer-domain {
+    background: linear-gradient(135deg, #1a3a2a, #14532d);
+    border: 1px solid #22c55e;
+  }
+
+  .layer-data {
+    background: linear-gradient(135deg, #3b1f4a, #4c1d95);
+    border: 1px solid #a78bfa;
+  }
+
+  .layer-core {
+    background: linear-gradient(135deg, #3b3010, #713f12);
+    border: 1px solid #f59e0b;
+    min-width: 100%;
+  }
+
+  .tech-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .badge-blue { background: #2563eb33; color: #93c5fd; border: 1px solid #3b82f644; }
+  .badge-green { background: #16a34a33; color: #86efac; border: 1px solid #22c55e44; }
+  .badge-purple { background: #7c3aed33; color: #c4b5fd; border: 1px solid #a78bfa44; }
+  .badge-amber { background: #d9770633; color: #fcd34d; border: 1px solid #f59e0b44; }
+
+  /* ── Arrows (SVG) ── */
+  .arrow-section {
+    position: relative;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .arrow-section svg {
+    overflow: visible;
+  }
+
+  .arrow-label {
+    font-size: 11px;
+    fill: #94a3b8;
+    text-anchor: middle;
+  }
+
+  /* ── Dependency Rules ── */
+  .rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .rule {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    font-size: 13px;
+  }
+
+  .rule-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+  }
+
+  .allowed { border-left: 3px solid #22c55e; }
+  .prohibited { border-left: 3px solid #ef4444; }
+
+  /* ── Flow Diagrams ── */
+  .flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .flow {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .flow-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #cbd5e1;
+  }
+
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .flow-step {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .step-presentation { background: #1e3a8a; color: #93c5fd; border: 1px solid #3b82f6; }
+  .step-domain      { background: #14532d; color: #86efac; border: 1px solid #22c55e; }
+  .step-data        { background: #4c1d95; color: #c4b5fd; border: 1px solid #a78bfa; }
+
+  .flow-arrow {
+    color: #64748b;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .flow-note {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 12px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ── Result Type ── */
+  .result-diagram {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .result-box {
+    border-radius: 12px;
+    padding: 20px 28px;
+    text-align: center;
+    min-width: 200px;
+    flex: 1;
+    max-width: 280px;
+  }
+
+  .result-parent {
+    background: #1e293b;
+    border: 1px solid #6366f1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .result-parent .layer-name { color: #a5b4fc; }
+
+  .result-success {
+    background: linear-gradient(135deg, #052e16, #14532d);
+    border: 1px solid #22c55e;
+  }
+
+  .result-failure {
+    background: linear-gradient(135deg, #450a0a, #7f1d1d);
+    border: 1px solid #ef4444;
+  }
+
+  .result-variant {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .result-desc {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  .result-arrow-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .result-arrow-group span {
+    color: #64748b;
+    font-size: 20px;
+  }
+
+  .code-block {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #e2e8f0;
+  }
+
+  .kw { color: #c084fc; }
+  .tp { color: #67e8f9; }
+  .cm { color: #64748b; }
+  .st { color: #86efac; }
+
+  /* ── Directory Tree ── */
+  .tree {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 20px 24px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+  }
+
+  .tree-dir { color: #60a5fa; font-weight: 600; }
+  .tree-comment { color: #64748b; }
+
+  @media (max-width: 640px) {
+    .layer-row { flex-direction: column; align-items: center; }
+    .rules { grid-template-columns: 1fr; }
+    .result-diagram { flex-direction: column; align-items: center; }
+    .flow-steps { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Habit Tracker アーキテクチャ</h1>
+<p class="subtitle">Flutter / Dart &mdash; レイヤーファースト・アーキテクチャ &mdash; ローカル専用 (Firebase不使用)</p>
+
+<!-- ━━━ 1. Directory Structure ━━━ -->
+<div class="diagram-container">
+  <div class="section-title">ディレクトリ構成</div>
+  <div class="tree"><span class="tree-dir">lib/</span>
+  <span class="tree-dir">core/</span>
+      <span class="tree-comment"># 共通ユーティリティ、定数、テーマ、拡張メソッド</span>
+  <span class="tree-dir">data/</span>
+      <span class="tree-comment"># データソース、リポジトリ実装、モデル (DB/API)</span>
+  <span class="tree-dir">domain/</span>
+      <span class="tree-comment"># エンティティ、リポジトリインターフェース、ユースケース</span>
+  <span class="tree-dir">presentation/</span>
+      <span class="tree-comment"># 画面、ウィジェット、コントローラー/Notifier</span>
+  main.dart
+      <span class="tree-comment"># エントリーポイント、アプリ設定</span></div>
+</div>
+
+<!-- ━━━ 2. Layer Diagram ━━━ -->
+<div class="diagram-container">
+  <div class="section-title">レイヤー概要と依存関係</div>
+
+  <div class="layers">
+    <!-- Presentation -->
+    <div class="layer-row">
+      <div class="layer layer-presentation" style="flex:1; max-width: 800px;">
+        <div class="layer-name">Presentation</div>
+        <div class="layer-path">lib/presentation/</div>
+        <div class="layer-desc">画面、ウィジェット、コントローラー &amp; Notifier</div>
+        <div class="tech-badges">
+          <span class="badge badge-blue">Riverpod (@riverpod)</span>
+          <span class="badge badge-blue">go_router</span>
+          <span class="badge badge-blue">freezed (状態管理)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrows: presentation → domain, data → domain -->
+    <div class="arrow-section">
+      <svg width="800" height="48">
+        <!-- Left arrow: presentation → domain -->
+        <line x1="300" y1="4" x2="300" y2="40" stroke="#3b82f6" stroke-width="2" />
+        <polygon points="294,38 300,48 306,38" fill="#3b82f6" />
+        <text x="270" y="28" class="arrow-label" font-size="11">依存</text>
+
+        <!-- Right arrow: data → domain -->
+        <line x1="500" y1="4" x2="500" y2="40" stroke="#a78bfa" stroke-width="2" />
+        <polygon points="494,38 500,48 506,38" fill="#a78bfa" />
+        <text x="540" y="28" class="arrow-label" font-size="11" text-anchor="start">実装</text>
+      </svg>
+    </div>
+
+    <!-- Domain & Data side by side -->
+    <div class="layer-row">
+      <div class="layer layer-domain" style="flex: 1;">
+        <div class="layer-name">Domain</div>
+        <div class="layer-path">lib/domain/</div>
+        <div class="layer-desc">エンティティ、リポジトリインターフェース、ユースケース</div>
+        <div class="tech-badges">
+          <span class="badge badge-green">freezed (エンティティ)</span>
+          <span class="badge badge-green">Result&lt;T&gt;</span>
+        </div>
+      </div>
+      <div class="layer layer-data" style="flex: 1;">
+        <div class="layer-name">Data</div>
+        <div class="layer-path">lib/data/</div>
+        <div class="layer-desc">リポジトリ実装、データソース、モデル</div>
+        <div class="tech-badges">
+          <span class="badge badge-purple">drift (SQLite)</span>
+          <span class="badge badge-purple">freezed (モデル)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core at the bottom -->
+    <div class="arrow-section" style="height: 24px;">
+      <svg width="800" height="24">
+        <line x1="400" y1="0" x2="400" y2="20" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,4" />
+      </svg>
+    </div>
+
+    <div class="layer-row">
+      <div class="layer layer-core">
+        <div class="layer-name">Core</div>
+        <div class="layer-path">lib/core/</div>
+        <div class="layer-desc">共通ユーティリティ、定数、テーマ、拡張メソッド &mdash; 全レイヤーから利用可能</div>
+        <div class="tech-badges">
+          <span class="badge badge-amber">flutter_lints</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dependency Rules -->
+  <div class="rules" style="margin-top: 28px;">
+    <div class="rule allowed">
+      <div class="rule-icon">&#10003;</div>
+      <div><strong>presentation</strong> &rarr; domain (Provider経由)</div>
+    </div>
+    <div class="rule prohibited">
+      <div class="rule-icon">&#10007;</div>
+      <div><strong>presentation</strong> &rarr; data (直接インポート禁止)</div>
+    </div>
+    <div class="rule allowed">
+      <div class="rule-icon">&#10003;</div>
+      <div><strong>data</strong> &rarr; domain (インターフェースを実装)</div>
+    </div>
+    <div class="rule prohibited">
+      <div class="rule-icon">&#10007;</div>
+      <div><strong>domain</strong> &rarr; data / presentation (純粋に保つ)</div>
+    </div>
+    <div class="rule allowed">
+      <div class="rule-icon">&#10003;</div>
+      <div><strong>core</strong> は全レイヤーから利用可能</div>
+    </div>
+    <div class="rule allowed">
+      <div class="rule-icon">&#10003;</div>
+      <div><strong>data</strong> はRiverpod Providerを介してdomainインターフェースに接続</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ 3. Data Flow ━━━ -->
+<div class="diagram-container">
+  <div class="section-title">データフローパターン</div>
+
+  <div class="flow-container">
+    <!-- Use Case Flow -->
+    <div class="flow">
+      <div class="flow-title">A. ユースケースフロー (ビジネスロジックあり)</div>
+      <div class="flow-steps">
+        <div class="flow-step step-presentation">画面 / Widget</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-presentation">Notifier</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-domain">Use Case</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-domain">Repository IF</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-data">Repository Impl</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-data">drift DB</div>
+      </div>
+      <div class="flow-note">ユースケースはビジネスロジックがある場合のみ作成: バリデーション、集約、複数リポジトリの連携、計算処理</div>
+    </div>
+
+    <!-- Simple CRUD Flow -->
+    <div class="flow">
+      <div class="flow-title">B. シンプルCRUDフロー (ビジネスロジックなし)</div>
+      <div class="flow-steps">
+        <div class="flow-step step-presentation">画面 / Widget</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-presentation">Notifier</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-domain">Repository IF</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-data">Repository Impl</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step step-data">drift DB</div>
+      </div>
+      <div class="flow-note">ロジックのないシンプルなCRUDでは、Riverpod Provider経由でリポジトリインターフェースを直接呼び出し可能</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━ 4. Result Type ━━━ -->
+<div class="diagram-container">
+  <div class="section-title">エラーハンドリング: Result&lt;T&gt;</div>
+
+  <div class="result-diagram">
+    <div class="result-box result-parent">
+      <div class="layer-name">Result&lt;T&gt;</div>
+      <div class="result-desc" style="margin-top: 4px;">sealed class (freezed)</div>
+      <div class="result-desc">呼び出し側で網羅的パターンマッチ</div>
+    </div>
+    <div class="result-arrow-group">
+      <span>&rarr;</span>
+      <span>&rarr;</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div class="result-box result-success">
+        <div class="result-variant">Success&lt;T&gt;</div>
+        <div class="result-desc">T型の値を保持</div>
+      </div>
+      <div class="result-box result-failure">
+        <div class="result-variant">Failure&lt;T&gt;</div>
+        <div class="result-desc">エラー情報を保持</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="cm">// ユースケースはResult&lt;T&gt;を返し、エラーを明示的に処理</span>
+<span class="kw">Future</span>&lt;<span class="tp">Result</span>&lt;<span class="tp">Habit</span>&gt;&gt; execute(<span class="tp">CreateHabitParams</span> params) <span class="kw">async</span> {
+  <span class="kw">if</span> (params.name.isEmpty) {
+    <span class="kw">return</span> <span class="tp">Result</span>.failure(<span class="st">'Name cannot be empty'</span>);
+  }
+  <span class="kw">final</span> habit = <span class="kw">await</span> _repository.create(params);
+  <span class="kw">return</span> <span class="tp">Result</span>.success(habit);
+}
+
+<span class="cm">// 呼び出し側での網羅的パターンマッチ</span>
+<span class="kw">final</span> result = <span class="kw">await</span> createHabitUseCase.execute(params);
+result.<span class="kw">when</span>(
+  success: (habit) =&gt; state = <span class="tp">AsyncData</span>(habit),
+  failure: (error) =&gt; state = <span class="tp">AsyncError</span>(error),
+);
+  </div>
+</div>
+
+<!-- ━━━ 5. Tech Stack ━━━ -->
+<div class="diagram-container">
+  <div class="section-title">技術スタック</div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+    <div class="rule" style="border-left: 3px solid #3b82f6;">
+      <div>
+        <div style="font-weight:700; margin-bottom: 2px;">Riverpod</div>
+        <div style="font-size: 12px; color: #94a3b8;">@riverpodコード生成による状態管理</div>
+      </div>
+    </div>
+    <div class="rule" style="border-left: 3px solid #3b82f6;">
+      <div>
+        <div style="font-weight:700; margin-bottom: 2px;">go_router</div>
+        <div style="font-size: 12px; color: #94a3b8;">宣言的ナビゲーション &amp; ルーティング</div>
+      </div>
+    </div>
+    <div class="rule" style="border-left: 3px solid #a78bfa;">
+      <div>
+        <div style="font-weight:700; margin-bottom: 2px;">drift</div>
+        <div style="font-size: 12px; color: #94a3b8;">型安全なSQLiteによるローカル永続化</div>
+      </div>
+    </div>
+    <div class="rule" style="border-left: 3px solid #22c55e;">
+      <div>
+        <div style="font-weight:700; margin-bottom: 2px;">freezed</div>
+        <div style="font-size: 12px; color: #94a3b8;">イミュータブルデータクラス &amp; sealed union</div>
+      </div>
+    </div>
+    <div class="rule" style="border-left: 3px solid #f59e0b;">
+      <div>
+        <div style="font-weight:700; margin-bottom: 2px;">flutter_lints</div>
+        <div style="font-size: 12px; color: #94a3b8;">静的解析 &amp; リントルール</div>
+      </div>
+    </div>
+    <div class="rule" style="border-left: 3px solid #f59e0b;">
+      <div>
+        <div style="font-weight:700; margin-bottom: 2px;">build_runner</div>
+        <div style="font-size: 12px; color: #94a3b8;">riverpod, drift, freezed用コード生成</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center; color:#475569; font-size:12px; margin-top:32px;">
+  Habit Tracker &mdash; Flutter/Dart &mdash; iOS &amp; Android
+</p>
+
+</body>
+</html>
