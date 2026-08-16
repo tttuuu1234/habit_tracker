@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
+import '../mock_data.dart';
 import 'widgets/habit_list_tile.dart';
 import 'widgets/progress_ring.dart';
-
-class _MockHabit {
-  const _MockHabit({
-    required this.name,
-    required this.streakDays,
-    required this.isCompleted,
-    this.color,
-  });
-
-  final String name;
-  final int streakDays;
-  final bool isCompleted;
-  final Color? color;
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,34 +14,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<_MockHabit> _habits = [
-    _MockHabit(
-      name: '水を2L飲む',
-      streakDays: 12,
-      isCompleted: true,
-      color: Colors.green.shade700,
-    ),
-    _MockHabit(
-      name: '30分読書',
-      streakDays: 7,
-      isCompleted: true,
-      color: Colors.blue.shade600,
-    ),
-    _MockHabit(
-      name: '日記を書く',
-      streakDays: 21,
-      isCompleted: true,
-      color: Colors.red.shade700,
-    ),
-    const _MockHabit(name: 'ストレッチ', streakDays: 3, isCompleted: false),
-    const _MockHabit(name: '腹筋10回', streakDays: 0, isCompleted: false),
-  ];
+  late final List<MockHabit> _habits = List.of(mockHabits);
 
   int get _completedCount => _habits.where((h) => h.isCompleted).length;
 
   void _onHabitTap(int index) {
-    // TODO: 詳細画面への遷移（別issueで実装）
-    debugPrint('Tapped: ${_habits[index].name}');
+    context.push('/detail/$index');
   }
 
   void _onHabitLongPress(int index) {
@@ -79,10 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
     ).then((confirmed) {
       if (confirmed == true) {
         setState(() {
-          _habits[index] = _MockHabit(
+          _habits[index] = MockHabit(
             name: habit.name,
             streakDays: habit.streakDays + 1,
             isCompleted: true,
+            createdDate: habit.createdDate,
             color: Colors.green.shade700,
           );
         });
