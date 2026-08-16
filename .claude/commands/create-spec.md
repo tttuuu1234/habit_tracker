@@ -23,7 +23,7 @@ $ARGUMENTS の機能仕様書を作成し、`docs/specs/` に保存してくだ�
 
 ### 4. 保存
 - 承認後、`docs/specs/` ディレクトリにMarkdownファイルとして保存する
-- ファイル名: `<機能名のsnake_case>.md`（例: `habit_completion.md`）
+- ファイル名: `<機能名の日本語>.md`（例: `ホーム画面.md`、`習慣詳細画面.md`）
 
 ## 仕様書フォーマット
 
