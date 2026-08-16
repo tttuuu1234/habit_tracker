@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import 'detail/habit_detail_screen.dart';
 import 'home/home_screen.dart';
 
 final router = GoRouter(
@@ -7,6 +8,13 @@ final router = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/detail/:habitIndex',
+      builder: (context, state) {
+        final habitIndex = int.parse(state.pathParameters['habitIndex']!);
+        return HabitDetailScreen(habitIndex: habitIndex);
+      },
     ),
   ],
 );
