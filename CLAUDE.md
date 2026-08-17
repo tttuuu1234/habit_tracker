@@ -73,6 +73,10 @@ lib/
 - One public class per file
 - Tests mirror the `lib/` directory structure under `test/`
 
+### Git運用ルール
+
+- mainブランチで直接作業しない。作業開始前に対応するissueに基づいたブランチ（例: `chore/#10`, `feature/#12`）を作成してから作業する
+
 ### 禁止事項
 
 - GitHubのブランチ保護ルール（Branch Protection Rules）の作成・変更・削除を行わないこと
