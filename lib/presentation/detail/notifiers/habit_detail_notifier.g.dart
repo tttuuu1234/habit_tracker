@@ -6,7 +6,7 @@ part of 'habit_detail_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$habitDetailHash() => r'6e0cf106762be1af820104636567668250a2b862';
+String _$habitDetailHash() => r'bce5d98adfadb05cd76486c240bfdbfcb1907b8e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,10 +30,10 @@ class _SystemHash {
 }
 
 abstract class _$HabitDetail
-    extends BuildlessAutoDisposeNotifier<HabitDetailState> {
-  late final int habitIndex;
+    extends BuildlessAutoDisposeAsyncNotifier<HabitDetailState> {
+  late final int habitId;
 
-  HabitDetailState build(int habitIndex);
+  FutureOr<HabitDetailState> build(int habitId);
 }
 
 /// 習慣詳細画面の状態を管理するNotifier。
@@ -45,7 +45,7 @@ const habitDetailProvider = HabitDetailFamily();
 /// 習慣詳細画面の状態を管理するNotifier。
 ///
 /// Copied from [HabitDetail].
-class HabitDetailFamily extends Family<HabitDetailState> {
+class HabitDetailFamily extends Family<AsyncValue<HabitDetailState>> {
   /// 習慣詳細画面の状態を管理するNotifier。
   ///
   /// Copied from [HabitDetail].
@@ -54,15 +54,15 @@ class HabitDetailFamily extends Family<HabitDetailState> {
   /// 習慣詳細画面の状態を管理するNotifier。
   ///
   /// Copied from [HabitDetail].
-  HabitDetailProvider call(int habitIndex) {
-    return HabitDetailProvider(habitIndex);
+  HabitDetailProvider call(int habitId) {
+    return HabitDetailProvider(habitId);
   }
 
   @override
   HabitDetailProvider getProviderOverride(
     covariant HabitDetailProvider provider,
   ) {
-    return call(provider.habitIndex);
+    return call(provider.habitId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -84,13 +84,14 @@ class HabitDetailFamily extends Family<HabitDetailState> {
 ///
 /// Copied from [HabitDetail].
 class HabitDetailProvider
-    extends AutoDisposeNotifierProviderImpl<HabitDetail, HabitDetailState> {
+    extends
+        AutoDisposeAsyncNotifierProviderImpl<HabitDetail, HabitDetailState> {
   /// 習慣詳細画面の状態を管理するNotifier。
   ///
   /// Copied from [HabitDetail].
-  HabitDetailProvider(int habitIndex)
+  HabitDetailProvider(int habitId)
     : this._internal(
-        () => HabitDetail()..habitIndex = habitIndex,
+        () => HabitDetail()..habitId = habitId,
         from: habitDetailProvider,
         name: r'habitDetailProvider',
         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -98,7 +99,7 @@ class HabitDetailProvider
             : _$habitDetailHash,
         dependencies: HabitDetailFamily._dependencies,
         allTransitiveDependencies: HabitDetailFamily._allTransitiveDependencies,
-        habitIndex: habitIndex,
+        habitId: habitId,
       );
 
   HabitDetailProvider._internal(
@@ -108,14 +109,14 @@ class HabitDetailProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.habitIndex,
+    required this.habitId,
   }) : super.internal();
 
-  final int habitIndex;
+  final int habitId;
 
   @override
-  HabitDetailState runNotifierBuild(covariant HabitDetail notifier) {
-    return notifier.build(habitIndex);
+  FutureOr<HabitDetailState> runNotifierBuild(covariant HabitDetail notifier) {
+    return notifier.build(habitId);
   }
 
   @override
@@ -123,32 +124,32 @@ class HabitDetailProvider
     return ProviderOverride(
       origin: this,
       override: HabitDetailProvider._internal(
-        () => create()..habitIndex = habitIndex,
+        () => create()..habitId = habitId,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        habitIndex: habitIndex,
+        habitId: habitId,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<HabitDetail, HabitDetailState>
+  AutoDisposeAsyncNotifierProviderElement<HabitDetail, HabitDetailState>
   createElement() {
     return _HabitDetailProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is HabitDetailProvider && other.habitIndex == habitIndex;
+    return other is HabitDetailProvider && other.habitId == habitId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, habitIndex.hashCode);
+    hash = _SystemHash.combine(hash, habitId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -156,18 +157,19 @@ class HabitDetailProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin HabitDetailRef on AutoDisposeNotifierProviderRef<HabitDetailState> {
-  /// The parameter `habitIndex` of this provider.
-  int get habitIndex;
+mixin HabitDetailRef on AutoDisposeAsyncNotifierProviderRef<HabitDetailState> {
+  /// The parameter `habitId` of this provider.
+  int get habitId;
 }
 
 class _HabitDetailProviderElement
-    extends AutoDisposeNotifierProviderElement<HabitDetail, HabitDetailState>
+    extends
+        AutoDisposeAsyncNotifierProviderElement<HabitDetail, HabitDetailState>
     with HabitDetailRef {
   _HabitDetailProviderElement(super.provider);
 
   @override
-  int get habitIndex => (origin as HabitDetailProvider).habitIndex;
+  int get habitId => (origin as HabitDetailProvider).habitId;
 }
 
 // ignore_for_file: type=lint

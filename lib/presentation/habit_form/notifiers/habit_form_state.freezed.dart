@@ -18,8 +18,8 @@ mixin _$HabitFormState {
  String get name;/// 頻度種別。
  FrequencyType get frequencyType;/// 曜日指定時の対象曜日（1=月〜7=日）。
  Set<int> get weeklyDays;/// 選択中のカラー。
- Color? get color;/// 編集対象の習慣インデックス（nullなら作成モード）。
- int? get editingHabitIndex;/// 保存処理中かどうか。
+ Color? get color;/// 編集対象の習慣ID（nullなら作成モード）。
+ int? get editingHabitId;/// 保存処理中かどうか。
  bool get isSaving;
 /// Create a copy of HabitFormState
 /// with the given fields replaced by the non-null parameter values.
@@ -31,16 +31,16 @@ $HabitFormStateCopyWith<HabitFormState> get copyWith => _$HabitFormStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HabitFormState&&(identical(other.name, name) || other.name == name)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other.weeklyDays, weeklyDays)&&(identical(other.color, color) || other.color == color)&&(identical(other.editingHabitIndex, editingHabitIndex) || other.editingHabitIndex == editingHabitIndex)&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HabitFormState&&(identical(other.name, name) || other.name == name)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other.weeklyDays, weeklyDays)&&(identical(other.color, color) || other.color == color)&&(identical(other.editingHabitId, editingHabitId) || other.editingHabitId == editingHabitId)&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,frequencyType,const DeepCollectionEquality().hash(weeklyDays),color,editingHabitIndex,isSaving);
+int get hashCode => Object.hash(runtimeType,name,frequencyType,const DeepCollectionEquality().hash(weeklyDays),color,editingHabitId,isSaving);
 
 @override
 String toString() {
-  return 'HabitFormState(name: $name, frequencyType: $frequencyType, weeklyDays: $weeklyDays, color: $color, editingHabitIndex: $editingHabitIndex, isSaving: $isSaving)';
+  return 'HabitFormState(name: $name, frequencyType: $frequencyType, weeklyDays: $weeklyDays, color: $color, editingHabitId: $editingHabitId, isSaving: $isSaving)';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $HabitFormStateCopyWith<$Res>  {
   factory $HabitFormStateCopyWith(HabitFormState value, $Res Function(HabitFormState) _then) = _$HabitFormStateCopyWithImpl;
 @useResult
 $Res call({
- String name, FrequencyType frequencyType, Set<int> weeklyDays, Color? color, int? editingHabitIndex, bool isSaving
+ String name, FrequencyType frequencyType, Set<int> weeklyDays, Color? color, int? editingHabitId, bool isSaving
 });
 
 
@@ -68,13 +68,13 @@ class _$HabitFormStateCopyWithImpl<$Res>
 
 /// Create a copy of HabitFormState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? frequencyType = null,Object? weeklyDays = null,Object? color = freezed,Object? editingHabitIndex = freezed,Object? isSaving = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? frequencyType = null,Object? weeklyDays = null,Object? color = freezed,Object? editingHabitId = freezed,Object? isSaving = null,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,frequencyType: null == frequencyType ? _self.frequencyType : frequencyType // ignore: cast_nullable_to_non_nullable
 as FrequencyType,weeklyDays: null == weeklyDays ? _self.weeklyDays : weeklyDays // ignore: cast_nullable_to_non_nullable
 as Set<int>,color: freezed == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
-as Color?,editingHabitIndex: freezed == editingHabitIndex ? _self.editingHabitIndex : editingHabitIndex // ignore: cast_nullable_to_non_nullable
+as Color?,editingHabitId: freezed == editingHabitId ? _self.editingHabitId : editingHabitId // ignore: cast_nullable_to_non_nullable
 as int?,isSaving: null == isSaving ? _self.isSaving : isSaving // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -161,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  FrequencyType frequencyType,  Set<int> weeklyDays,  Color? color,  int? editingHabitIndex,  bool isSaving)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  FrequencyType frequencyType,  Set<int> weeklyDays,  Color? color,  int? editingHabitId,  bool isSaving)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HabitFormState() when $default != null:
-return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_that.editingHabitIndex,_that.isSaving);case _:
+return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_that.editingHabitId,_that.isSaving);case _:
   return orElse();
 
 }
@@ -182,10 +182,10 @@ return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  FrequencyType frequencyType,  Set<int> weeklyDays,  Color? color,  int? editingHabitIndex,  bool isSaving)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  FrequencyType frequencyType,  Set<int> weeklyDays,  Color? color,  int? editingHabitId,  bool isSaving)  $default,) {final _that = this;
 switch (_that) {
 case _HabitFormState():
-return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_that.editingHabitIndex,_that.isSaving);case _:
+return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_that.editingHabitId,_that.isSaving);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +202,10 @@ return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  FrequencyType frequencyType,  Set<int> weeklyDays,  Color? color,  int? editingHabitIndex,  bool isSaving)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  FrequencyType frequencyType,  Set<int> weeklyDays,  Color? color,  int? editingHabitId,  bool isSaving)?  $default,) {final _that = this;
 switch (_that) {
 case _HabitFormState() when $default != null:
-return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_that.editingHabitIndex,_that.isSaving);case _:
+return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_that.editingHabitId,_that.isSaving);case _:
   return null;
 
 }
@@ -217,7 +217,7 @@ return $default(_that.name,_that.frequencyType,_that.weeklyDays,_that.color,_tha
 
 
 class _HabitFormState extends HabitFormState {
-  const _HabitFormState({this.name = '', this.frequencyType = FrequencyType.daily, final  Set<int> weeklyDays = const {}, this.color = null, this.editingHabitIndex = null, this.isSaving = false}): _weeklyDays = weeklyDays,super._();
+  const _HabitFormState({this.name = '', this.frequencyType = FrequencyType.daily, final  Set<int> weeklyDays = const {}, this.color = null, this.editingHabitId = null, this.isSaving = false}): _weeklyDays = weeklyDays,super._();
   
 
 /// 習慣名。
@@ -235,8 +235,8 @@ class _HabitFormState extends HabitFormState {
 
 /// 選択中のカラー。
 @override@JsonKey() final  Color? color;
-/// 編集対象の習慣インデックス（nullなら作成モード）。
-@override@JsonKey() final  int? editingHabitIndex;
+/// 編集対象の習慣ID（nullなら作成モード）。
+@override@JsonKey() final  int? editingHabitId;
 /// 保存処理中かどうか。
 @override@JsonKey() final  bool isSaving;
 
@@ -250,16 +250,16 @@ _$HabitFormStateCopyWith<_HabitFormState> get copyWith => __$HabitFormStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HabitFormState&&(identical(other.name, name) || other.name == name)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other._weeklyDays, _weeklyDays)&&(identical(other.color, color) || other.color == color)&&(identical(other.editingHabitIndex, editingHabitIndex) || other.editingHabitIndex == editingHabitIndex)&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HabitFormState&&(identical(other.name, name) || other.name == name)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other._weeklyDays, _weeklyDays)&&(identical(other.color, color) || other.color == color)&&(identical(other.editingHabitId, editingHabitId) || other.editingHabitId == editingHabitId)&&(identical(other.isSaving, isSaving) || other.isSaving == isSaving));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,frequencyType,const DeepCollectionEquality().hash(_weeklyDays),color,editingHabitIndex,isSaving);
+int get hashCode => Object.hash(runtimeType,name,frequencyType,const DeepCollectionEquality().hash(_weeklyDays),color,editingHabitId,isSaving);
 
 @override
 String toString() {
-  return 'HabitFormState(name: $name, frequencyType: $frequencyType, weeklyDays: $weeklyDays, color: $color, editingHabitIndex: $editingHabitIndex, isSaving: $isSaving)';
+  return 'HabitFormState(name: $name, frequencyType: $frequencyType, weeklyDays: $weeklyDays, color: $color, editingHabitId: $editingHabitId, isSaving: $isSaving)';
 }
 
 
@@ -270,7 +270,7 @@ abstract mixin class _$HabitFormStateCopyWith<$Res> implements $HabitFormStateCo
   factory _$HabitFormStateCopyWith(_HabitFormState value, $Res Function(_HabitFormState) _then) = __$HabitFormStateCopyWithImpl;
 @override @useResult
 $Res call({
- String name, FrequencyType frequencyType, Set<int> weeklyDays, Color? color, int? editingHabitIndex, bool isSaving
+ String name, FrequencyType frequencyType, Set<int> weeklyDays, Color? color, int? editingHabitId, bool isSaving
 });
 
 
@@ -287,13 +287,13 @@ class __$HabitFormStateCopyWithImpl<$Res>
 
 /// Create a copy of HabitFormState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? frequencyType = null,Object? weeklyDays = null,Object? color = freezed,Object? editingHabitIndex = freezed,Object? isSaving = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? frequencyType = null,Object? weeklyDays = null,Object? color = freezed,Object? editingHabitId = freezed,Object? isSaving = null,}) {
   return _then(_HabitFormState(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,frequencyType: null == frequencyType ? _self.frequencyType : frequencyType // ignore: cast_nullable_to_non_nullable
 as FrequencyType,weeklyDays: null == weeklyDays ? _self._weeklyDays : weeklyDays // ignore: cast_nullable_to_non_nullable
 as Set<int>,color: freezed == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
-as Color?,editingHabitIndex: freezed == editingHabitIndex ? _self.editingHabitIndex : editingHabitIndex // ignore: cast_nullable_to_non_nullable
+as Color?,editingHabitId: freezed == editingHabitId ? _self.editingHabitId : editingHabitId // ignore: cast_nullable_to_non_nullable
 as int?,isSaving: null == isSaving ? _self.isSaving : isSaving // ignore: cast_nullable_to_non_nullable
 as bool,
   ));

@@ -5,6 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'presentation/router.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   initializeDateFormatting('ja');
   runApp(const ProviderScope(child: MyApp()));
 }

@@ -23,15 +23,15 @@ abstract class HabitFormState with _$HabitFormState {
     /// 選択中のカラー。
     @Default(null) Color? color,
 
-    /// 編集対象の習慣インデックス（nullなら作成モード）。
-    @Default(null) int? editingHabitIndex,
+    /// 編集対象の習慣ID（nullなら作成モード）。
+    @Default(null) int? editingHabitId,
 
     /// 保存処理中かどうか。
     @Default(false) bool isSaving,
   }) = _HabitFormState;
 
   /// 作成モードかどうか。
-  bool get isCreateMode => editingHabitIndex == null;
+  bool get isCreateMode => editingHabitId == null;
 
   /// フォーム入力が有効かどうか。
   bool get isValid {

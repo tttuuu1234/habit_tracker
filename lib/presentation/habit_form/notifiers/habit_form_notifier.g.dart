@@ -6,7 +6,7 @@ part of 'habit_form_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$habitFormHash() => r'07e39d22c560c3479ad46f21c52393efa15b6fcb';
+String _$habitFormHash() => r'6e299ad6264eee33695a74c2742c11d389d8cd22';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,10 +30,10 @@ class _SystemHash {
 }
 
 abstract class _$HabitForm
-    extends BuildlessAutoDisposeNotifier<HabitFormState> {
-  late final int? editingHabitIndex;
+    extends BuildlessAutoDisposeAsyncNotifier<HabitFormState> {
+  late final int? editingHabitId;
 
-  HabitFormState build(int? editingHabitIndex);
+  FutureOr<HabitFormState> build(int? editingHabitId);
 }
 
 /// 習慣作成・編集フォームの状態を管理するNotifier。
@@ -45,7 +45,7 @@ const habitFormProvider = HabitFormFamily();
 /// 習慣作成・編集フォームの状態を管理するNotifier。
 ///
 /// Copied from [HabitForm].
-class HabitFormFamily extends Family<HabitFormState> {
+class HabitFormFamily extends Family<AsyncValue<HabitFormState>> {
   /// 習慣作成・編集フォームの状態を管理するNotifier。
   ///
   /// Copied from [HabitForm].
@@ -54,13 +54,13 @@ class HabitFormFamily extends Family<HabitFormState> {
   /// 習慣作成・編集フォームの状態を管理するNotifier。
   ///
   /// Copied from [HabitForm].
-  HabitFormProvider call(int? editingHabitIndex) {
-    return HabitFormProvider(editingHabitIndex);
+  HabitFormProvider call(int? editingHabitId) {
+    return HabitFormProvider(editingHabitId);
   }
 
   @override
   HabitFormProvider getProviderOverride(covariant HabitFormProvider provider) {
-    return call(provider.editingHabitIndex);
+    return call(provider.editingHabitId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -82,13 +82,13 @@ class HabitFormFamily extends Family<HabitFormState> {
 ///
 /// Copied from [HabitForm].
 class HabitFormProvider
-    extends AutoDisposeNotifierProviderImpl<HabitForm, HabitFormState> {
+    extends AutoDisposeAsyncNotifierProviderImpl<HabitForm, HabitFormState> {
   /// 習慣作成・編集フォームの状態を管理するNotifier。
   ///
   /// Copied from [HabitForm].
-  HabitFormProvider(int? editingHabitIndex)
+  HabitFormProvider(int? editingHabitId)
     : this._internal(
-        () => HabitForm()..editingHabitIndex = editingHabitIndex,
+        () => HabitForm()..editingHabitId = editingHabitId,
         from: habitFormProvider,
         name: r'habitFormProvider',
         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -96,7 +96,7 @@ class HabitFormProvider
             : _$habitFormHash,
         dependencies: HabitFormFamily._dependencies,
         allTransitiveDependencies: HabitFormFamily._allTransitiveDependencies,
-        editingHabitIndex: editingHabitIndex,
+        editingHabitId: editingHabitId,
       );
 
   HabitFormProvider._internal(
@@ -106,14 +106,14 @@ class HabitFormProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.editingHabitIndex,
+    required this.editingHabitId,
   }) : super.internal();
 
-  final int? editingHabitIndex;
+  final int? editingHabitId;
 
   @override
-  HabitFormState runNotifierBuild(covariant HabitForm notifier) {
-    return notifier.build(editingHabitIndex);
+  FutureOr<HabitFormState> runNotifierBuild(covariant HabitForm notifier) {
+    return notifier.build(editingHabitId);
   }
 
   @override
@@ -121,33 +121,32 @@ class HabitFormProvider
     return ProviderOverride(
       origin: this,
       override: HabitFormProvider._internal(
-        () => create()..editingHabitIndex = editingHabitIndex,
+        () => create()..editingHabitId = editingHabitId,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        editingHabitIndex: editingHabitIndex,
+        editingHabitId: editingHabitId,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<HabitForm, HabitFormState>
+  AutoDisposeAsyncNotifierProviderElement<HabitForm, HabitFormState>
   createElement() {
     return _HabitFormProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is HabitFormProvider &&
-        other.editingHabitIndex == editingHabitIndex;
+    return other is HabitFormProvider && other.editingHabitId == editingHabitId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, editingHabitIndex.hashCode);
+    hash = _SystemHash.combine(hash, editingHabitId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -155,18 +154,18 @@ class HabitFormProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin HabitFormRef on AutoDisposeNotifierProviderRef<HabitFormState> {
-  /// The parameter `editingHabitIndex` of this provider.
-  int? get editingHabitIndex;
+mixin HabitFormRef on AutoDisposeAsyncNotifierProviderRef<HabitFormState> {
+  /// The parameter `editingHabitId` of this provider.
+  int? get editingHabitId;
 }
 
 class _HabitFormProviderElement
-    extends AutoDisposeNotifierProviderElement<HabitForm, HabitFormState>
+    extends AutoDisposeAsyncNotifierProviderElement<HabitForm, HabitFormState>
     with HabitFormRef {
   _HabitFormProviderElement(super.provider);
 
   @override
-  int? get editingHabitIndex => (origin as HabitFormProvider).editingHabitIndex;
+  int? get editingHabitId => (origin as HabitFormProvider).editingHabitId;
 }
 
 // ignore_for_file: type=lint
