@@ -17,6 +17,9 @@ void main() {
     expect(find.text('3/5'), findsOneWidget);
     expect(find.text('完了'), findsOneWidget);
     expect(find.text('水を2L飲む'), findsOneWidget);
+
+    // リストをスクロールして最後の項目を表示する
+    await tester.scrollUntilVisible(find.text('腹筋10回'), 100);
     expect(find.text('腹筋10回'), findsOneWidget);
   });
 

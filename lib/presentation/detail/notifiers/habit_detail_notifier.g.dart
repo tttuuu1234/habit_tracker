@@ -36,16 +36,24 @@ abstract class _$HabitDetail
   HabitDetailState build(int habitIndex);
 }
 
-/// See also [HabitDetail].
+/// 習慣詳細画面の状態を管理するNotifier。
+///
+/// Copied from [HabitDetail].
 @ProviderFor(HabitDetail)
 const habitDetailProvider = HabitDetailFamily();
 
-/// See also [HabitDetail].
+/// 習慣詳細画面の状態を管理するNotifier。
+///
+/// Copied from [HabitDetail].
 class HabitDetailFamily extends Family<HabitDetailState> {
-  /// See also [HabitDetail].
+  /// 習慣詳細画面の状態を管理するNotifier。
+  ///
+  /// Copied from [HabitDetail].
   const HabitDetailFamily();
 
-  /// See also [HabitDetail].
+  /// 習慣詳細画面の状態を管理するNotifier。
+  ///
+  /// Copied from [HabitDetail].
   HabitDetailProvider call(int habitIndex) {
     return HabitDetailProvider(habitIndex);
   }
@@ -72,10 +80,14 @@ class HabitDetailFamily extends Family<HabitDetailState> {
   String? get name => r'habitDetailProvider';
 }
 
-/// See also [HabitDetail].
+/// 習慣詳細画面の状態を管理するNotifier。
+///
+/// Copied from [HabitDetail].
 class HabitDetailProvider
     extends AutoDisposeNotifierProviderImpl<HabitDetail, HabitDetailState> {
-  /// See also [HabitDetail].
+  /// 習慣詳細画面の状態を管理するNotifier。
+  ///
+  /// Copied from [HabitDetail].
   HabitDetailProvider(int habitIndex)
     : this._internal(
         () => HabitDetail()..habitIndex = habitIndex,

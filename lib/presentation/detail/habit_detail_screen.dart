@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'notifiers/habit_detail_notifier.dart';
 import 'widgets/monthly_calendar.dart';
@@ -22,6 +23,12 @@ class HabitDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(state.habitName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => context.push('/edit/$habitIndex'),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

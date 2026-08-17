@@ -62,6 +62,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final dateText = DateTime.now().toDisplayDate();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => context.push('/create'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

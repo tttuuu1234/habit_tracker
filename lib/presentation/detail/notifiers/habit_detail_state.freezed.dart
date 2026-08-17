@@ -14,7 +14,12 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HabitDetailState {
 
- String get habitName; DateTime get habitCreatedDate; Color? get habitColor; Set<DateTime> get completionDates; DateTime get displayMonth;
+/// 習慣名。
+ String get habitName;/// 習慣の登録日。
+ DateTime get habitCreatedDate;/// 習慣のテーマカラー。
+ Color? get habitColor;/// 達成した日付の集合。
+ Set<DateTime> get completionDates;/// カレンダーに表示中の年月。
+ DateTime get displayMonth;
 /// Create a copy of HabitDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -213,16 +218,22 @@ class _HabitDetailState extends HabitDetailState {
   const _HabitDetailState({required this.habitName, required this.habitCreatedDate, required this.habitColor, required final  Set<DateTime> completionDates, required this.displayMonth}): _completionDates = completionDates,super._();
   
 
+/// 習慣名。
 @override final  String habitName;
+/// 習慣の登録日。
 @override final  DateTime habitCreatedDate;
+/// 習慣のテーマカラー。
 @override final  Color? habitColor;
+/// 達成した日付の集合。
  final  Set<DateTime> _completionDates;
+/// 達成した日付の集合。
 @override Set<DateTime> get completionDates {
   if (_completionDates is EqualUnmodifiableSetView) return _completionDates;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableSetView(_completionDates);
 }
 
+/// カレンダーに表示中の年月。
 @override final  DateTime displayMonth;
 
 /// Create a copy of HabitDetailState
