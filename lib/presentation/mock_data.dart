@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../domain/habit/frequency_type.dart';
+
 class MockHabit {
   const MockHabit({
     required this.name,
@@ -7,6 +9,8 @@ class MockHabit {
     required this.isCompleted,
     required this.createdDate,
     this.color,
+    this.frequencyType = FrequencyType.daily,
+    this.weeklyDays = const {},
   });
 
   final String name;
@@ -14,6 +18,12 @@ class MockHabit {
   final bool isCompleted;
   final DateTime createdDate;
   final Color? color;
+
+  /// 頻度種別。
+  final FrequencyType frequencyType;
+
+  /// 曜日指定時の対象曜日（1=月〜7=日）。
+  final Set<int> weeklyDays;
 }
 
 final List<MockHabit> mockHabits = [
