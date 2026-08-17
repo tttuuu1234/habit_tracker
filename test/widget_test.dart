@@ -1,24 +1,112 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:habit_tracker/data/providers.dart';
+import 'package:habit_tracker/domain/habit/frequency_type.dart';
+import 'package:habit_tracker/domain/habit/habit.dart';
+import 'package:habit_tracker/main.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import 'package:habit_tracker/main.dart';
+import 'helpers/fake_completion_record_repository.dart';
+import 'helpers/fake_habit_repository.dart';
 
 void main() {
   setUpAll(() {
     initializeDateFormatting('ja');
   });
 
+  final today = DateTime.now();
+  final normalizedToday = DateTime(today.year, today.month, today.day);
+
+  FakeHabitRepository createHabitRepository() {
+    final repo = FakeHabitRepository();
+    repo.addHabit(
+      Habit(
+        id: 1,
+        name: '水を2L飲む',
+        createdDate: DateTime(2025, 7, 1),
+        colorValue: Colors.green.shade700.toARGB32(),
+        frequencyType: FrequencyType.daily,
+        weeklyDays: {},
+      ),
+    );
+    repo.addHabit(
+      Habit(
+        id: 2,
+        name: '30分読書',
+        createdDate: DateTime(2025, 7, 15),
+        colorValue: Colors.blue.shade600.toARGB32(),
+        frequencyType: FrequencyType.daily,
+        weeklyDays: {},
+      ),
+    );
+    repo.addHabit(
+      Habit(
+        id: 3,
+        name: '日記を書く',
+        createdDate: DateTime(2025, 6, 1),
+        colorValue: Colors.red.shade700.toARGB32(),
+        frequencyType: FrequencyType.daily,
+        weeklyDays: {},
+      ),
+    );
+    repo.addHabit(
+      Habit(
+        id: 4,
+        name: 'ストレッチ',
+        createdDate: DateTime(2025, 8, 1),
+        colorValue: null,
+        frequencyType: FrequencyType.daily,
+        weeklyDays: {},
+      ),
+    );
+    repo.addHabit(
+      Habit(
+        id: 5,
+        name: '腹筋10回',
+        createdDate: DateTime(2025, 8, 10),
+        colorValue: null,
+        frequencyType: FrequencyType.daily,
+        weeklyDays: {},
+      ),
+    );
+    return repo;
+  }
+
+  FakeCompletionRecordRepository createCompletionRecordRepository() {
+    final repo = FakeCompletionRecordRepository();
+    repo.addCompletionDates(1, {normalizedToday});
+    repo.addCompletionDates(2, {normalizedToday});
+    repo.addCompletionDates(3, {normalizedToday});
+    return repo;
+  }
+
+  Widget createApp(
+    FakeHabitRepository habitRepo,
+    FakeCompletionRecordRepository completionRepo,
+  ) {
+    return ProviderScope(
+      overrides: [
+        habitRepositoryProvider.overrideWithValue(habitRepo),
+        completionRecordRepositoryProvider.overrideWithValue(completionRepo),
+      ],
+      child: const MyApp(),
+    );
+  }
+
   testWidgets('HomeScreen displays progress and habit list', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final habitRepo = createHabitRepository();
+    final completionRepo = createCompletionRecordRepository();
+    await tester.pumpWidget(createApp(habitRepo, completionRepo));
+    await tester.pumpAndSettle();
 
     expect(find.text('お疲れさまです'), findsOneWidget);
     expect(find.text('3/5'), findsOneWidget);
     expect(find.text('完了'), findsOneWidget);
     expect(find.text('水を2L飲む'), findsOneWidget);
 
-    // リストをスクロールして最後の項目を表示する
     await tester.scrollUntilVisible(find.text('腹筋10回'), 100);
     expect(find.text('腹筋10回'), findsOneWidget);
   });
@@ -26,7 +114,10 @@ void main() {
   testWidgets('Long press shows completion dialog', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    final habitRepo = createHabitRepository();
+    final completionRepo = createCompletionRecordRepository();
+    await tester.pumpWidget(createApp(habitRepo, completionRepo));
+    await tester.pumpAndSettle();
 
     await tester.longPress(find.text('ストレッチ'));
     await tester.pumpAndSettle();

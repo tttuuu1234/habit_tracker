@@ -11,10 +11,10 @@ final router = GoRouter(
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: '/detail/:habitIndex',
+      path: '/detail/:habitId',
       builder: (context, state) {
-        final habitIndex = int.parse(state.pathParameters['habitIndex']!);
-        return HabitDetailScreen(habitIndex: habitIndex);
+        final habitId = int.parse(state.pathParameters['habitId']!);
+        return HabitDetailScreen(habitId: habitId);
       },
     ),
     GoRoute(
@@ -22,10 +22,10 @@ final router = GoRouter(
       builder: (context, state) => const HabitFormScreen(),
     ),
     GoRoute(
-      path: '/edit/:habitIndex',
+      path: '/edit/:habitId',
       builder: (context, state) {
-        final habitIndex = int.parse(state.pathParameters['habitIndex']!);
-        return HabitFormScreen(editingHabitIndex: habitIndex);
+        final habitId = int.parse(state.pathParameters['habitId']!);
+        return HabitFormScreen(editingHabitId: habitId);
       },
     ),
   ],

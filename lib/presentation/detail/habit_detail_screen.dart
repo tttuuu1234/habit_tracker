@@ -10,49 +10,65 @@ import 'widgets/streak_header.dart';
 class HabitDetailScreen extends ConsumerWidget {
   const HabitDetailScreen({
     super.key,
-    required this.habitIndex,
+    required this.habitId,
   });
 
-  final int habitIndex;
+  final int habitId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(habitDetailProvider(habitIndex));
-    final notifier = ref.read(habitDetailProvider(habitIndex).notifier);
+    final asyncState = ref.watch(habitDetailProvider(habitId));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(state.habitName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            onPressed: () => context.push('/edit/$habitIndex'),
+    return asyncState.when(
+      loading: () => Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        appBar: AppBar(),
+        body: Center(child: Text('エラー: $error')),
+      ),
+      data: (state) {
+        final notifier = ref.read(habitDetailProvider(habitId).notifier);
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(state.habitName),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () async {
+                  await context.push('/edit/$habitId');
+                  ref.invalidate(habitDetailProvider(habitId));
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            StreakHeader(streakDays: state.currentStreak),
-            const SizedBox(height: 32),
-            MonthlyCalendar(
-              displayMonth: state.displayMonth,
-              completedDates: state.completionDates,
-              habitCreatedDate: state.habitCreatedDate,
-              canGoBack: state.canGoBack,
-              canGoForward: state.canGoForward,
-              onPreviousMonth: notifier.goToPreviousMonth,
-              onNextMonth: notifier.goToNextMonth,
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                StreakHeader(streakDays: state.currentStreak),
+                const SizedBox(height: 32),
+                MonthlyCalendar(
+                  displayMonth: state.displayMonth,
+                  completedDates: state.completionDates,
+                  habitCreatedDate: state.habitCreatedDate,
+                  canGoBack: state.canGoBack,
+                  canGoForward: state.canGoForward,
+                  onPreviousMonth: notifier.goToPreviousMonth,
+                  onNextMonth: notifier.goToNextMonth,
+                ),
+                const SizedBox(height: 32),
+                StatsCard(
+                  longestStreak: state.longestStreak,
+                  completionRate: state.completionRate,
+                ),
+              ],
             ),
-            const SizedBox(height: 32),
-            StatsCard(
-              longestStreak: state.longestStreak,
-              completionRate: state.completionRate,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
