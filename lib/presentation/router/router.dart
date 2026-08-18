@@ -1,28 +1,29 @@
 import 'package:go_router/go_router.dart';
 
-import 'detail/habit_detail_screen.dart';
-import 'habit_form/habit_form_screen.dart';
-import 'home/home_screen.dart';
+import '../detail/habit_detail_screen.dart';
+import '../habit_form/habit_form_screen.dart';
+import '../home/home_screen.dart';
+import 'app_route.dart';
 
 final router = GoRouter(
   routes: [
     GoRoute(
-      path: '/',
+      path: AppRoute.home.path,
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
-      path: '/detail/:habitId',
+      path: '${AppRoute.detail.path}/:habitId',
       builder: (context, state) {
         final habitId = int.parse(state.pathParameters['habitId']!);
         return HabitDetailScreen(habitId: habitId);
       },
     ),
     GoRoute(
-      path: '/create',
+      path: AppRoute.create.path,
       builder: (context, state) => const HabitFormScreen(),
     ),
     GoRoute(
-      path: '/edit/:habitId',
+      path: '${AppRoute.edit.path}/:habitId',
       builder: (context, state) {
         final habitId = int.parse(state.pathParameters['habitId']!);
         return HabitFormScreen(editingHabitId: habitId);

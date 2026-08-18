@@ -78,8 +78,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
           .delete();
 
       if (!mounted) return;
-      ref.invalidate(homeProvider);
-      context.go('/');
+      context.pop(widget.editingHabitId);
     });
   }
 

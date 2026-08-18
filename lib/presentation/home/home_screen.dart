@@ -3,15 +3,71 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
+import '../router/app_route.dart';
+import 'notifiers/habit_summary.dart';
 import 'notifiers/home_notifier.dart';
 import 'widgets/habit_list_tile.dart';
 import 'widgets/progress_ring.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _removeController;
+  late final Animation<double> _removeOpacity;
+  late final Animation<double> _removeSizeFactor;
+
+  /// 削除アニメーション中の習慣ID。
+  int? _deletingHabitId;
+
+  @override
+  void initState() {
+    super.initState();
+    _removeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _removeOpacity = Tween<double>(begin: 1, end: 0).animate(
+      CurvedAnimation(
+        parent: _removeController,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
+    );
+    _removeSizeFactor = Tween<double>(begin: 1, end: 0).animate(
+      CurvedAnimation(
+        parent: _removeController,
+        curve: const Interval(0.3, 1.0, curve: Curves.easeInOut),
+      ),
+    );
+    _removeController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _deletingHabitId = null;
+        _removeController.reset();
+        ref.invalidate(homeProvider);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _removeController.dispose();
+    super.dispose();
+  }
+
+  void _startDeleteAnimation(int habitId) {
+    setState(() {
+      _deletingHabitId = habitId;
+    });
+    _removeController.forward(from: 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final asyncState = ref.watch(homeProvider);
     final dateText = DateTime.now().toDisplayDate();
 
@@ -22,7 +78,8 @@ class HomeScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              await context.push('/create');
+              await context.push(AppRoute.create.path);
+              if (!mounted) return;
               ref.invalidate(homeProvider);
             },
           ),
@@ -77,42 +134,13 @@ class HomeScreen extends ConsumerWidget {
                           child: Text('習慣がまだありません\n右上の＋ボタンから追加しましょう',
                               textAlign: TextAlign.center),
                         )
-                      : ListView.builder(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: habits.length,
-                          itemBuilder: (context, index) {
-                            final habit = habits[index];
-                            final color = habit.colorValue != null
-                                ? Color(habit.colorValue!)
-                                : null;
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                top: index == 0 ? 0 : 8,
-                                bottom:
-                                    index == habits.length - 1 ? 16 : 0,
-                              ),
-                              child: HabitListTile(
-                                name: habit.name,
-                                streakDays: habit.streakDays,
-                                isCompleted: habit.isCompleted,
-                                color: color,
-                                onTap: () async {
-                                  await context
-                                      .push('/detail/${habit.id}');
-                                  ref.invalidate(homeProvider);
-                                },
-                                onLongPress: () =>
-                                    _onHabitLongPress(
-                                      context,
-                                      ref,
-                                      habit.id,
-                                      habit.name,
-                                      habit.isCompleted,
-                                    ),
-                              ),
-                            );
-                          },
+                      : _HabitListView(
+                          habits: habits,
+                          deletingHabitId: _deletingHabitId,
+                          removeSizeFactor: _removeSizeFactor,
+                          removeOpacity: _removeOpacity,
+                          onTap: _onHabitTap,
+                          onLongPress: _onHabitLongPress,
                         ),
                 ),
               ],
@@ -123,9 +151,19 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _onHabitTap(int habitId) async {
+    final deletedId = await context.push<int?>(
+      AppRoute.detail.withId(habitId),
+    );
+    if (!mounted) return;
+    if (deletedId != null) {
+      _startDeleteAnimation(deletedId);
+      return;
+    }
+    ref.invalidate(homeProvider);
+  }
+
   void _onHabitLongPress(
-    BuildContext context,
-    WidgetRef ref,
     int habitId,
     String habitName,
     bool isCompleted,
@@ -153,5 +191,66 @@ class HomeScreen extends ConsumerWidget {
         ref.read(homeProvider.notifier).toggleCompletion(habitId);
       }
     });
+  }
+}
+
+class _HabitListView extends StatelessWidget {
+  const _HabitListView({
+    required this.habits,
+    required this.deletingHabitId,
+    required this.removeSizeFactor,
+    required this.removeOpacity,
+    required this.onTap,
+    required this.onLongPress,
+  });
+
+  final List<HabitSummary> habits;
+  final int? deletingHabitId;
+  final Animation<double> removeSizeFactor;
+  final Animation<double> removeOpacity;
+  final void Function(int habitId) onTap;
+  final void Function(int habitId, String name, bool isCompleted) onLongPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: habits.length,
+      itemBuilder: (context, index) {
+        final habit = habits[index];
+        final isDeleting = habit.id == deletingHabitId;
+        final color =
+            habit.colorValue != null ? Color(habit.colorValue!) : null;
+
+        final tile = Padding(
+          padding: EdgeInsets.only(
+            top: index == 0 ? 0 : 8,
+            bottom: index == habits.length - 1 ? 16 : 0,
+          ),
+          child: HabitListTile(
+            name: habit.name,
+            streakDays: habit.streakDays,
+            isCompleted: habit.isCompleted,
+            color: color,
+            onTap: isDeleting ? null : () => onTap(habit.id),
+            onLongPress: isDeleting
+                ? null
+                : () => onLongPress(habit.id, habit.name, habit.isCompleted),
+          ),
+        );
+
+        if (isDeleting) {
+          return SizeTransition(
+            sizeFactor: removeSizeFactor,
+            child: FadeTransition(
+              opacity: removeOpacity,
+              child: tile,
+            ),
+          );
+        }
+
+        return tile;
+      },
+    );
   }
 }
