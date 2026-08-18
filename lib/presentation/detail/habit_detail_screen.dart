@@ -38,7 +38,14 @@ class HabitDetailScreen extends ConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () async {
-                  await context.push('/edit/$habitId');
+                  final deletedId =
+                      await context.push<int?>('/edit/$habitId');
+                  if (!context.mounted) return;
+                  // 削除された場合はホーム画面に削除IDを転送
+                  if (deletedId != null) {
+                    context.pop(deletedId);
+                    return;
+                  }
                   ref.invalidate(habitDetailProvider(habitId));
                 },
               ),
