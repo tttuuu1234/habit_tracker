@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
+import '../router/app_route.dart';
 import 'notifiers/home_notifier.dart';
 import 'widgets/habit_list_tile.dart';
 import 'widgets/progress_ring.dart';
@@ -76,7 +77,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              await context.push('/create');
+              await context.push(AppRoute.create.path);
               if (!mounted) return;
               ref.invalidate(homeProvider);
             },
@@ -160,7 +161,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     : () async {
                                         final deletedId =
                                             await context.push<int?>(
-                                          '/detail/${habit.id}',
+                                          AppRoute.detail.withId(habit.id),
                                         );
                                         if (!mounted) return;
                                         if (deletedId != null) {

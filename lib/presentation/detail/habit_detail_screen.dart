@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../router/app_route.dart';
 import 'notifiers/habit_detail_notifier.dart';
 import 'widgets/monthly_calendar.dart';
 import 'widgets/stats_card.dart';
@@ -39,7 +40,7 @@ class HabitDetailScreen extends ConsumerWidget {
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () async {
                   final deletedId =
-                      await context.push<int?>('/edit/$habitId');
+                      await context.push<int?>(AppRoute.edit.withId(habitId));
                   if (!context.mounted) return;
                   // 削除された場合はホーム画面に削除IDを転送
                   if (deletedId != null) {
