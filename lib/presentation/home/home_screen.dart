@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
 import '../router/app_route.dart';
+import 'notifiers/habit_summary.dart';
 import 'notifiers/home_notifier.dart';
 import 'widgets/habit_list_tile.dart';
 import 'widgets/progress_ring.dart';
@@ -133,65 +134,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           child: Text('習慣がまだありません\n右上の＋ボタンから追加しましょう',
                               textAlign: TextAlign.center),
                         )
-                      : ListView.builder(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: habits.length,
-                          itemBuilder: (context, index) {
-                            final habit = habits[index];
-                            final isDeleting =
-                                habit.id == _deletingHabitId;
-                            final color = habit.colorValue != null
-                                ? Color(habit.colorValue!)
-                                : null;
-
-                            final tile = Padding(
-                              padding: EdgeInsets.only(
-                                top: index == 0 ? 0 : 8,
-                                bottom:
-                                    index == habits.length - 1 ? 16 : 0,
-                              ),
-                              child: HabitListTile(
-                                name: habit.name,
-                                streakDays: habit.streakDays,
-                                isCompleted: habit.isCompleted,
-                                color: color,
-                                onTap: isDeleting
-                                    ? null
-                                    : () async {
-                                        final deletedId =
-                                            await context.push<int?>(
-                                          AppRoute.detail.withId(habit.id),
-                                        );
-                                        if (!mounted) return;
-                                        if (deletedId != null) {
-                                          _startDeleteAnimation(deletedId);
-                                          return;
-                                        }
-                                        ref.invalidate(homeProvider);
-                                      },
-                                onLongPress: isDeleting
-                                    ? null
-                                    : () => _onHabitLongPress(
-                                          habit.id,
-                                          habit.name,
-                                          habit.isCompleted,
-                                        ),
-                              ),
-                            );
-
-                            if (isDeleting) {
-                              return SizeTransition(
-                                sizeFactor: _removeSizeFactor,
-                                child: FadeTransition(
-                                  opacity: _removeOpacity,
-                                  child: tile,
-                                ),
-                              );
-                            }
-
-                            return tile;
-                          },
+                      : _HabitListView(
+                          habits: habits,
+                          deletingHabitId: _deletingHabitId,
+                          removeSizeFactor: _removeSizeFactor,
+                          removeOpacity: _removeOpacity,
+                          onTap: _onHabitTap,
+                          onLongPress: _onHabitLongPress,
                         ),
                 ),
               ],
@@ -200,6 +149,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _onHabitTap(int habitId) async {
+    final deletedId = await context.push<int?>(
+      AppRoute.detail.withId(habitId),
+    );
+    if (!mounted) return;
+    if (deletedId != null) {
+      _startDeleteAnimation(deletedId);
+      return;
+    }
+    ref.invalidate(homeProvider);
   }
 
   void _onHabitLongPress(
@@ -230,5 +191,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ref.read(homeProvider.notifier).toggleCompletion(habitId);
       }
     });
+  }
+}
+
+class _HabitListView extends StatelessWidget {
+  const _HabitListView({
+    required this.habits,
+    required this.deletingHabitId,
+    required this.removeSizeFactor,
+    required this.removeOpacity,
+    required this.onTap,
+    required this.onLongPress,
+  });
+
+  final List<HabitSummary> habits;
+  final int? deletingHabitId;
+  final Animation<double> removeSizeFactor;
+  final Animation<double> removeOpacity;
+  final void Function(int habitId) onTap;
+  final void Function(int habitId, String name, bool isCompleted) onLongPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: habits.length,
+      itemBuilder: (context, index) {
+        final habit = habits[index];
+        final isDeleting = habit.id == deletingHabitId;
+        final color =
+            habit.colorValue != null ? Color(habit.colorValue!) : null;
+
+        final tile = Padding(
+          padding: EdgeInsets.only(
+            top: index == 0 ? 0 : 8,
+            bottom: index == habits.length - 1 ? 16 : 0,
+          ),
+          child: HabitListTile(
+            name: habit.name,
+            streakDays: habit.streakDays,
+            isCompleted: habit.isCompleted,
+            color: color,
+            onTap: isDeleting ? null : () => onTap(habit.id),
+            onLongPress: isDeleting
+                ? null
+                : () => onLongPress(habit.id, habit.name, habit.isCompleted),
+          ),
+        );
+
+        if (isDeleting) {
+          return SizeTransition(
+            sizeFactor: removeSizeFactor,
+            child: FadeTransition(
+              opacity: removeOpacity,
+              child: tile,
+            ),
+          );
+        }
+
+        return tile;
+      },
+    );
   }
 }
