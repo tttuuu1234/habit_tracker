@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../domain/habit/frequency_type.dart';
+import '../../domain/habit/habit_type.dart';
 import '../home/notifiers/home_notifier.dart';
 import 'notifiers/habit_form_notifier.dart';
 import 'widgets/color_palette.dart';
 import 'widgets/frequency_selector.dart';
+import 'widgets/habit_type_selector.dart';
 import 'widgets/weekday_selector.dart';
 
 /// 習慣作成・編集画面。
@@ -25,11 +27,13 @@ class HabitFormScreen extends ConsumerStatefulWidget {
 
 class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
   final _nameController = TextEditingController();
+  final _targetTimeController = TextEditingController();
   bool _nameInitialized = false;
 
   @override
   void dispose() {
     _nameController.dispose();
+    _targetTimeController.dispose();
     super.dispose();
   }
 
@@ -126,6 +130,9 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
         // 初回データ到着時にテキストコントローラーを初期化
         if (!_nameInitialized) {
           _nameController.text = state.name;
+          if (state.targetTime != null) {
+            _targetTimeController.text = state.targetTime.toString();
+          }
           _nameInitialized = true;
         }
 
@@ -197,6 +204,60 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                             onChanged: notifier.updateName,
                           ),
                         ),
+                        const SizedBox(height: 24),
+                        Text(
+                          '種類',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: HabitTypeSelector(
+                            selected: state.habitType,
+                            onChanged: notifier.updateHabitType,
+                          ),
+                        ),
+                        if (state.habitType == HabitType.time) ...[
+                          const SizedBox(height: 24),
+                          Text(
+                            '目標時間（分）',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      Colors.black.withValues(alpha: 0.06),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _targetTimeController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText: '例: 30',
+                                suffixText: '分',
+                                filled: true,
+                                fillColor:
+                                    Theme.of(context).colorScheme.surface,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onChanged: (value) {
+                                final parsed = int.tryParse(value);
+                                notifier.updateTargetTime(parsed);
+                              },
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 24),
                         Text(
                           '頻度',
