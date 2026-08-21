@@ -1,6 +1,7 @@
 import 'package:habit_tracker/domain/habit/frequency_type.dart';
 import 'package:habit_tracker/domain/habit/habit.dart';
 import 'package:habit_tracker/domain/habit/habit_repository.dart';
+import 'package:habit_tracker/domain/habit/habit_type.dart';
 import 'package:habit_tracker/domain/result.dart';
 
 /// テスト用の習慣リポジトリ実装。
@@ -34,6 +35,8 @@ class FakeHabitRepository implements HabitRepository {
     required int? colorValue,
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
+    required HabitType habitType,
+    required int? targetTime,
   }) async {
     final habit = Habit(
       id: _nextId++,
@@ -43,6 +46,8 @@ class FakeHabitRepository implements HabitRepository {
       colorValue: colorValue,
       frequencyType: frequencyType,
       weeklyDays: weeklyDays,
+      habitType: habitType,
+      targetTime: targetTime,
     );
     _habits.add(habit);
     return Result.success(habit);
