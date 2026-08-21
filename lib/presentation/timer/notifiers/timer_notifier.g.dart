@@ -6,7 +6,7 @@ part of 'timer_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$habitTimerHash() => r'5cba49c032f9297b122cd67cdd4116027a611d30';
+String _$habitTimerHash() => r'ed52fdb9e62b827d288b4add6afbfb8e9a28cb0c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,8 +29,7 @@ class _SystemHash {
   }
 }
 
-abstract class _$HabitTimer
-    extends BuildlessAutoDisposeAsyncNotifier<TimerState> {
+abstract class _$HabitTimer extends BuildlessAsyncNotifier<TimerState> {
   late final int habitId;
 
   FutureOr<TimerState> build(int habitId);
@@ -84,7 +83,7 @@ class HabitTimerFamily extends Family<AsyncValue<TimerState>> {
 ///
 /// Copied from [HabitTimer].
 class HabitTimerProvider
-    extends AutoDisposeAsyncNotifierProviderImpl<HabitTimer, TimerState> {
+    extends AsyncNotifierProviderImpl<HabitTimer, TimerState> {
   /// タイマー画面の状態を管理するNotifier。
   ///
   /// Copied from [HabitTimer].
@@ -135,8 +134,7 @@ class HabitTimerProvider
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<HabitTimer, TimerState>
-  createElement() {
+  AsyncNotifierProviderElement<HabitTimer, TimerState> createElement() {
     return _HabitTimerProviderElement(this);
   }
 
@@ -156,13 +154,13 @@ class HabitTimerProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin HabitTimerRef on AutoDisposeAsyncNotifierProviderRef<TimerState> {
+mixin HabitTimerRef on AsyncNotifierProviderRef<TimerState> {
   /// The parameter `habitId` of this provider.
   int get habitId;
 }
 
 class _HabitTimerProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<HabitTimer, TimerState>
+    extends AsyncNotifierProviderElement<HabitTimer, TimerState>
     with HabitTimerRef {
   _HabitTimerProviderElement(super.provider);
 

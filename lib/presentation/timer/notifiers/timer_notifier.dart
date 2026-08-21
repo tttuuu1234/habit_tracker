@@ -9,7 +9,7 @@ import 'timer_state.dart';
 part 'timer_notifier.g.dart';
 
 /// タイマー画面の状態を管理するNotifier。
-@riverpod
+@Riverpod(keepAlive: true)
 class HabitTimer extends _$HabitTimer {
   Timer? _timer;
   late int _habitId;
