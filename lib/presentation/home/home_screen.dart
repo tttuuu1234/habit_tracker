@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
-import '../../domain/habit/habit_type.dart';
 import '../router/app_route.dart';
 import '../timer/notifiers/timer_notifier.dart';
 import 'notifiers/habit_summary.dart';
@@ -168,7 +167,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Future<void> _onHabitLongPress(HabitSummary habit) async {
     if (habit.isCompleted) return;
 
-    if (habit.habitType == HabitType.time) {
+    if (habit is TimeHabitSummary) {
       await context.push(AppRoute.timer.withId(habit.id));
       if (!mounted) return;
       ref.invalidate(homeProvider);
@@ -219,7 +218,7 @@ class _HabitListView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // タイマー完了時にホーム画面の達成状態を更新する
     for (final habit in habits) {
-      if (habit.habitType != HabitType.time || habit.isCompleted) continue;
+      if (habit is! TimeHabitSummary || habit.isCompleted) continue;
       final provider = habitTimerProvider(habit.id);
       if (!ref.exists(provider)) continue;
       ref.listen(provider, (prev, next) {
@@ -235,8 +234,6 @@ class _HabitListView extends ConsumerWidget {
       itemBuilder: (context, index) {
         final habit = habits[index];
         final isDeleting = habit.id == deletingHabitId;
-        final color =
-            habit.colorValue != null ? Color(habit.colorValue!) : null;
 
         final tile = Padding(
           padding: EdgeInsets.only(
@@ -244,10 +241,7 @@ class _HabitListView extends ConsumerWidget {
             bottom: index == habits.length - 1 ? 16 : 0,
           ),
           child: HabitListTile(
-            name: habit.name,
-            streakDays: habit.streakDays,
-            isCompleted: habit.isCompleted,
-            color: color,
+            habit: habit,
             subtitle: _buildTimerSubtitle(context, ref, habit),
             onTap: isDeleting ? null : () => onTap(habit.id),
             onLongPress: isDeleting
@@ -277,7 +271,7 @@ class _HabitListView extends ConsumerWidget {
     WidgetRef ref,
     HabitSummary habit,
   ) {
-    if (habit.habitType != HabitType.time) return null;
+    if (habit is! TimeHabitSummary) return null;
     if (habit.isCompleted) return null;
 
     final provider = habitTimerProvider(habit.id);
