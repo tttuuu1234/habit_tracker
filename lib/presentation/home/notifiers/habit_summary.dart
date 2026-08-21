@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../domain/habit/habit_type.dart';
+
 part 'habit_summary.freezed.dart';
 
 /// ホーム画面に表示する習慣サマリー。
@@ -20,5 +22,11 @@ abstract class HabitSummary with _$HabitSummary {
 
     /// テーマカラーの値。
     required int? colorValue,
+
+    /// 習慣の種別。
+    required HabitType habitType,
+
+    /// 目標時間（分）。時間方式の場合のみ使用。
+    required int? targetTime,
   }) = _HabitSummary;
 }

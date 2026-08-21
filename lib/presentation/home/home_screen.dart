@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
+import '../../domain/habit/habit_type.dart';
 import '../router/app_route.dart';
 import 'notifiers/habit_summary.dart';
 import 'notifiers/home_notifier.dart';
@@ -140,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           removeSizeFactor: _removeSizeFactor,
                           removeOpacity: _removeOpacity,
                           onTap: _onHabitTap,
-                          onLongPress: _onHabitLongPress,
+                          onLongPress: (habit) => _onHabitLongPress(habit),
                         ),
                 ),
               ],
@@ -163,18 +164,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     ref.invalidate(homeProvider);
   }
 
-  void _onHabitLongPress(
-    int habitId,
-    String habitName,
-    bool isCompleted,
-  ) {
-    if (isCompleted) return;
+  Future<void> _onHabitLongPress(HabitSummary habit) async {
+    if (habit.isCompleted) return;
 
-    showDialog<bool>(
+    if (habit.habitType == HabitType.time) {
+      await context.push(AppRoute.timer.withId(habit.id));
+      if (!mounted) return;
+      ref.invalidate(homeProvider);
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('達成確認'),
-        content: Text('「$habitName」を達成済みにしますか？'),
+        content: Text('「${habit.name}」を達成済みにしますか？'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -186,11 +190,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         ],
       ),
-    ).then((confirmed) {
-      if (confirmed == true) {
-        ref.read(homeProvider.notifier).toggleCompletion(habitId);
-      }
-    });
+    );
+    if (confirmed == true) {
+      ref.read(homeProvider.notifier).toggleCompletion(habit.id);
+    }
   }
 }
 
@@ -209,7 +212,7 @@ class _HabitListView extends StatelessWidget {
   final Animation<double> removeSizeFactor;
   final Animation<double> removeOpacity;
   final void Function(int habitId) onTap;
-  final void Function(int habitId, String name, bool isCompleted) onLongPress;
+  final void Function(HabitSummary habit) onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +238,7 @@ class _HabitListView extends StatelessWidget {
             onTap: isDeleting ? null : () => onTap(habit.id),
             onLongPress: isDeleting
                 ? null
-                : () => onLongPress(habit.id, habit.name, habit.isCompleted),
+                : () => onLongPress(habit),
           ),
         );
 

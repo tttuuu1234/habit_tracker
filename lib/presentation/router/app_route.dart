@@ -9,7 +9,10 @@ enum AppRoute {
   create('/create'),
 
   /// 習慣編集画面。
-  edit('/edit');
+  edit('/edit'),
+
+  /// タイマー画面。
+  timer('/timer');
 
   const AppRoute(this.path);
   final String path;

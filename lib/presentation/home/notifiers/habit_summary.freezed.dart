@@ -19,7 +19,9 @@ mixin _$HabitSummary {
  String get name;/// 現在の連続達成日数。
  int get streakDays;/// 今日達成済みかどうか。
  bool get isCompleted;/// テーマカラーの値。
- int? get colorValue;
+ int? get colorValue;/// 習慣の種別。
+ HabitType get habitType;/// 目標時間（分）。時間方式の場合のみ使用。
+ int? get targetTime;
 /// Create a copy of HabitSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +32,16 @@ $HabitSummaryCopyWith<HabitSummary> get copyWith => _$HabitSummaryCopyWithImpl<H
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HabitSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HabitSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue)&&(identical(other.habitType, habitType) || other.habitType == habitType)&&(identical(other.targetTime, targetTime) || other.targetTime == targetTime));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,streakDays,isCompleted,colorValue);
+int get hashCode => Object.hash(runtimeType,id,name,streakDays,isCompleted,colorValue,habitType,targetTime);
 
 @override
 String toString() {
-  return 'HabitSummary(id: $id, name: $name, streakDays: $streakDays, isCompleted: $isCompleted, colorValue: $colorValue)';
+  return 'HabitSummary(id: $id, name: $name, streakDays: $streakDays, isCompleted: $isCompleted, colorValue: $colorValue, habitType: $habitType, targetTime: $targetTime)';
 }
 
 
@@ -50,7 +52,7 @@ abstract mixin class $HabitSummaryCopyWith<$Res>  {
   factory $HabitSummaryCopyWith(HabitSummary value, $Res Function(HabitSummary) _then) = _$HabitSummaryCopyWithImpl;
 @useResult
 $Res call({
- int id, String name, int streakDays, bool isCompleted, int? colorValue
+ int id, String name, int streakDays, bool isCompleted, int? colorValue, HabitType habitType, int? targetTime
 });
 
 
@@ -67,13 +69,15 @@ class _$HabitSummaryCopyWithImpl<$Res>
 
 /// Create a copy of HabitSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? streakDays = null,Object? isCompleted = null,Object? colorValue = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? streakDays = null,Object? isCompleted = null,Object? colorValue = freezed,Object? habitType = null,Object? targetTime = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,streakDays: null == streakDays ? _self.streakDays : streakDays // ignore: cast_nullable_to_non_nullable
 as int,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,colorValue: freezed == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int?,habitType: null == habitType ? _self.habitType : habitType // ignore: cast_nullable_to_non_nullable
+as HabitType,targetTime: freezed == targetTime ? _self.targetTime : targetTime // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -159,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  int streakDays,  bool isCompleted,  int? colorValue)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  int streakDays,  bool isCompleted,  int? colorValue,  HabitType habitType,  int? targetTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HabitSummary() when $default != null:
-return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.colorValue);case _:
+return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.colorValue,_that.habitType,_that.targetTime);case _:
   return orElse();
 
 }
@@ -180,10 +184,10 @@ return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.col
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  int streakDays,  bool isCompleted,  int? colorValue)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  int streakDays,  bool isCompleted,  int? colorValue,  HabitType habitType,  int? targetTime)  $default,) {final _that = this;
 switch (_that) {
 case _HabitSummary():
-return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.colorValue);case _:
+return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.colorValue,_that.habitType,_that.targetTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +204,10 @@ return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.col
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  int streakDays,  bool isCompleted,  int? colorValue)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  int streakDays,  bool isCompleted,  int? colorValue,  HabitType habitType,  int? targetTime)?  $default,) {final _that = this;
 switch (_that) {
 case _HabitSummary() when $default != null:
-return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.colorValue);case _:
+return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.colorValue,_that.habitType,_that.targetTime);case _:
   return null;
 
 }
@@ -215,7 +219,7 @@ return $default(_that.id,_that.name,_that.streakDays,_that.isCompleted,_that.col
 
 
 class _HabitSummary implements HabitSummary {
-  const _HabitSummary({required this.id, required this.name, required this.streakDays, required this.isCompleted, required this.colorValue});
+  const _HabitSummary({required this.id, required this.name, required this.streakDays, required this.isCompleted, required this.colorValue, required this.habitType, required this.targetTime});
   
 
 /// 習慣ID。
@@ -228,6 +232,10 @@ class _HabitSummary implements HabitSummary {
 @override final  bool isCompleted;
 /// テーマカラーの値。
 @override final  int? colorValue;
+/// 習慣の種別。
+@override final  HabitType habitType;
+/// 目標時間（分）。時間方式の場合のみ使用。
+@override final  int? targetTime;
 
 /// Create a copy of HabitSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +247,16 @@ _$HabitSummaryCopyWith<_HabitSummary> get copyWith => __$HabitSummaryCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HabitSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HabitSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.streakDays, streakDays) || other.streakDays == streakDays)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue)&&(identical(other.habitType, habitType) || other.habitType == habitType)&&(identical(other.targetTime, targetTime) || other.targetTime == targetTime));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,streakDays,isCompleted,colorValue);
+int get hashCode => Object.hash(runtimeType,id,name,streakDays,isCompleted,colorValue,habitType,targetTime);
 
 @override
 String toString() {
-  return 'HabitSummary(id: $id, name: $name, streakDays: $streakDays, isCompleted: $isCompleted, colorValue: $colorValue)';
+  return 'HabitSummary(id: $id, name: $name, streakDays: $streakDays, isCompleted: $isCompleted, colorValue: $colorValue, habitType: $habitType, targetTime: $targetTime)';
 }
 
 
@@ -259,7 +267,7 @@ abstract mixin class _$HabitSummaryCopyWith<$Res> implements $HabitSummaryCopyWi
   factory _$HabitSummaryCopyWith(_HabitSummary value, $Res Function(_HabitSummary) _then) = __$HabitSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name, int streakDays, bool isCompleted, int? colorValue
+ int id, String name, int streakDays, bool isCompleted, int? colorValue, HabitType habitType, int? targetTime
 });
 
 
@@ -276,13 +284,15 @@ class __$HabitSummaryCopyWithImpl<$Res>
 
 /// Create a copy of HabitSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? streakDays = null,Object? isCompleted = null,Object? colorValue = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? streakDays = null,Object? isCompleted = null,Object? colorValue = freezed,Object? habitType = null,Object? targetTime = freezed,}) {
   return _then(_HabitSummary(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,streakDays: null == streakDays ? _self.streakDays : streakDays // ignore: cast_nullable_to_non_nullable
 as int,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,colorValue: freezed == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int?,habitType: null == habitType ? _self.habitType : habitType // ignore: cast_nullable_to_non_nullable
+as HabitType,targetTime: freezed == targetTime ? _self.targetTime : targetTime // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
