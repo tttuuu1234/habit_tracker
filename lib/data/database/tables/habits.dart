@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../domain/habit/frequency_type.dart';
+import '../../../domain/habit/habit_type.dart';
 
 /// FrequencyType ↔ String の変換。
 class FrequencyTypeConverter extends TypeConverter<FrequencyType, String> {
@@ -11,6 +12,17 @@ class FrequencyTypeConverter extends TypeConverter<FrequencyType, String> {
 
   @override
   String toSql(FrequencyType value) => value.name;
+}
+
+/// HabitType ↔ String の変換。
+class HabitTypeConverter extends TypeConverter<HabitType, String> {
+  const HabitTypeConverter();
+
+  @override
+  HabitType fromSql(String fromDb) => HabitType.values.byName(fromDb);
+
+  @override
+  String toSql(HabitType value) => value.name;
 }
 
 /// `Set<int>` ↔ カンマ区切りString の変換。
@@ -51,4 +63,11 @@ class Habits extends Table {
 
   /// 曜日指定時の対象曜日（1=月〜7=日）。
   TextColumn get weeklyDays => text().map(const WeeklyDaysConverter())();
+
+  /// 習慣の種別。
+  TextColumn get habitType =>
+      text().map(const HabitTypeConverter()).withDefault(const Constant('check'))();
+
+  /// 目標時間（分）。時間方式の場合のみ使用。
+  IntColumn get targetTime => integer().nullable()();
 }

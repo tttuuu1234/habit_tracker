@@ -75,6 +75,27 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         requiredDuringInsert: true,
       ).withConverter<Set<int>>($HabitsTable.$converterweeklyDays);
   @override
+  late final GeneratedColumnWithTypeConverter<HabitType, String> habitType =
+      GeneratedColumn<String>(
+        'habit_type',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('check'),
+      ).withConverter<HabitType>($HabitsTable.$converterhabitType);
+  static const VerificationMeta _targetTimeMeta = const VerificationMeta(
+    'targetTime',
+  );
+  @override
+  late final GeneratedColumn<int> targetTime = GeneratedColumn<int>(
+    'target_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     name,
@@ -82,6 +103,8 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     colorValue,
     frequencyType,
     weeklyDays,
+    habitType,
+    targetTime,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -123,6 +146,12 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         colorValue.isAcceptableOrUnknown(data['color_value']!, _colorValueMeta),
       );
     }
+    if (data.containsKey('target_time')) {
+      context.handle(
+        _targetTimeMeta,
+        targetTime.isAcceptableOrUnknown(data['target_time']!, _targetTimeMeta),
+      );
+    }
     return context;
   }
 
@@ -160,6 +189,16 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
           data['${effectivePrefix}weekly_days'],
         )!,
       ),
+      habitType: $HabitsTable.$converterhabitType.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}habit_type'],
+        )!,
+      ),
+      targetTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_time'],
+      ),
     );
   }
 
@@ -172,6 +211,8 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
       const FrequencyTypeConverter();
   static TypeConverter<Set<int>, String> $converterweeklyDays =
       const WeeklyDaysConverter();
+  static TypeConverter<HabitType, String> $converterhabitType =
+      const HabitTypeConverter();
 }
 
 class Habit extends DataClass implements Insertable<Habit> {
@@ -192,6 +233,12 @@ class Habit extends DataClass implements Insertable<Habit> {
 
   /// 曜日指定時の対象曜日（1=月〜7=日）。
   final Set<int> weeklyDays;
+
+  /// 習慣の種別。
+  final HabitType habitType;
+
+  /// 目標時間（分）。時間方式の場合のみ使用。
+  final int? targetTime;
   const Habit({
     required this.id,
     required this.name,
@@ -199,6 +246,8 @@ class Habit extends DataClass implements Insertable<Habit> {
     this.colorValue,
     required this.frequencyType,
     required this.weeklyDays,
+    required this.habitType,
+    this.targetTime,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -219,6 +268,14 @@ class Habit extends DataClass implements Insertable<Habit> {
         $HabitsTable.$converterweeklyDays.toSql(weeklyDays),
       );
     }
+    {
+      map['habit_type'] = Variable<String>(
+        $HabitsTable.$converterhabitType.toSql(habitType),
+      );
+    }
+    if (!nullToAbsent || targetTime != null) {
+      map['target_time'] = Variable<int>(targetTime);
+    }
     return map;
   }
 
@@ -232,6 +289,10 @@ class Habit extends DataClass implements Insertable<Habit> {
           : Value(colorValue),
       frequencyType: Value(frequencyType),
       weeklyDays: Value(weeklyDays),
+      habitType: Value(habitType),
+      targetTime: targetTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetTime),
     );
   }
 
@@ -247,6 +308,8 @@ class Habit extends DataClass implements Insertable<Habit> {
       colorValue: serializer.fromJson<int?>(json['colorValue']),
       frequencyType: serializer.fromJson<FrequencyType>(json['frequencyType']),
       weeklyDays: serializer.fromJson<Set<int>>(json['weeklyDays']),
+      habitType: serializer.fromJson<HabitType>(json['habitType']),
+      targetTime: serializer.fromJson<int?>(json['targetTime']),
     );
   }
   @override
@@ -259,6 +322,8 @@ class Habit extends DataClass implements Insertable<Habit> {
       'colorValue': serializer.toJson<int?>(colorValue),
       'frequencyType': serializer.toJson<FrequencyType>(frequencyType),
       'weeklyDays': serializer.toJson<Set<int>>(weeklyDays),
+      'habitType': serializer.toJson<HabitType>(habitType),
+      'targetTime': serializer.toJson<int?>(targetTime),
     };
   }
 
@@ -269,6 +334,8 @@ class Habit extends DataClass implements Insertable<Habit> {
     Value<int?> colorValue = const Value.absent(),
     FrequencyType? frequencyType,
     Set<int>? weeklyDays,
+    HabitType? habitType,
+    Value<int?> targetTime = const Value.absent(),
   }) => Habit(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -276,6 +343,8 @@ class Habit extends DataClass implements Insertable<Habit> {
     colorValue: colorValue.present ? colorValue.value : this.colorValue,
     frequencyType: frequencyType ?? this.frequencyType,
     weeklyDays: weeklyDays ?? this.weeklyDays,
+    habitType: habitType ?? this.habitType,
+    targetTime: targetTime.present ? targetTime.value : this.targetTime,
   );
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
@@ -293,6 +362,10 @@ class Habit extends DataClass implements Insertable<Habit> {
       weeklyDays: data.weeklyDays.present
           ? data.weeklyDays.value
           : this.weeklyDays,
+      habitType: data.habitType.present ? data.habitType.value : this.habitType,
+      targetTime: data.targetTime.present
+          ? data.targetTime.value
+          : this.targetTime,
     );
   }
 
@@ -304,14 +377,24 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('createdDate: $createdDate, ')
           ..write('colorValue: $colorValue, ')
           ..write('frequencyType: $frequencyType, ')
-          ..write('weeklyDays: $weeklyDays')
+          ..write('weeklyDays: $weeklyDays, ')
+          ..write('habitType: $habitType, ')
+          ..write('targetTime: $targetTime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, createdDate, colorValue, frequencyType, weeklyDays);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    createdDate,
+    colorValue,
+    frequencyType,
+    weeklyDays,
+    habitType,
+    targetTime,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -321,7 +404,9 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.createdDate == this.createdDate &&
           other.colorValue == this.colorValue &&
           other.frequencyType == this.frequencyType &&
-          other.weeklyDays == this.weeklyDays);
+          other.weeklyDays == this.weeklyDays &&
+          other.habitType == this.habitType &&
+          other.targetTime == this.targetTime);
 }
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
@@ -331,6 +416,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<int?> colorValue;
   final Value<FrequencyType> frequencyType;
   final Value<Set<int>> weeklyDays;
+  final Value<HabitType> habitType;
+  final Value<int?> targetTime;
   const HabitsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -338,6 +425,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.colorValue = const Value.absent(),
     this.frequencyType = const Value.absent(),
     this.weeklyDays = const Value.absent(),
+    this.habitType = const Value.absent(),
+    this.targetTime = const Value.absent(),
   });
   HabitsCompanion.insert({
     this.id = const Value.absent(),
@@ -346,6 +435,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.colorValue = const Value.absent(),
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
+    this.habitType = const Value.absent(),
+    this.targetTime = const Value.absent(),
   }) : name = Value(name),
        createdDate = Value(createdDate),
        frequencyType = Value(frequencyType),
@@ -357,6 +448,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<int>? colorValue,
     Expression<String>? frequencyType,
     Expression<String>? weeklyDays,
+    Expression<String>? habitType,
+    Expression<int>? targetTime,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -365,6 +458,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (colorValue != null) 'color_value': colorValue,
       if (frequencyType != null) 'frequency_type': frequencyType,
       if (weeklyDays != null) 'weekly_days': weeklyDays,
+      if (habitType != null) 'habit_type': habitType,
+      if (targetTime != null) 'target_time': targetTime,
     });
   }
 
@@ -375,6 +470,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<int?>? colorValue,
     Value<FrequencyType>? frequencyType,
     Value<Set<int>>? weeklyDays,
+    Value<HabitType>? habitType,
+    Value<int?>? targetTime,
   }) {
     return HabitsCompanion(
       id: id ?? this.id,
@@ -383,6 +480,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       colorValue: colorValue ?? this.colorValue,
       frequencyType: frequencyType ?? this.frequencyType,
       weeklyDays: weeklyDays ?? this.weeklyDays,
+      habitType: habitType ?? this.habitType,
+      targetTime: targetTime ?? this.targetTime,
     );
   }
 
@@ -411,6 +510,14 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
         $HabitsTable.$converterweeklyDays.toSql(weeklyDays.value),
       );
     }
+    if (habitType.present) {
+      map['habit_type'] = Variable<String>(
+        $HabitsTable.$converterhabitType.toSql(habitType.value),
+      );
+    }
+    if (targetTime.present) {
+      map['target_time'] = Variable<int>(targetTime.value);
+    }
     return map;
   }
 
@@ -422,7 +529,9 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('createdDate: $createdDate, ')
           ..write('colorValue: $colorValue, ')
           ..write('frequencyType: $frequencyType, ')
-          ..write('weeklyDays: $weeklyDays')
+          ..write('weeklyDays: $weeklyDays, ')
+          ..write('habitType: $habitType, ')
+          ..write('targetTime: $targetTime')
           ..write(')'))
         .toString();
   }
@@ -736,6 +845,8 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<int?> colorValue,
       required FrequencyType frequencyType,
       required Set<int> weeklyDays,
+      Value<HabitType> habitType,
+      Value<int?> targetTime,
     });
 typedef $$HabitsTableUpdateCompanionBuilder =
     HabitsCompanion Function({
@@ -745,6 +856,8 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<int?> colorValue,
       Value<FrequencyType> frequencyType,
       Value<Set<int>> weeklyDays,
+      Value<HabitType> habitType,
+      Value<int?> targetTime,
     });
 
 final class $$HabitsTableReferences
@@ -817,6 +930,17 @@ class $$HabitsTableFilterComposer
         builder: (column) => ColumnWithTypeConverterFilters(column),
       );
 
+  ColumnWithTypeConverterFilters<HabitType, HabitType, String> get habitType =>
+      $composableBuilder(
+        column: $table.habitType,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<int> get targetTime => $composableBuilder(
+    column: $table.targetTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> completionRecordsRefs(
     Expression<bool> Function($$CompletionRecordsTableFilterComposer f) f,
   ) {
@@ -881,6 +1005,16 @@ class $$HabitsTableOrderingComposer
     column: $table.weeklyDays,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get habitType => $composableBuilder(
+    column: $table.habitType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetTime => $composableBuilder(
+    column: $table.targetTime,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HabitsTableAnnotationComposer
@@ -919,6 +1053,14 @@ class $$HabitsTableAnnotationComposer
         column: $table.weeklyDays,
         builder: (column) => column,
       );
+
+  GeneratedColumnWithTypeConverter<HabitType, String> get habitType =>
+      $composableBuilder(column: $table.habitType, builder: (column) => column);
+
+  GeneratedColumn<int> get targetTime => $composableBuilder(
+    column: $table.targetTime,
+    builder: (column) => column,
+  );
 
   Expression<T> completionRecordsRefs<T extends Object>(
     Expression<T> Function($$CompletionRecordsTableAnnotationComposer a) f,
@@ -981,6 +1123,8 @@ class $$HabitsTableTableManager
                 Value<int?> colorValue = const Value.absent(),
                 Value<FrequencyType> frequencyType = const Value.absent(),
                 Value<Set<int>> weeklyDays = const Value.absent(),
+                Value<HabitType> habitType = const Value.absent(),
+                Value<int?> targetTime = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
                 name: name,
@@ -988,6 +1132,8 @@ class $$HabitsTableTableManager
                 colorValue: colorValue,
                 frequencyType: frequencyType,
                 weeklyDays: weeklyDays,
+                habitType: habitType,
+                targetTime: targetTime,
               ),
           createCompanionCallback:
               ({
@@ -997,6 +1143,8 @@ class $$HabitsTableTableManager
                 Value<int?> colorValue = const Value.absent(),
                 required FrequencyType frequencyType,
                 required Set<int> weeklyDays,
+                Value<HabitType> habitType = const Value.absent(),
+                Value<int?> targetTime = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
                 name: name,
@@ -1004,6 +1152,8 @@ class $$HabitsTableTableManager
                 colorValue: colorValue,
                 frequencyType: frequencyType,
                 weeklyDays: weeklyDays,
+                habitType: habitType,
+                targetTime: targetTime,
               ),
           withReferenceMapper: (p0) => p0
               .map(

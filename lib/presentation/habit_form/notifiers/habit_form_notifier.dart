@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/providers.dart';
 import '../../../domain/habit/frequency_type.dart';
+import '../../../domain/habit/habit_type.dart';
 import '../../../domain/result.dart';
 import 'habit_form_state.dart';
 
@@ -34,6 +35,8 @@ class HabitForm extends _$HabitForm {
             color:
                 value.colorValue != null ? Color(value.colorValue!) : null,
             editingHabitId: editingHabitId,
+            habitType: value.habitType,
+            targetTime: value.targetTime,
           );
           _initialState = initial;
           return initial;
@@ -76,6 +79,20 @@ class HabitForm extends _$HabitForm {
     state = AsyncData(currentState.copyWith(color: color));
   }
 
+  /// 習慣の種別を更新する。
+  void updateHabitType(HabitType habitType) {
+    final currentState = state.value;
+    if (currentState == null) return;
+    state = AsyncData(currentState.copyWith(habitType: habitType));
+  }
+
+  /// 目標時間（分）を更新する。
+  void updateTargetTime(int? targetTime) {
+    final currentState = state.value;
+    if (currentState == null) return;
+    state = AsyncData(currentState.copyWith(targetTime: targetTime));
+  }
+
   /// 習慣を保存する。作成モードならリストに追加、編集モードなら更新。
   Future<void> save() async {
     final currentState = state.value;
@@ -95,6 +112,8 @@ class HabitForm extends _$HabitForm {
         colorValue: colorValue,
         frequencyType: currentState.frequencyType,
         weeklyDays: currentState.weeklyDays,
+        habitType: currentState.habitType,
+        targetTime: currentState.targetTime,
       );
     } else {
       final habitResult = await repo.getById(currentState.editingHabitId!);
@@ -105,6 +124,8 @@ class HabitForm extends _$HabitForm {
             colorValue: colorValue,
             frequencyType: currentState.frequencyType,
             weeklyDays: currentState.weeklyDays,
+            habitType: currentState.habitType,
+            targetTime: currentState.targetTime,
           ),
         );
       }
@@ -133,6 +154,8 @@ class HabitForm extends _$HabitForm {
         currentState.frequencyType != initial.frequencyType ||
         currentState.weeklyDays.length != initial.weeklyDays.length ||
         !currentState.weeklyDays.containsAll(initial.weeklyDays) ||
-        currentState.color != initial.color;
+        currentState.color != initial.color ||
+        currentState.habitType != initial.habitType ||
+        currentState.targetTime != initial.targetTime;
   }
 }

@@ -1,4 +1,4 @@
-import '../../domain/habit/completion_record_repository.dart';
+import '../../domain/completion_record/completion_record_repository.dart';
 import '../../domain/result.dart';
 import '../database/app_database.dart';
 import '../database/daos/completion_record_dao.dart';

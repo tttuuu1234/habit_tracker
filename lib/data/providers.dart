@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../domain/habit/completion_record_repository.dart';
+import '../domain/completion_record/completion_record_repository.dart';
 import '../domain/habit/habit_repository.dart';
 import 'database/app_database.dart';
 import 'database/daos/completion_record_dao.dart';

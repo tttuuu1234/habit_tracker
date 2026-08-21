@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/habit/frequency_type.dart';
+import '../../../domain/habit/habit_type.dart';
 
 part 'habit_form_state.freezed.dart';
 
@@ -28,6 +29,12 @@ abstract class HabitFormState with _$HabitFormState {
 
     /// 保存処理中かどうか。
     @Default(false) bool isSaving,
+
+    /// 習慣の種別。
+    @Default(HabitType.check) HabitType habitType,
+
+    /// 目標時間（分）。時間方式の場合のみ使用。
+    @Default(null) int? targetTime,
   }) = _HabitFormState;
 
   /// 作成モードかどうか。
@@ -39,6 +46,9 @@ abstract class HabitFormState with _$HabitFormState {
     if (trimmedName.isEmpty || trimmedName.length > 30) return false;
     if (frequencyType == FrequencyType.weekly && weeklyDays.isEmpty) {
       return false;
+    }
+    if (habitType == HabitType.time) {
+      if (targetTime == null || targetTime! <= 0) return false;
     }
     return true;
   }

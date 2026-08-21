@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../../domain/habit/frequency_type.dart';
+import '../../domain/habit/habit_type.dart';
 import 'daos/completion_record_dao.dart';
 import 'daos/habit_dao.dart';
 import 'tables/completion_records.dart';
@@ -24,10 +25,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.addColumn(habits, habits.habitType);
+            await m.addColumn(habits, habits.targetTime);
+          }
+        },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');
         },

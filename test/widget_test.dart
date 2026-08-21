@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_tracker/data/providers.dart';
 import 'package:habit_tracker/domain/habit/frequency_type.dart';
 import 'package:habit_tracker/domain/habit/habit.dart';
+import 'package:habit_tracker/domain/habit/habit_type.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -28,6 +29,8 @@ void main() {
         colorValue: Colors.green.shade700.toARGB32(),
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
+        habitType: HabitType.check,
+        targetTime: null,
       ),
     );
     repo.addHabit(
@@ -38,6 +41,8 @@ void main() {
         colorValue: Colors.blue.shade600.toARGB32(),
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
+        habitType: HabitType.check,
+        targetTime: null,
       ),
     );
     repo.addHabit(
@@ -48,6 +53,8 @@ void main() {
         colorValue: Colors.red.shade700.toARGB32(),
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
+        habitType: HabitType.check,
+        targetTime: null,
       ),
     );
     repo.addHabit(
@@ -58,6 +65,8 @@ void main() {
         colorValue: null,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
+        habitType: HabitType.check,
+        targetTime: null,
       ),
     );
     repo.addHabit(
@@ -68,6 +77,8 @@ void main() {
         colorValue: null,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
+        habitType: HabitType.check,
+        targetTime: null,
       ),
     );
     return repo;

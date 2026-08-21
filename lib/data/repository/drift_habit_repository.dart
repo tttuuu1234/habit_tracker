@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../../domain/habit/frequency_type.dart';
 import '../../domain/habit/habit.dart' as domain;
 import '../../domain/habit/habit_repository.dart';
+import '../../domain/habit/habit_type.dart';
 import '../../domain/result.dart';
 import '../database/app_database.dart';
 import '../database/daos/habit_dao.dart';
@@ -44,6 +45,8 @@ class DriftHabitRepository implements HabitRepository {
     required int? colorValue,
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
+    required HabitType habitType,
+    required int? targetTime,
   }) async {
     try {
       final normalizedDate = _normalizeDate(createdDate);
@@ -53,6 +56,8 @@ class DriftHabitRepository implements HabitRepository {
         colorValue: Value(colorValue),
         frequencyType: frequencyType,
         weeklyDays: weeklyDays,
+        habitType: Value(habitType),
+        targetTime: Value(targetTime),
       );
       final row = await _habitDao.insert_(entry);
       return Result.success(_toDomain(row));
@@ -71,6 +76,8 @@ class DriftHabitRepository implements HabitRepository {
         colorValue: Value(habit.colorValue),
         frequencyType: Value(habit.frequencyType),
         weeklyDays: Value(habit.weeklyDays),
+        habitType: Value(habit.habitType),
+        targetTime: Value(habit.targetTime),
       );
       await _habitDao.update_(entry);
       return const Result.success(null);
@@ -97,6 +104,8 @@ class DriftHabitRepository implements HabitRepository {
       colorValue: row.colorValue,
       frequencyType: row.frequencyType,
       weeklyDays: row.weeklyDays,
+      habitType: row.habitType,
+      targetTime: row.targetTime,
     );
   }
 

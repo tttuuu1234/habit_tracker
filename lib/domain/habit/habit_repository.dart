@@ -1,6 +1,7 @@
 import '../result.dart';
 import 'frequency_type.dart';
 import 'habit.dart';
+import 'habit_type.dart';
 
 /// 習慣データのリポジトリインターフェース。
 abstract class HabitRepository {
@@ -17,6 +18,8 @@ abstract class HabitRepository {
     required int? colorValue,
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
+    required HabitType habitType,
+    required int? targetTime,
   });
 
   /// 習慣を更新する。

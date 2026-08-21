@@ -1,4 +1,4 @@
-import 'package:habit_tracker/domain/habit/completion_record_repository.dart';
+import 'package:habit_tracker/domain/completion_record/completion_record_repository.dart';
 import 'package:habit_tracker/domain/result.dart';
 
 /// テスト用の達成記録リポジトリ実装。
