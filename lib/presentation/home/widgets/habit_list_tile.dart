@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../notifiers/habit_summary.dart';
+
 class HabitListTile extends StatelessWidget {
   const HabitListTile({
     super.key,
-    required this.name,
-    required this.streakDays,
-    required this.isCompleted,
-    this.color,
+    required this.habit,
     this.subtitle,
     this.onTap,
     this.onLongPress,
   });
 
-  final String name;
-  final int streakDays;
-  final bool isCompleted;
-  final Color? color;
+  /// 表示する習慣サマリー。
+  final HabitSummary habit;
 
-  /// 習慣名の下に表示するサブタイトル。
+  /// 習慣名の下に表示するサブタイトル（タイマー残り時間など）。
   final Widget? subtitle;
 
   final VoidCallback? onTap;
@@ -25,7 +22,8 @@ class HabitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final habitColor = color ?? Colors.grey;
+    final habitColor =
+        habit.colorValue != null ? Color(habit.colorValue!) : Colors.grey;
 
     return Container(
       decoration: BoxDecoration(
@@ -57,12 +55,18 @@ class HabitListTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        name,
+                        habit.name,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 2),
                         subtitle!,
+                      ] else if (habit is TimeHabitSummary) ...[
+                        const SizedBox(height: 2),
+                        _buildTargetTimeLabel(
+                          context,
+                          (habit as TimeHabitSummary).targetTime,
+                        ),
                       ],
                     ],
                   ),
@@ -77,7 +81,7 @@ class HabitListTile extends StatelessWidget {
   }
 
   Widget _buildCheckIcon(Color habitColor) {
-    if (isCompleted) {
+    if (habit.isCompleted) {
       return Container(
         width: 32,
         height: 32,
@@ -103,10 +107,26 @@ class HabitListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildStreakBadge(BuildContext context, Color habitColor) {
-    final text = '$streakDays日';
+  Widget _buildTargetTimeLabel(BuildContext context, int targetTime) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.timer_outlined, size: 14, color: Colors.grey.shade600),
+        const SizedBox(width: 4),
+        Text(
+          '$targetTime分',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey.shade600,
+              ),
+        ),
+      ],
+    );
+  }
 
-    if (isCompleted) {
+  Widget _buildStreakBadge(BuildContext context, Color habitColor) {
+    final text = '${habit.streakDays}日';
+
+    if (habit.isCompleted) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(

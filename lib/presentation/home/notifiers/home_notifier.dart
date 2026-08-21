@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/providers.dart';
+import '../../../domain/habit/habit_type.dart';
 import '../../../domain/result.dart';
 import 'habit_summary.dart';
 import 'home_state.dart';
@@ -38,15 +39,23 @@ class Home extends _$Home {
               final isCompleted =
                   completionDates.contains(normalizedToday);
 
-              return HabitSummary(
-                id: habit.id,
-                name: habit.name,
-                streakDays: streakDays,
-                isCompleted: isCompleted,
-                colorValue: habit.colorValue,
-                habitType: habit.habitType,
-                targetTime: habit.targetTime,
-              );
+              return switch (habit.habitType) {
+                HabitType.check => HabitSummary.check(
+                    id: habit.id,
+                    name: habit.name,
+                    streakDays: streakDays,
+                    isCompleted: isCompleted,
+                    colorValue: habit.colorValue,
+                  ),
+                HabitType.time => HabitSummary.time(
+                    id: habit.id,
+                    name: habit.name,
+                    streakDays: streakDays,
+                    isCompleted: isCompleted,
+                    colorValue: habit.colorValue,
+                    targetTime: habit.targetTime!,
+                  ),
+              };
             }),
           ),
         ),
