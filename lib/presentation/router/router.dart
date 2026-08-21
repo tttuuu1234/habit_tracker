@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../detail/habit_detail_screen.dart';
 import '../habit_form/habit_form_screen.dart';
 import '../home/home_screen.dart';
+import '../timer/timer_screen.dart';
 import 'app_route.dart';
 
 final router = GoRouter(
@@ -27,6 +28,13 @@ final router = GoRouter(
       builder: (context, state) {
         final habitId = int.parse(state.pathParameters['habitId']!);
         return HabitFormScreen(editingHabitId: habitId);
+      },
+    ),
+    GoRoute(
+      path: '${AppRoute.timer.path}/:habitId',
+      builder: (context, state) {
+        final habitId = int.parse(state.pathParameters['habitId']!);
+        return TimerScreen(habitId: habitId);
       },
     ),
   ],

@@ -44,6 +44,8 @@ class Home extends _$Home {
                 streakDays: streakDays,
                 isCompleted: isCompleted,
                 colorValue: habit.colorValue,
+                habitType: habit.habitType,
+                targetTime: habit.targetTime,
               );
             }),
           ),

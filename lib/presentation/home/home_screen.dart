@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
+import '../../domain/habit/habit_type.dart';
 import '../router/app_route.dart';
+import '../timer/notifiers/timer_notifier.dart';
 import 'notifiers/habit_summary.dart';
 import 'notifiers/home_notifier.dart';
 import 'widgets/habit_list_tile.dart';
@@ -140,7 +142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           removeSizeFactor: _removeSizeFactor,
                           removeOpacity: _removeOpacity,
                           onTap: _onHabitTap,
-                          onLongPress: _onHabitLongPress,
+                          onLongPress: (habit) => _onHabitLongPress(habit),
                         ),
                 ),
               ],
@@ -163,18 +165,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     ref.invalidate(homeProvider);
   }
 
-  void _onHabitLongPress(
-    int habitId,
-    String habitName,
-    bool isCompleted,
-  ) {
-    if (isCompleted) return;
+  Future<void> _onHabitLongPress(HabitSummary habit) async {
+    if (habit.isCompleted) return;
 
-    showDialog<bool>(
+    if (habit.habitType == HabitType.time) {
+      await context.push(AppRoute.timer.withId(habit.id));
+      if (!mounted) return;
+      ref.invalidate(homeProvider);
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('達成確認'),
-        content: Text('「$habitName」を達成済みにしますか？'),
+        content: Text('「${habit.name}」を達成済みにしますか？'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -186,15 +191,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         ],
       ),
-    ).then((confirmed) {
-      if (confirmed == true) {
-        ref.read(homeProvider.notifier).toggleCompletion(habitId);
-      }
-    });
+    );
+    if (confirmed == true) {
+      ref.read(homeProvider.notifier).toggleCompletion(habit.id);
+    }
   }
 }
 
-class _HabitListView extends StatelessWidget {
+class _HabitListView extends ConsumerWidget {
   const _HabitListView({
     required this.habits,
     required this.deletingHabitId,
@@ -209,10 +213,22 @@ class _HabitListView extends StatelessWidget {
   final Animation<double> removeSizeFactor;
   final Animation<double> removeOpacity;
   final void Function(int habitId) onTap;
-  final void Function(int habitId, String name, bool isCompleted) onLongPress;
+  final void Function(HabitSummary habit) onLongPress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // タイマー完了時にホーム画面の達成状態を更新する
+    for (final habit in habits) {
+      if (habit.habitType != HabitType.time || habit.isCompleted) continue;
+      final provider = habitTimerProvider(habit.id);
+      if (!ref.exists(provider)) continue;
+      ref.listen(provider, (prev, next) {
+        if (next.valueOrNull?.isCompleted == true) {
+          ref.invalidate(homeProvider);
+        }
+      });
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: habits.length,
@@ -232,10 +248,11 @@ class _HabitListView extends StatelessWidget {
             streakDays: habit.streakDays,
             isCompleted: habit.isCompleted,
             color: color,
+            subtitle: _buildTimerSubtitle(context, ref, habit),
             onTap: isDeleting ? null : () => onTap(habit.id),
             onLongPress: isDeleting
                 ? null
-                : () => onLongPress(habit.id, habit.name, habit.isCompleted),
+                : () => onLongPress(habit),
           ),
         );
 
@@ -251,6 +268,46 @@ class _HabitListView extends StatelessWidget {
 
         return tile;
       },
+    );
+  }
+
+  /// 時間方式の習慣でタイマーが動作中の場合、残り時間のサブタイトルを返す。
+  Widget? _buildTimerSubtitle(
+    BuildContext context,
+    WidgetRef ref,
+    HabitSummary habit,
+  ) {
+    if (habit.habitType != HabitType.time) return null;
+    if (habit.isCompleted) return null;
+
+    final provider = habitTimerProvider(habit.id);
+    if (!ref.exists(provider)) return null;
+
+    final asyncState = ref.watch(provider);
+    final timerState = asyncState.valueOrNull;
+    if (timerState == null || timerState.isCompleted) return null;
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (timerState.isRunning) {
+      return Text(
+        '残り ${timerState.displayTime}',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+      );
+    }
+
+    // 未開始（残り時間が目標時間と同じ）の場合は表示しない
+    if (timerState.remainingSeconds >= timerState.targetSeconds) return null;
+
+    // 一時停止中（開始済みだが実行中でない）
+    return Text(
+      '一時停止中 ${timerState.displayTime}',
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey,
+          ),
     );
   }
 }
