@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'frequency_type.dart';
+import 'habit_type.dart';
 
 part 'habit.freezed.dart';
 
@@ -25,5 +26,11 @@ abstract class Habit with _$Habit {
 
     /// 曜日指定時の対象曜日（1=月〜7=日）。
     required Set<int> weeklyDays,
+
+    /// 習慣の種別。
+    required HabitType habitType,
+
+    /// 目標時間（分）。時間方式の場合のみ使用。
+    required int? targetTime,
   }) = _Habit;
 }
