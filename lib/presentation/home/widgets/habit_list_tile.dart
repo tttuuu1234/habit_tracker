@@ -7,6 +7,7 @@ class HabitListTile extends StatelessWidget {
     required this.streakDays,
     required this.isCompleted,
     this.color,
+    this.subtitle,
     this.onTap,
     this.onLongPress,
   });
@@ -15,6 +16,10 @@ class HabitListTile extends StatelessWidget {
   final int streakDays;
   final bool isCompleted;
   final Color? color;
+
+  /// 習慣名の下に表示するサブタイトル。
+  final Widget? subtitle;
+
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
@@ -47,9 +52,19 @@ class HabitListTile extends StatelessWidget {
                 _buildCheckIcon(habitColor),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    name,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        name,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 2),
+                        subtitle!,
+                      ],
+                    ],
                   ),
                 ),
                 _buildStreakBadge(context, habitColor),
