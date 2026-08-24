@@ -19,7 +19,8 @@ mixin _$TimerState {
  int get targetSeconds;/// 残り時間（秒）。
  int get remainingSeconds;/// タイマー実行中かどうか。
  bool get isRunning;/// タイマーが完了したかどうか。
- bool get isCompleted;
+ bool get isCompleted;/// バックグラウンド移行時刻。
+ DateTime? get pausedAt;
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +31,16 @@ $TimerStateCopyWith<TimerState> get copyWith => _$TimerStateCopyWithImpl<TimerSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimerState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.targetSeconds, targetSeconds) || other.targetSeconds == targetSeconds)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimerState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.targetSeconds, targetSeconds) || other.targetSeconds == targetSeconds)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.pausedAt, pausedAt) || other.pausedAt == pausedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,habitName,targetSeconds,remainingSeconds,isRunning,isCompleted);
+int get hashCode => Object.hash(runtimeType,habitName,targetSeconds,remainingSeconds,isRunning,isCompleted,pausedAt);
 
 @override
 String toString() {
-  return 'TimerState(habitName: $habitName, targetSeconds: $targetSeconds, remainingSeconds: $remainingSeconds, isRunning: $isRunning, isCompleted: $isCompleted)';
+  return 'TimerState(habitName: $habitName, targetSeconds: $targetSeconds, remainingSeconds: $remainingSeconds, isRunning: $isRunning, isCompleted: $isCompleted, pausedAt: $pausedAt)';
 }
 
 
@@ -50,7 +51,7 @@ abstract mixin class $TimerStateCopyWith<$Res>  {
   factory $TimerStateCopyWith(TimerState value, $Res Function(TimerState) _then) = _$TimerStateCopyWithImpl;
 @useResult
 $Res call({
- String habitName, int targetSeconds, int remainingSeconds, bool isRunning, bool isCompleted
+ String habitName, int targetSeconds, int remainingSeconds, bool isRunning, bool isCompleted, DateTime? pausedAt
 });
 
 
@@ -67,14 +68,15 @@ class _$TimerStateCopyWithImpl<$Res>
 
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? habitName = null,Object? targetSeconds = null,Object? remainingSeconds = null,Object? isRunning = null,Object? isCompleted = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? habitName = null,Object? targetSeconds = null,Object? remainingSeconds = null,Object? isRunning = null,Object? isCompleted = null,Object? pausedAt = freezed,}) {
   return _then(_self.copyWith(
 habitName: null == habitName ? _self.habitName : habitName // ignore: cast_nullable_to_non_nullable
 as String,targetSeconds: null == targetSeconds ? _self.targetSeconds : targetSeconds // ignore: cast_nullable_to_non_nullable
 as int,remainingSeconds: null == remainingSeconds ? _self.remainingSeconds : remainingSeconds // ignore: cast_nullable_to_non_nullable
 as int,isRunning: null == isRunning ? _self.isRunning : isRunning // ignore: cast_nullable_to_non_nullable
 as bool,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,pausedAt: freezed == pausedAt ? _self.pausedAt : pausedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String habitName,  int targetSeconds,  int remainingSeconds,  bool isRunning,  bool isCompleted)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String habitName,  int targetSeconds,  int remainingSeconds,  bool isRunning,  bool isCompleted,  DateTime? pausedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TimerState() when $default != null:
-return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that.isRunning,_that.isCompleted);case _:
+return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that.isRunning,_that.isCompleted,_that.pausedAt);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String habitName,  int targetSeconds,  int remainingSeconds,  bool isRunning,  bool isCompleted)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String habitName,  int targetSeconds,  int remainingSeconds,  bool isRunning,  bool isCompleted,  DateTime? pausedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TimerState():
-return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that.isRunning,_that.isCompleted);case _:
+return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that.isRunning,_that.isCompleted,_that.pausedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String habitName,  int targetSeconds,  int remainingSeconds,  bool isRunning,  bool isCompleted)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String habitName,  int targetSeconds,  int remainingSeconds,  bool isRunning,  bool isCompleted,  DateTime? pausedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TimerState() when $default != null:
-return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that.isRunning,_that.isCompleted);case _:
+return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that.isRunning,_that.isCompleted,_that.pausedAt);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.habitName,_that.targetSeconds,_that.remainingSeconds,_that
 
 
 class _TimerState extends TimerState {
-  const _TimerState({required this.habitName, required this.targetSeconds, required this.remainingSeconds, this.isRunning = false, this.isCompleted = false}): super._();
+  const _TimerState({required this.habitName, required this.targetSeconds, required this.remainingSeconds, this.isRunning = false, this.isCompleted = false, this.pausedAt}): super._();
   
 
 /// 習慣名。
@@ -228,6 +230,8 @@ class _TimerState extends TimerState {
 @override@JsonKey() final  bool isRunning;
 /// タイマーが完了したかどうか。
 @override@JsonKey() final  bool isCompleted;
+/// バックグラウンド移行時刻。
+@override final  DateTime? pausedAt;
 
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +243,16 @@ _$TimerStateCopyWith<_TimerState> get copyWith => __$TimerStateCopyWithImpl<_Tim
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimerState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.targetSeconds, targetSeconds) || other.targetSeconds == targetSeconds)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimerState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.targetSeconds, targetSeconds) || other.targetSeconds == targetSeconds)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.pausedAt, pausedAt) || other.pausedAt == pausedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,habitName,targetSeconds,remainingSeconds,isRunning,isCompleted);
+int get hashCode => Object.hash(runtimeType,habitName,targetSeconds,remainingSeconds,isRunning,isCompleted,pausedAt);
 
 @override
 String toString() {
-  return 'TimerState(habitName: $habitName, targetSeconds: $targetSeconds, remainingSeconds: $remainingSeconds, isRunning: $isRunning, isCompleted: $isCompleted)';
+  return 'TimerState(habitName: $habitName, targetSeconds: $targetSeconds, remainingSeconds: $remainingSeconds, isRunning: $isRunning, isCompleted: $isCompleted, pausedAt: $pausedAt)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$TimerStateCopyWith<$Res> implements $TimerStateCopyWith<$
   factory _$TimerStateCopyWith(_TimerState value, $Res Function(_TimerState) _then) = __$TimerStateCopyWithImpl;
 @override @useResult
 $Res call({
- String habitName, int targetSeconds, int remainingSeconds, bool isRunning, bool isCompleted
+ String habitName, int targetSeconds, int remainingSeconds, bool isRunning, bool isCompleted, DateTime? pausedAt
 });
 
 
@@ -276,14 +280,15 @@ class __$TimerStateCopyWithImpl<$Res>
 
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? habitName = null,Object? targetSeconds = null,Object? remainingSeconds = null,Object? isRunning = null,Object? isCompleted = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? habitName = null,Object? targetSeconds = null,Object? remainingSeconds = null,Object? isRunning = null,Object? isCompleted = null,Object? pausedAt = freezed,}) {
   return _then(_TimerState(
 habitName: null == habitName ? _self.habitName : habitName // ignore: cast_nullable_to_non_nullable
 as String,targetSeconds: null == targetSeconds ? _self.targetSeconds : targetSeconds // ignore: cast_nullable_to_non_nullable
 as int,remainingSeconds: null == remainingSeconds ? _self.remainingSeconds : remainingSeconds // ignore: cast_nullable_to_non_nullable
 as int,isRunning: null == isRunning ? _self.isRunning : isRunning // ignore: cast_nullable_to_non_nullable
 as bool,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,pausedAt: freezed == pausedAt ? _self.pausedAt : pausedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

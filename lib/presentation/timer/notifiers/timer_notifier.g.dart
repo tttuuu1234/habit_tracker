@@ -6,7 +6,7 @@ part of 'timer_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$habitTimerHash() => r'ed52fdb9e62b827d288b4add6afbfb8e9a28cb0c';
+String _$habitTimerHash() => r'92cf1d2e5108a50b0bca8fde4cc41f2cb5a748eb';
 
 /// Copied from Dart SDK
 class _SystemHash {
