@@ -32,5 +32,8 @@ abstract class Habit with _$Habit {
 
     /// 目標時間（分）。時間方式の場合のみ使用。
     required int? targetTime,
+
+    /// アーカイブ済みかどうか。
+    @Default(false) bool isArchived,
   }) = _Habit;
 }
