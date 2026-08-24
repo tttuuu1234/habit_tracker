@@ -37,6 +37,35 @@ class HabitDetailScreen extends ConsumerWidget {
             title: Text(state.habitName),
             actions: [
               IconButton(
+                icon: Icon(
+                  state.isArchived ? Icons.unarchive_outlined : Icons.archive_outlined,
+                ),
+                onPressed: () async {
+                  final label = state.isArchived ? 'アーカイブ解除' : 'アーカイブ';
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('$labelの確認'),
+                      content: Text('「${state.habitName}」を$labelしますか？'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('キャンセル'),
+                        ),
+                        FilledButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text(label),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirmed != true || !context.mounted) return;
+                  await notifier.toggleArchive();
+                  if (!context.mounted) return;
+                  context.pop();
+                },
+              ),
+              IconButton(
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () async {
                   final deletedId =

@@ -12,7 +12,10 @@ enum AppRoute {
   edit('/edit'),
 
   /// タイマー画面。
-  timer('/timer');
+  timer('/timer'),
+
+  /// アーカイブ一覧画面。
+  archive('/archive');
 
   const AppRoute(this.path);
   final String path;

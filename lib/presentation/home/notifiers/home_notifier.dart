@@ -20,7 +20,7 @@ class Home extends _$Home {
   Future<HomeState> _loadHabits() async {
     final habitRepo = ref.read(habitRepositoryProvider);
     final completionRepo = ref.read(completionRecordRepositoryProvider);
-    final result = await habitRepo.getAll();
+    final result = await habitRepo.getActive();
 
     return switch (result) {
       Success(:final value) => HomeState(

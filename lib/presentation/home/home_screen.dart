@@ -77,6 +77,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         title: const Text(''),
         actions: [
           IconButton(
+            icon: const Icon(Icons.archive_outlined),
+            onPressed: () async {
+              await context.push(AppRoute.archive.path);
+              if (!mounted) return;
+              ref.invalidate(homeProvider);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
               await context.push(AppRoute.create.path);

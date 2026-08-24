@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../archive/archive_screen.dart';
 import '../detail/habit_detail_screen.dart';
 import '../habit_form/habit_form_screen.dart';
 import '../home/home_screen.dart';
@@ -36,6 +37,10 @@ final router = GoRouter(
         final habitId = int.parse(state.pathParameters['habitId']!);
         return TimerScreen(habitId: habitId);
       },
+    ),
+    GoRoute(
+      path: AppRoute.archive.path,
+      builder: (context, state) => const ArchiveScreen(),
     ),
   ],
 );
