@@ -13,6 +13,14 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   /// すべての習慣を取得する。
   Future<List<Habit>> getAll() => select(habits).get();
 
+  /// アーカイブされていない習慣を取得する。
+  Future<List<Habit>> getActive() =>
+      (select(habits)..where((t) => t.isArchived.equals(false))).get();
+
+  /// アーカイブ済みの習慣を取得する。
+  Future<List<Habit>> getArchived() =>
+      (select(habits)..where((t) => t.isArchived.equals(true))).get();
+
   /// IDで習慣を1件取得する。
   Future<Habit?> getById(int id) =>
       (select(habits)..where((t) => t.id.equals(id))).getSingleOrNull();

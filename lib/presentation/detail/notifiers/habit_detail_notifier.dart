@@ -36,9 +36,33 @@ class HabitDetail extends _$HabitDetail {
             habitColor: habitColor,
             completionDates: completionDates,
             displayMonth: DateTime(now.year, now.month),
+            isArchived: value.isArchived,
           );
         }(),
       Failure(:final message) => throw Exception(message),
+    };
+  }
+
+  /// 習慣のアーカイブ状態を切り替える。
+  Future<Result<void>> toggleArchive() async {
+    final currentState = state.value;
+    if (currentState == null) return const Result.failure('状態が取得できません');
+
+    final habitRepo = ref.read(habitRepositoryProvider);
+    final habitResult = await habitRepo.getById(habitId);
+
+    return switch (habitResult) {
+      Success(:final value) => () async {
+          final updated = value.copyWith(isArchived: !value.isArchived);
+          final updateResult = await habitRepo.update(updated);
+          if (updateResult is Success) {
+            state = AsyncData(
+              currentState.copyWith(isArchived: updated.isArchived),
+            );
+          }
+          return updateResult;
+        }(),
+      Failure(:final message) => Result.failure(message),
     };
   }
 

@@ -23,6 +23,9 @@ abstract class HabitDetailState with _$HabitDetailState {
 
     /// カレンダーに表示中の年月。
     required DateTime displayMonth,
+
+    /// アーカイブ済みかどうか。
+    @Default(false) bool isArchived,
   }) = _HabitDetailState;
 
   /// 今日から遡って途切れずに達成している日数。

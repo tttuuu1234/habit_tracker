@@ -20,6 +20,18 @@ class FakeHabitRepository implements HabitRepository {
   }
 
   @override
+  Future<Result<List<Habit>>> getActive() async {
+    final active = _habits.where((h) => !h.isArchived).toList();
+    return Result.success(List.unmodifiable(active));
+  }
+
+  @override
+  Future<Result<List<Habit>>> getArchived() async {
+    final archived = _habits.where((h) => h.isArchived).toList();
+    return Result.success(List.unmodifiable(archived));
+  }
+
+  @override
   Future<Result<Habit>> getById(int id) async {
     final habit = _habits.where((h) => h.id == id).firstOrNull;
     if (habit == null) {

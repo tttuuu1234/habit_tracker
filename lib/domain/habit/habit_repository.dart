@@ -8,6 +8,12 @@ abstract class HabitRepository {
   /// すべての習慣を取得する。
   Future<Result<List<Habit>>> getAll();
 
+  /// アーカイブされていない習慣を取得する。
+  Future<Result<List<Habit>>> getActive();
+
+  /// アーカイブ済みの習慣を取得する。
+  Future<Result<List<Habit>>> getArchived();
+
   /// IDで習慣を1件取得する。
   Future<Result<Habit>> getById(int id);
 

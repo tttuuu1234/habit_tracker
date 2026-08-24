@@ -19,7 +19,8 @@ mixin _$HabitDetailState {
  DateTime get habitCreatedDate;/// 習慣のテーマカラー。
  Color? get habitColor;/// 達成した日付の集合。
  Set<DateTime> get completionDates;/// カレンダーに表示中の年月。
- DateTime get displayMonth;
+ DateTime get displayMonth;/// アーカイブ済みかどうか。
+ bool get isArchived;
 /// Create a copy of HabitDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +31,16 @@ $HabitDetailStateCopyWith<HabitDetailState> get copyWith => _$HabitDetailStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HabitDetailState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.habitCreatedDate, habitCreatedDate) || other.habitCreatedDate == habitCreatedDate)&&(identical(other.habitColor, habitColor) || other.habitColor == habitColor)&&const DeepCollectionEquality().equals(other.completionDates, completionDates)&&(identical(other.displayMonth, displayMonth) || other.displayMonth == displayMonth));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HabitDetailState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.habitCreatedDate, habitCreatedDate) || other.habitCreatedDate == habitCreatedDate)&&(identical(other.habitColor, habitColor) || other.habitColor == habitColor)&&const DeepCollectionEquality().equals(other.completionDates, completionDates)&&(identical(other.displayMonth, displayMonth) || other.displayMonth == displayMonth)&&(identical(other.isArchived, isArchived) || other.isArchived == isArchived));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,habitName,habitCreatedDate,habitColor,const DeepCollectionEquality().hash(completionDates),displayMonth);
+int get hashCode => Object.hash(runtimeType,habitName,habitCreatedDate,habitColor,const DeepCollectionEquality().hash(completionDates),displayMonth,isArchived);
 
 @override
 String toString() {
-  return 'HabitDetailState(habitName: $habitName, habitCreatedDate: $habitCreatedDate, habitColor: $habitColor, completionDates: $completionDates, displayMonth: $displayMonth)';
+  return 'HabitDetailState(habitName: $habitName, habitCreatedDate: $habitCreatedDate, habitColor: $habitColor, completionDates: $completionDates, displayMonth: $displayMonth, isArchived: $isArchived)';
 }
 
 
@@ -50,7 +51,7 @@ abstract mixin class $HabitDetailStateCopyWith<$Res>  {
   factory $HabitDetailStateCopyWith(HabitDetailState value, $Res Function(HabitDetailState) _then) = _$HabitDetailStateCopyWithImpl;
 @useResult
 $Res call({
- String habitName, DateTime habitCreatedDate, Color? habitColor, Set<DateTime> completionDates, DateTime displayMonth
+ String habitName, DateTime habitCreatedDate, Color? habitColor, Set<DateTime> completionDates, DateTime displayMonth, bool isArchived
 });
 
 
@@ -67,14 +68,15 @@ class _$HabitDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of HabitDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? habitName = null,Object? habitCreatedDate = null,Object? habitColor = freezed,Object? completionDates = null,Object? displayMonth = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? habitName = null,Object? habitCreatedDate = null,Object? habitColor = freezed,Object? completionDates = null,Object? displayMonth = null,Object? isArchived = null,}) {
   return _then(_self.copyWith(
 habitName: null == habitName ? _self.habitName : habitName // ignore: cast_nullable_to_non_nullable
 as String,habitCreatedDate: null == habitCreatedDate ? _self.habitCreatedDate : habitCreatedDate // ignore: cast_nullable_to_non_nullable
 as DateTime,habitColor: freezed == habitColor ? _self.habitColor : habitColor // ignore: cast_nullable_to_non_nullable
 as Color?,completionDates: null == completionDates ? _self.completionDates : completionDates // ignore: cast_nullable_to_non_nullable
 as Set<DateTime>,displayMonth: null == displayMonth ? _self.displayMonth : displayMonth // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isArchived: null == isArchived ? _self.isArchived : isArchived // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String habitName,  DateTime habitCreatedDate,  Color? habitColor,  Set<DateTime> completionDates,  DateTime displayMonth)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String habitName,  DateTime habitCreatedDate,  Color? habitColor,  Set<DateTime> completionDates,  DateTime displayMonth,  bool isArchived)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HabitDetailState() when $default != null:
-return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.completionDates,_that.displayMonth);case _:
+return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.completionDates,_that.displayMonth,_that.isArchived);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.co
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String habitName,  DateTime habitCreatedDate,  Color? habitColor,  Set<DateTime> completionDates,  DateTime displayMonth)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String habitName,  DateTime habitCreatedDate,  Color? habitColor,  Set<DateTime> completionDates,  DateTime displayMonth,  bool isArchived)  $default,) {final _that = this;
 switch (_that) {
 case _HabitDetailState():
-return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.completionDates,_that.displayMonth);case _:
+return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.completionDates,_that.displayMonth,_that.isArchived);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.co
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String habitName,  DateTime habitCreatedDate,  Color? habitColor,  Set<DateTime> completionDates,  DateTime displayMonth)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String habitName,  DateTime habitCreatedDate,  Color? habitColor,  Set<DateTime> completionDates,  DateTime displayMonth,  bool isArchived)?  $default,) {final _that = this;
 switch (_that) {
 case _HabitDetailState() when $default != null:
-return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.completionDates,_that.displayMonth);case _:
+return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.completionDates,_that.displayMonth,_that.isArchived);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.habitName,_that.habitCreatedDate,_that.habitColor,_that.co
 
 
 class _HabitDetailState extends HabitDetailState {
-  const _HabitDetailState({required this.habitName, required this.habitCreatedDate, required this.habitColor, required final  Set<DateTime> completionDates, required this.displayMonth}): _completionDates = completionDates,super._();
+  const _HabitDetailState({required this.habitName, required this.habitCreatedDate, required this.habitColor, required final  Set<DateTime> completionDates, required this.displayMonth, this.isArchived = false}): _completionDates = completionDates,super._();
   
 
 /// 習慣名。
@@ -235,6 +237,8 @@ class _HabitDetailState extends HabitDetailState {
 
 /// カレンダーに表示中の年月。
 @override final  DateTime displayMonth;
+/// アーカイブ済みかどうか。
+@override@JsonKey() final  bool isArchived;
 
 /// Create a copy of HabitDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -246,16 +250,16 @@ _$HabitDetailStateCopyWith<_HabitDetailState> get copyWith => __$HabitDetailStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HabitDetailState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.habitCreatedDate, habitCreatedDate) || other.habitCreatedDate == habitCreatedDate)&&(identical(other.habitColor, habitColor) || other.habitColor == habitColor)&&const DeepCollectionEquality().equals(other._completionDates, _completionDates)&&(identical(other.displayMonth, displayMonth) || other.displayMonth == displayMonth));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HabitDetailState&&(identical(other.habitName, habitName) || other.habitName == habitName)&&(identical(other.habitCreatedDate, habitCreatedDate) || other.habitCreatedDate == habitCreatedDate)&&(identical(other.habitColor, habitColor) || other.habitColor == habitColor)&&const DeepCollectionEquality().equals(other._completionDates, _completionDates)&&(identical(other.displayMonth, displayMonth) || other.displayMonth == displayMonth)&&(identical(other.isArchived, isArchived) || other.isArchived == isArchived));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,habitName,habitCreatedDate,habitColor,const DeepCollectionEquality().hash(_completionDates),displayMonth);
+int get hashCode => Object.hash(runtimeType,habitName,habitCreatedDate,habitColor,const DeepCollectionEquality().hash(_completionDates),displayMonth,isArchived);
 
 @override
 String toString() {
-  return 'HabitDetailState(habitName: $habitName, habitCreatedDate: $habitCreatedDate, habitColor: $habitColor, completionDates: $completionDates, displayMonth: $displayMonth)';
+  return 'HabitDetailState(habitName: $habitName, habitCreatedDate: $habitCreatedDate, habitColor: $habitColor, completionDates: $completionDates, displayMonth: $displayMonth, isArchived: $isArchived)';
 }
 
 
@@ -266,7 +270,7 @@ abstract mixin class _$HabitDetailStateCopyWith<$Res> implements $HabitDetailSta
   factory _$HabitDetailStateCopyWith(_HabitDetailState value, $Res Function(_HabitDetailState) _then) = __$HabitDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- String habitName, DateTime habitCreatedDate, Color? habitColor, Set<DateTime> completionDates, DateTime displayMonth
+ String habitName, DateTime habitCreatedDate, Color? habitColor, Set<DateTime> completionDates, DateTime displayMonth, bool isArchived
 });
 
 
@@ -283,14 +287,15 @@ class __$HabitDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of HabitDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? habitName = null,Object? habitCreatedDate = null,Object? habitColor = freezed,Object? completionDates = null,Object? displayMonth = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? habitName = null,Object? habitCreatedDate = null,Object? habitColor = freezed,Object? completionDates = null,Object? displayMonth = null,Object? isArchived = null,}) {
   return _then(_HabitDetailState(
 habitName: null == habitName ? _self.habitName : habitName // ignore: cast_nullable_to_non_nullable
 as String,habitCreatedDate: null == habitCreatedDate ? _self.habitCreatedDate : habitCreatedDate // ignore: cast_nullable_to_non_nullable
 as DateTime,habitColor: freezed == habitColor ? _self.habitColor : habitColor // ignore: cast_nullable_to_non_nullable
 as Color?,completionDates: null == completionDates ? _self._completionDates : completionDates // ignore: cast_nullable_to_non_nullable
 as Set<DateTime>,displayMonth: null == displayMonth ? _self.displayMonth : displayMonth // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,isArchived: null == isArchived ? _self.isArchived : isArchived // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
