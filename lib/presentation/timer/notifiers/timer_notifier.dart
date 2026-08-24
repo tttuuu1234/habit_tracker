@@ -65,6 +65,61 @@ class HabitTimer extends _$HabitTimer {
     state = AsyncData(currentState.copyWith(isRunning: false));
   }
 
+  /// バックグラウンド移行時にタイマーを中断する。
+  void onBackground() {
+    final currentState = state.value;
+    if (currentState == null || !currentState.isRunning || currentState.pausedAt != null) return;
+
+    _timer?.cancel();
+    state = AsyncData(currentState.copyWith(pausedAt: DateTime.now()));
+  }
+
+  /// フォアグラウンド復帰時にバックグラウンド中の経過時間を反映する。
+  void onForeground() {
+    final currentState = state.value;
+    if (currentState == null || currentState.pausedAt == null) return;
+
+    final elapsed =
+        DateTime.now().difference(currentState.pausedAt!).inSeconds;
+    final newRemaining = currentState.remainingSeconds - elapsed;
+
+    if (newRemaining <= 0) {
+      state = AsyncData(
+        currentState.copyWith(
+          remainingSeconds: 0,
+          isRunning: false,
+          isCompleted: true,
+          pausedAt: null,
+        ),
+      );
+      _recordCompletion();
+      return;
+    }
+
+    state = AsyncData(
+      currentState.copyWith(
+        remainingSeconds: newRemaining,
+        pausedAt: null,
+      ),
+    );
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final s = state.value;
+      if (s == null) return;
+
+      final remaining = s.remainingSeconds - 1;
+      if (remaining <= 0) {
+        _timer?.cancel();
+        state = AsyncData(
+          s.copyWith(remainingSeconds: 0, isRunning: false, isCompleted: true),
+        );
+        _recordCompletion();
+        return;
+      }
+
+      state = AsyncData(s.copyWith(remainingSeconds: remaining));
+    });
+  }
+
   /// 達成記録を保存する。
   Future<void> _recordCompletion() async {
     final completionRepo = ref.read(completionRecordRepositoryProvider);

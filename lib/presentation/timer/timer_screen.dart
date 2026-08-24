@@ -5,14 +5,47 @@ import 'package:go_router/go_router.dart';
 import 'notifiers/timer_notifier.dart';
 import 'notifiers/timer_state.dart';
 
-class TimerScreen extends ConsumerWidget {
+class TimerScreen extends ConsumerStatefulWidget {
   const TimerScreen({super.key, required this.habitId});
 
   final int habitId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncState = ref.watch(habitTimerProvider(habitId));
+  ConsumerState<TimerScreen> createState() => _TimerScreenState();
+}
+
+class _TimerScreenState extends ConsumerState<TimerScreen> {
+  late final AppLifecycleListener _lifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycleListener = AppLifecycleListener(
+      onStateChange: _onStateChange,
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
+  }
+
+  void _onStateChange(AppLifecycleState state) {
+    final notifier = ref.read(habitTimerProvider(widget.habitId).notifier);
+    switch (state) {
+      case AppLifecycleState.hidden || AppLifecycleState.paused:
+        notifier.onBackground();
+      case AppLifecycleState.resumed:
+        notifier.onForeground();
+      default:
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asyncState = ref.watch(habitTimerProvider(widget.habitId));
 
     return Scaffold(
       appBar: AppBar(title: const Text('タイマー')),
@@ -21,10 +54,12 @@ class TimerScreen extends ConsumerWidget {
         error: (error, _) => Center(child: Text('エラー: $error')),
         data: (state) => _TimerBody(
           state: state,
-          onStart: () => ref.read(habitTimerProvider(habitId).notifier).start(),
-          onPause: () => ref.read(habitTimerProvider(habitId).notifier).pause(),
+          onStart: () =>
+              ref.read(habitTimerProvider(widget.habitId).notifier).start(),
+          onPause: () =>
+              ref.read(habitTimerProvider(widget.habitId).notifier).pause(),
           onFinish: () {
-            ref.invalidate(habitTimerProvider(habitId));
+            ref.invalidate(habitTimerProvider(widget.habitId));
             context.pop();
           },
         ),

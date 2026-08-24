@@ -22,6 +22,9 @@ abstract class TimerState with _$TimerState {
 
     /// タイマーが完了したかどうか。
     @Default(false) bool isCompleted,
+
+    /// バックグラウンド移行時刻。
+    DateTime? pausedAt,
   }) = _TimerState;
 
   /// 進捗率（0.0〜1.0）。
