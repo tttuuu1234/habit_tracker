@@ -95,6 +95,21 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _isArchivedMeta = const VerificationMeta(
+    'isArchived',
+  );
+  @override
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+    'is_archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -105,6 +120,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     weeklyDays,
     habitType,
     targetTime,
+    isArchived,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -150,6 +166,12 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
       context.handle(
         _targetTimeMeta,
         targetTime.isAcceptableOrUnknown(data['target_time']!, _targetTimeMeta),
+      );
+    }
+    if (data.containsKey('is_archived')) {
+      context.handle(
+        _isArchivedMeta,
+        isArchived.isAcceptableOrUnknown(data['is_archived']!, _isArchivedMeta),
       );
     }
     return context;
@@ -199,6 +221,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.int,
         data['${effectivePrefix}target_time'],
       ),
+      isArchived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_archived'],
+      )!,
     );
   }
 
@@ -239,6 +265,9 @@ class Habit extends DataClass implements Insertable<Habit> {
 
   /// 目標時間（分）。時間方式の場合のみ使用。
   final int? targetTime;
+
+  /// アーカイブ済みかどうか。
+  final bool isArchived;
   const Habit({
     required this.id,
     required this.name,
@@ -248,6 +277,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.weeklyDays,
     required this.habitType,
     this.targetTime,
+    required this.isArchived,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -276,6 +306,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     if (!nullToAbsent || targetTime != null) {
       map['target_time'] = Variable<int>(targetTime);
     }
+    map['is_archived'] = Variable<bool>(isArchived);
     return map;
   }
 
@@ -293,6 +324,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       targetTime: targetTime == null && nullToAbsent
           ? const Value.absent()
           : Value(targetTime),
+      isArchived: Value(isArchived),
     );
   }
 
@@ -310,6 +342,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       weeklyDays: serializer.fromJson<Set<int>>(json['weeklyDays']),
       habitType: serializer.fromJson<HabitType>(json['habitType']),
       targetTime: serializer.fromJson<int?>(json['targetTime']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
     );
   }
   @override
@@ -324,6 +357,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'weeklyDays': serializer.toJson<Set<int>>(weeklyDays),
       'habitType': serializer.toJson<HabitType>(habitType),
       'targetTime': serializer.toJson<int?>(targetTime),
+      'isArchived': serializer.toJson<bool>(isArchived),
     };
   }
 
@@ -336,6 +370,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     Set<int>? weeklyDays,
     HabitType? habitType,
     Value<int?> targetTime = const Value.absent(),
+    bool? isArchived,
   }) => Habit(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -345,6 +380,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     weeklyDays: weeklyDays ?? this.weeklyDays,
     habitType: habitType ?? this.habitType,
     targetTime: targetTime.present ? targetTime.value : this.targetTime,
+    isArchived: isArchived ?? this.isArchived,
   );
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
@@ -366,6 +402,9 @@ class Habit extends DataClass implements Insertable<Habit> {
       targetTime: data.targetTime.present
           ? data.targetTime.value
           : this.targetTime,
+      isArchived: data.isArchived.present
+          ? data.isArchived.value
+          : this.isArchived,
     );
   }
 
@@ -379,7 +418,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('frequencyType: $frequencyType, ')
           ..write('weeklyDays: $weeklyDays, ')
           ..write('habitType: $habitType, ')
-          ..write('targetTime: $targetTime')
+          ..write('targetTime: $targetTime, ')
+          ..write('isArchived: $isArchived')
           ..write(')'))
         .toString();
   }
@@ -394,6 +434,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     weeklyDays,
     habitType,
     targetTime,
+    isArchived,
   );
   @override
   bool operator ==(Object other) =>
@@ -406,7 +447,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.frequencyType == this.frequencyType &&
           other.weeklyDays == this.weeklyDays &&
           other.habitType == this.habitType &&
-          other.targetTime == this.targetTime);
+          other.targetTime == this.targetTime &&
+          other.isArchived == this.isArchived);
 }
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
@@ -418,6 +460,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<Set<int>> weeklyDays;
   final Value<HabitType> habitType;
   final Value<int?> targetTime;
+  final Value<bool> isArchived;
   const HabitsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -427,6 +470,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.weeklyDays = const Value.absent(),
     this.habitType = const Value.absent(),
     this.targetTime = const Value.absent(),
+    this.isArchived = const Value.absent(),
   });
   HabitsCompanion.insert({
     this.id = const Value.absent(),
@@ -437,6 +481,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     required Set<int> weeklyDays,
     this.habitType = const Value.absent(),
     this.targetTime = const Value.absent(),
+    this.isArchived = const Value.absent(),
   }) : name = Value(name),
        createdDate = Value(createdDate),
        frequencyType = Value(frequencyType),
@@ -450,6 +495,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<String>? weeklyDays,
     Expression<String>? habitType,
     Expression<int>? targetTime,
+    Expression<bool>? isArchived,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -460,6 +506,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (weeklyDays != null) 'weekly_days': weeklyDays,
       if (habitType != null) 'habit_type': habitType,
       if (targetTime != null) 'target_time': targetTime,
+      if (isArchived != null) 'is_archived': isArchived,
     });
   }
 
@@ -472,6 +519,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<Set<int>>? weeklyDays,
     Value<HabitType>? habitType,
     Value<int?>? targetTime,
+    Value<bool>? isArchived,
   }) {
     return HabitsCompanion(
       id: id ?? this.id,
@@ -482,6 +530,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       weeklyDays: weeklyDays ?? this.weeklyDays,
       habitType: habitType ?? this.habitType,
       targetTime: targetTime ?? this.targetTime,
+      isArchived: isArchived ?? this.isArchived,
     );
   }
 
@@ -518,6 +567,9 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (targetTime.present) {
       map['target_time'] = Variable<int>(targetTime.value);
     }
+    if (isArchived.present) {
+      map['is_archived'] = Variable<bool>(isArchived.value);
+    }
     return map;
   }
 
@@ -531,7 +583,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('frequencyType: $frequencyType, ')
           ..write('weeklyDays: $weeklyDays, ')
           ..write('habitType: $habitType, ')
-          ..write('targetTime: $targetTime')
+          ..write('targetTime: $targetTime, ')
+          ..write('isArchived: $isArchived')
           ..write(')'))
         .toString();
   }
@@ -847,6 +900,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       required Set<int> weeklyDays,
       Value<HabitType> habitType,
       Value<int?> targetTime,
+      Value<bool> isArchived,
     });
 typedef $$HabitsTableUpdateCompanionBuilder =
     HabitsCompanion Function({
@@ -858,6 +912,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<Set<int>> weeklyDays,
       Value<HabitType> habitType,
       Value<int?> targetTime,
+      Value<bool> isArchived,
     });
 
 final class $$HabitsTableReferences
@@ -941,6 +996,11 @@ class $$HabitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> completionRecordsRefs(
     Expression<bool> Function($$CompletionRecordsTableFilterComposer f) f,
   ) {
@@ -1015,6 +1075,11 @@ class $$HabitsTableOrderingComposer
     column: $table.targetTime,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HabitsTableAnnotationComposer
@@ -1059,6 +1124,11 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<int> get targetTime => $composableBuilder(
     column: $table.targetTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
     builder: (column) => column,
   );
 
@@ -1125,6 +1195,7 @@ class $$HabitsTableTableManager
                 Value<Set<int>> weeklyDays = const Value.absent(),
                 Value<HabitType> habitType = const Value.absent(),
                 Value<int?> targetTime = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
                 name: name,
@@ -1134,6 +1205,7 @@ class $$HabitsTableTableManager
                 weeklyDays: weeklyDays,
                 habitType: habitType,
                 targetTime: targetTime,
+                isArchived: isArchived,
               ),
           createCompanionCallback:
               ({
@@ -1145,6 +1217,7 @@ class $$HabitsTableTableManager
                 required Set<int> weeklyDays,
                 Value<HabitType> habitType = const Value.absent(),
                 Value<int?> targetTime = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
                 name: name,
@@ -1154,6 +1227,7 @@ class $$HabitsTableTableManager
                 weeklyDays: weeklyDays,
                 habitType: habitType,
                 targetTime: targetTime,
+                isArchived: isArchived,
               ),
           withReferenceMapper: (p0) => p0
               .map(

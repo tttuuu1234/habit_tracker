@@ -70,4 +70,8 @@ class Habits extends Table {
 
   /// 目標時間（分）。時間方式の場合のみ使用。
   IntColumn get targetTime => integer().nullable()();
+
+  /// アーカイブ済みかどうか。
+  BoolColumn get isArchived =>
+      boolean().withDefault(const Constant(false))();
 }

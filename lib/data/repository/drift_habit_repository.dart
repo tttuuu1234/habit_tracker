@@ -26,6 +26,28 @@ class DriftHabitRepository implements HabitRepository {
   }
 
   @override
+  Future<Result<List<domain.Habit>>> getActive() async {
+    try {
+      final rows = await _habitDao.getActive();
+      final habits = rows.map(_toDomain).toList();
+      return Result.success(habits);
+    } on Exception catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<List<domain.Habit>>> getArchived() async {
+    try {
+      final rows = await _habitDao.getArchived();
+      final habits = rows.map(_toDomain).toList();
+      return Result.success(habits);
+    } on Exception catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
   Future<Result<domain.Habit>> getById(int id) async {
     try {
       final row = await _habitDao.getById(id);
@@ -78,6 +100,7 @@ class DriftHabitRepository implements HabitRepository {
         weeklyDays: Value(habit.weeklyDays),
         habitType: Value(habit.habitType),
         targetTime: Value(habit.targetTime),
+        isArchived: Value(habit.isArchived),
       );
       await _habitDao.update_(entry);
       return const Result.success(null);
@@ -106,6 +129,7 @@ class DriftHabitRepository implements HabitRepository {
       weeklyDays: row.weeklyDays,
       habitType: row.habitType,
       targetTime: row.targetTime,
+      isArchived: row.isArchived,
     );
   }
 
