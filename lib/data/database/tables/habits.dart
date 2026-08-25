@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../domain/habit/frequency_type.dart';
+import '../../../domain/habit/habit_category.dart';
 import '../../../domain/habit/habit_type.dart';
 
 /// FrequencyType ↔ String の変換。
@@ -43,6 +44,17 @@ class WeeklyDaysConverter extends TypeConverter<Set<int>, String> {
   }
 }
 
+/// HabitCategory ↔ String の変換。
+class HabitCategoryConverter extends TypeConverter<HabitCategory, String> {
+  const HabitCategoryConverter();
+
+  @override
+  HabitCategory fromSql(String fromDb) => HabitCategory.values.byName(fromDb);
+
+  @override
+  String toSql(HabitCategory value) => value.name;
+}
+
 /// 習慣テーブル。
 class Habits extends Table {
   /// 自動採番の主キー。
@@ -58,20 +70,23 @@ class Habits extends Table {
   IntColumn get colorValue => integer().nullable()();
 
   /// 頻度種別。
-  TextColumn get frequencyType =>
-      text().map(const FrequencyTypeConverter())();
+  TextColumn get frequencyType => text().map(const FrequencyTypeConverter())();
 
   /// 曜日指定時の対象曜日（1=月〜7=日）。
   TextColumn get weeklyDays => text().map(const WeeklyDaysConverter())();
 
   /// 習慣の種別。
-  TextColumn get habitType =>
-      text().map(const HabitTypeConverter()).withDefault(const Constant('check'))();
+  TextColumn get habitType => text()
+      .map(const HabitTypeConverter())
+      .withDefault(const Constant('check'))();
 
   /// 目標時間（分）。時間方式の場合のみ使用。
   IntColumn get targetTime => integer().nullable()();
 
   /// アーカイブ済みかどうか。
-  BoolColumn get isArchived =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
+
+  /// 習慣のカテゴリ。
+  TextColumn get category =>
+      text().nullable().map(const HabitCategoryConverter())();
 }

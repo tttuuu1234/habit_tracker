@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../domain/completion_record/completion_record_repository.dart';
 import '../domain/habit/habit_repository.dart';
+import '../domain/use_cases/get_category_statistics_use_case.dart';
 import 'database/app_database.dart';
 import 'database/daos/completion_record_dao.dart';
 import 'database/daos/habit_dao.dart';
@@ -32,4 +33,29 @@ CompletionRecordRepository completionRecordRepository(
 ) {
   final db = ref.watch(appDatabaseProvider);
   return DriftCompletionRecordRepository(CompletionRecordDao(db));
+}
+
+/// 習慣テーブルの変更を監視するストリーム。
+@riverpod
+Stream<void> habitsTableChanged(HabitsTableChangedRef ref) {
+  final db = ref.watch(appDatabaseProvider);
+  return HabitDao(db).watchActive().map((_) {});
+}
+
+/// 達成記録テーブルの変更を監視するストリーム。
+@riverpod
+Stream<void> completionRecordsTableChanged(
+  CompletionRecordsTableChangedRef ref,
+) {
+  final db = ref.watch(appDatabaseProvider);
+  return CompletionRecordDao(db).watchAll().map((_) {});
+}
+
+/// カテゴリ別統計ユースケースのインスタンス。
+@riverpod
+GetCategoryStatisticsUseCase getCategoryStatisticsUseCase(GetCategoryStatisticsUseCaseRef ref) {
+  return GetCategoryStatisticsUseCase(
+    ref.watch(habitRepositoryProvider),
+    ref.watch(completionRecordRepositoryProvider),
+  );
 }

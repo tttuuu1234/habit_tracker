@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'frequency_type.dart';
+import 'habit_category.dart';
 import 'habit_type.dart';
 
 part 'habit.freezed.dart';
@@ -18,8 +19,8 @@ abstract class Habit with _$Habit {
     /// 登録日。
     required DateTime createdDate,
 
-    /// テーマカラーの値（null時はデフォルト色を使用）。
-    required int? colorValue,
+    /// カテゴリ（nullは未分類）。
+    required HabitCategory? category,
 
     /// 頻度種別。
     required FrequencyType frequencyType,

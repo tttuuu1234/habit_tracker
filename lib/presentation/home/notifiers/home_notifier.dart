@@ -24,41 +24,44 @@ class Home extends _$Home {
 
     return switch (result) {
       Success(:final value) => HomeState(
-          habits: await Future.wait(
-            value.map((habit) async {
-              final completionResult =
-                  await completionRepo.getCompletionDates(habit.id);
-              final completionDates = switch (completionResult) {
-                Success(:final value) => value,
-                Failure() => <DateTime>{},
-              };
-              final streakDays = _calculateStreak(completionDates);
-              final today = DateTime.now();
-              final normalizedToday =
-                  DateTime(today.year, today.month, today.day);
-              final isCompleted =
-                  completionDates.contains(normalizedToday);
+        habits: await Future.wait(
+          value.map((habit) async {
+            final completionResult = await completionRepo.getCompletionDates(
+              habit.id,
+            );
+            final completionDates = switch (completionResult) {
+              Success(:final value) => value,
+              Failure() => <DateTime>{},
+            };
+            final streakDays = _calculateStreak(completionDates);
+            final today = DateTime.now();
+            final normalizedToday = DateTime(
+              today.year,
+              today.month,
+              today.day,
+            );
+            final isCompleted = completionDates.contains(normalizedToday);
 
-              return switch (habit.habitType) {
-                HabitType.check => HabitSummary.check(
-                    id: habit.id,
-                    name: habit.name,
-                    streakDays: streakDays,
-                    isCompleted: isCompleted,
-                    colorValue: habit.colorValue,
-                  ),
-                HabitType.time => HabitSummary.time(
-                    id: habit.id,
-                    name: habit.name,
-                    streakDays: streakDays,
-                    isCompleted: isCompleted,
-                    colorValue: habit.colorValue,
-                    targetTime: habit.targetTime!,
-                  ),
-              };
-            }),
-          ),
+            return switch (habit.habitType) {
+              HabitType.check => HabitSummary.check(
+                id: habit.id,
+                name: habit.name,
+                streakDays: streakDays,
+                isCompleted: isCompleted,
+                category: habit.category,
+              ),
+              HabitType.time => HabitSummary.time(
+                id: habit.id,
+                name: habit.name,
+                streakDays: streakDays,
+                isCompleted: isCompleted,
+                category: habit.category,
+                targetTime: habit.targetTime!,
+              ),
+            };
+          }),
         ),
+      ),
       Failure(:final message) => HomeState(errorMessage: message),
     };
   }
@@ -69,8 +72,10 @@ class Home extends _$Home {
     final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
 
-    final isCompleted =
-        await completionRepo.isCompletedOn(habitId, normalizedToday);
+    final isCompleted = await completionRepo.isCompletedOn(
+      habitId,
+      normalizedToday,
+    );
 
     if (isCompleted) {
       await completionRepo.removeCompletion(habitId, normalizedToday);
@@ -111,7 +116,7 @@ class Home extends _$Home {
     final normalizedToday = DateTime(today.year, today.month, today.day);
     var streak = 0;
 
-    for (var i = 0;; i++) {
+    for (var i = 0; ; i++) {
       final date = normalizedToday.subtract(Duration(days: i));
       if (completionDates.contains(date)) {
         streak++;

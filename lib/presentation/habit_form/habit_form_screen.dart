@@ -6,17 +6,14 @@ import '../../domain/habit/frequency_type.dart';
 import '../../domain/habit/habit_type.dart';
 import '../home/notifiers/home_notifier.dart';
 import 'notifiers/habit_form_notifier.dart';
-import 'widgets/color_palette.dart';
+import 'widgets/category_selector.dart';
 import 'widgets/frequency_selector.dart';
 import 'widgets/habit_type_selector.dart';
 import 'widgets/weekday_selector.dart';
 
 /// 習慣作成・編集画面。
 class HabitFormScreen extends ConsumerStatefulWidget {
-  const HabitFormScreen({
-    super.key,
-    this.editingHabitId,
-  });
+  const HabitFormScreen({super.key, this.editingHabitId});
 
   /// 編集対象の習慣ID（nullなら作成モード）。
   final int? editingHabitId;
@@ -56,9 +53,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('習慣を削除'),
-        content: Text(
-          '「$name」を削除しますか？達成記録もすべて削除されます。',
-        ),
+        content: Text('「$name」を削除しますか？達成記録もすべて削除されます。'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -180,8 +175,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.black.withValues(alpha: 0.06),
+                                color: Colors.black.withValues(alpha: 0.06),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),
@@ -193,8 +187,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                             decoration: InputDecoration(
                               hintText: '例: 30分読書',
                               filled: true,
-                              fillColor:
-                                  Theme.of(context).colorScheme.surface,
+                              fillColor: Theme.of(context).colorScheme.surface,
                               border: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(8),
@@ -230,8 +223,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color:
-                                      Colors.black.withValues(alpha: 0.06),
+                                  color: Colors.black.withValues(alpha: 0.06),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -244,8 +236,9 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                                 hintText: '例: 30',
                                 suffixText: '分',
                                 filled: true,
-                                fillColor:
-                                    Theme.of(context).colorScheme.surface,
+                                fillColor: Theme.of(
+                                  context,
+                                ).colorScheme.surface,
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide.none,
                                   borderRadius: BorderRadius.circular(8),
@@ -271,8 +264,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                             onChanged: notifier.updateFrequencyType,
                           ),
                         ),
-                        if (state.frequencyType ==
-                            FrequencyType.weekly) ...[
+                        if (state.frequencyType == FrequencyType.weekly) ...[
                           const SizedBox(height: 24),
                           Text(
                             '曜日',
@@ -286,13 +278,13 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                         ],
                         const SizedBox(height: 24),
                         Text(
-                          'カラー',
+                          'カテゴリ',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 8),
-                        ColorPalette(
-                          selectedColor: state.color,
-                          onColorSelected: notifier.updateColor,
+                        CategorySelector(
+                          selectedCategory: state.category,
+                          onCategorySelected: notifier.updateCategory,
                         ),
                       ],
                     ),

@@ -17,6 +17,10 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   Future<List<Habit>> getActive() =>
       (select(habits)..where((t) => t.isArchived.equals(false))).get();
 
+  /// アーカイブされていない習慣の変更を監視する。
+  Stream<List<Habit>> watchActive() =>
+      (select(habits)..where((t) => t.isArchived.equals(false))).watch();
+
   /// アーカイブ済みの習慣を取得する。
   Future<List<Habit>> getArchived() =>
       (select(habits)..where((t) => t.isArchived.equals(true))).get();

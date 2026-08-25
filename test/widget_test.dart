@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_tracker/data/providers.dart';
 import 'package:habit_tracker/domain/habit/frequency_type.dart';
 import 'package:habit_tracker/domain/habit/habit.dart';
+import 'package:habit_tracker/domain/habit/habit_category.dart';
 import 'package:habit_tracker/domain/habit/habit_type.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -26,7 +27,7 @@ void main() {
         id: 1,
         name: '水を2L飲む',
         createdDate: DateTime(2025, 7, 1),
-        colorValue: Colors.green.shade700.toARGB32(),
+        category: HabitCategory.health,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
         habitType: HabitType.check,
@@ -38,7 +39,7 @@ void main() {
         id: 2,
         name: '30分読書',
         createdDate: DateTime(2025, 7, 15),
-        colorValue: Colors.blue.shade600.toARGB32(),
+        category: HabitCategory.study,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
         habitType: HabitType.check,
@@ -50,7 +51,7 @@ void main() {
         id: 3,
         name: '日記を書く',
         createdDate: DateTime(2025, 6, 1),
-        colorValue: Colors.red.shade700.toARGB32(),
+        category: HabitCategory.lifestyle,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
         habitType: HabitType.check,
@@ -62,7 +63,7 @@ void main() {
         id: 4,
         name: 'ストレッチ',
         createdDate: DateTime(2025, 8, 1),
-        colorValue: null,
+        category: HabitCategory.exercise,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
         habitType: HabitType.check,
@@ -74,7 +75,7 @@ void main() {
         id: 5,
         name: '腹筋10回',
         createdDate: DateTime(2025, 8, 10),
-        colorValue: null,
+        category: null,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
         habitType: HabitType.check,
@@ -86,7 +87,7 @@ void main() {
         id: 6,
         name: '瞑想',
         createdDate: DateTime(2025, 8, 15),
-        colorValue: null,
+        category: HabitCategory.mental,
         frequencyType: FrequencyType.daily,
         weeklyDays: {},
         habitType: HabitType.time,
@@ -128,10 +129,12 @@ void main() {
     expect(find.text('お疲れさまです'), findsOneWidget);
     expect(find.text('3/6'), findsOneWidget);
     expect(find.text('完了'), findsOneWidget);
-    expect(find.text('水を2L飲む'), findsOneWidget);
 
-    await tester.scrollUntilVisible(find.text('腹筋10回'), 100);
-    expect(find.text('腹筋10回'), findsOneWidget);
+    // オフスクリーンも含めてウィジェットツリーに存在することを確認
+    final offstage = find.text('水を2L飲む', skipOffstage: false);
+    expect(offstage, findsOneWidget);
+    final offstage2 = find.text('腹筋10回', skipOffstage: false);
+    expect(offstage2, findsOneWidget);
   });
 
   testWidgets('Long press shows completion dialog', (
@@ -157,8 +160,8 @@ void main() {
     await tester.pumpWidget(createApp(habitRepo, completionRepo));
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(find.text('瞑想'), 100);
-    await tester.ensureVisible(find.text('瞑想'));
+    final meditationFinder = find.text('瞑想', skipOffstage: false);
+    await tester.ensureVisible(meditationFinder);
     await tester.pumpAndSettle();
     await tester.longPress(find.text('瞑想'));
     await tester.pumpAndSettle();

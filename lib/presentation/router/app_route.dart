@@ -2,6 +2,9 @@ enum AppRoute {
   /// ホーム画面。
   home('/'),
 
+  /// グラフ画面。
+  graph('/graph'),
+
   /// 習慣詳細画面。
   detail('/detail'),
 

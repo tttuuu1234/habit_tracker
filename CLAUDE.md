@@ -59,6 +59,7 @@ lib/
 - Only create a use case when there is **actual business logic** (validation, aggregation, multi-repo coordination, computation)
 - For simple CRUD with no logic, `presentation/` may call repository interfaces directly via providers
 - Use cases return `Result<T>` to make error handling explicit at the call site
+- クラス名・ファイル名には末尾に `UseCase` / `_use_case` を付ける（例: `GetCategoryStatisticsUseCase` / `get_category_statistics_use_case.dart`）
 
 ### Error Handling
 

@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../domain/habit/frequency_type.dart';
 import '../../domain/habit/habit.dart' as domain;
+import '../../domain/habit/habit_category.dart';
 import '../../domain/habit/habit_repository.dart';
 import '../../domain/habit/habit_type.dart';
 import '../../domain/result.dart';
@@ -64,7 +65,7 @@ class DriftHabitRepository implements HabitRepository {
   Future<Result<domain.Habit>> create({
     required String name,
     required DateTime createdDate,
-    required int? colorValue,
+    required HabitCategory? category,
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
     required HabitType habitType,
@@ -75,11 +76,11 @@ class DriftHabitRepository implements HabitRepository {
       final entry = HabitsCompanion.insert(
         name: name,
         createdDate: normalizedDate,
-        colorValue: Value(colorValue),
         frequencyType: frequencyType,
         weeklyDays: weeklyDays,
         habitType: Value(habitType),
         targetTime: Value(targetTime),
+        category: Value(category),
       );
       final row = await _habitDao.insert_(entry);
       return Result.success(_toDomain(row));
@@ -95,12 +96,12 @@ class DriftHabitRepository implements HabitRepository {
         id: Value(habit.id),
         name: Value(habit.name),
         createdDate: Value(_normalizeDate(habit.createdDate)),
-        colorValue: Value(habit.colorValue),
         frequencyType: Value(habit.frequencyType),
         weeklyDays: Value(habit.weeklyDays),
         habitType: Value(habit.habitType),
         targetTime: Value(habit.targetTime),
         isArchived: Value(habit.isArchived),
+        category: Value(habit.category),
       );
       await _habitDao.update_(entry);
       return const Result.success(null);
@@ -124,7 +125,7 @@ class DriftHabitRepository implements HabitRepository {
       id: row.id,
       name: row.name,
       createdDate: _normalizeDate(row.createdDate),
-      colorValue: row.colorValue,
+      category: row.category,
       frequencyType: row.frequencyType,
       weeklyDays: row.weeklyDays,
       habitType: row.habitType,

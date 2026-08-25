@@ -1,6 +1,7 @@
 import '../result.dart';
 import 'frequency_type.dart';
 import 'habit.dart';
+import 'habit_category.dart';
 import 'habit_type.dart';
 
 /// 習慣データのリポジトリインターフェース。
@@ -21,7 +22,7 @@ abstract class HabitRepository {
   Future<Result<Habit>> create({
     required String name,
     required DateTime createdDate,
-    required int? colorValue,
+    required HabitCategory? category,
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
     required HabitType habitType,

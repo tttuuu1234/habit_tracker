@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../domain/habit/habit_category.dart';
+
 part 'archive_state.freezed.dart';
 
 /// アーカイブ済み習慣の概要。
@@ -12,7 +14,7 @@ abstract class ArchivedHabit with _$ArchivedHabit {
     /// 習慣名。
     required String name,
 
-    /// テーマカラーの値。
-    required int? colorValue,
+    /// カテゴリ。
+    required HabitCategory? category,
   }) = _ArchivedHabit;
 }

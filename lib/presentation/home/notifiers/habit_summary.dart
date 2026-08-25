@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../domain/habit/habit_category.dart';
+
 part 'habit_summary.freezed.dart';
 
 /// ホーム画面に表示する習慣サマリー。
@@ -19,8 +21,8 @@ sealed class HabitSummary with _$HabitSummary {
     /// 今日達成済みかどうか。
     required bool isCompleted,
 
-    /// テーマカラーの値。
-    required int? colorValue,
+    /// カテゴリ。
+    required HabitCategory? category,
   }) = CheckHabitSummary;
 
   /// 時間方式の習慣サマリー。
@@ -37,8 +39,8 @@ sealed class HabitSummary with _$HabitSummary {
     /// 今日達成済みかどうか。
     required bool isCompleted,
 
-    /// テーマカラーの値。
-    required int? colorValue,
+    /// カテゴリ。
+    required HabitCategory? category,
 
     /// 目標時間（分）。
     required int targetTime,

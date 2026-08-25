@@ -20,9 +20,7 @@ class ArchiveScreen extends ConsumerWidget {
         error: (error, _) => Center(child: Text('エラー: $error')),
         data: (habits) {
           if (habits.isEmpty) {
-            return const Center(
-              child: Text('アーカイブされた習慣はありません'),
-            );
+            return const Center(child: Text('アーカイブされた習慣はありません'));
           }
 
           return ListView.builder(
@@ -92,8 +90,9 @@ class _ArchivedHabitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final habitColor =
-        habit.colorValue != null ? Color(habit.colorValue!) : Colors.grey;
+    final habitColor = habit.category != null
+        ? Color(habit.category!.colorValue)
+        : Colors.grey;
 
     return Container(
       decoration: BoxDecoration(

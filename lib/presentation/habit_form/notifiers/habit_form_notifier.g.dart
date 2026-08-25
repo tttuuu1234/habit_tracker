@@ -6,7 +6,7 @@ part of 'habit_form_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$habitFormHash() => r'20b32f3fe7c6bd59f478c4915945891c650439dc';
+String _$habitFormHash() => r'06d7083feae0076a819c1232f9150602d97ec4d6';
 
 /// Copied from Dart SDK
 class _SystemHash {

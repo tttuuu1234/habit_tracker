@@ -11,6 +11,9 @@ class CompletionRecordDao extends DatabaseAccessor<AppDatabase>
     with _$CompletionRecordDaoMixin {
   CompletionRecordDao(super.db);
 
+  /// 達成記録テーブルの変更を監視する。
+  Stream<List<CompletionRecord>> watchAll() => select(completionRecords).watch();
+
   /// 指定した習慣の達成記録を取得する。
   Future<List<CompletionRecord>> getByHabitId(int habitId) =>
       (select(completionRecords)..where((t) => t.habitId.equals(habitId)))
