@@ -17,8 +17,8 @@ mixin _$Habit {
 /// 一意なID。
  int get id;/// 習慣名。
  String get name;/// 登録日。
- DateTime get createdDate;/// テーマカラーの値（null時はデフォルト色を使用）。
- int? get colorValue;/// 頻度種別。
+ DateTime get createdDate;/// カテゴリ（nullは未分類）。
+ HabitCategory? get category;/// 頻度種別。
  FrequencyType get frequencyType;/// 曜日指定時の対象曜日（1=月〜7=日）。
  Set<int> get weeklyDays;/// 習慣の種別。
  HabitType get habitType;/// 目標時間（分）。時間方式の場合のみ使用。
@@ -34,16 +34,16 @@ $HabitCopyWith<Habit> get copyWith => _$HabitCopyWithImpl<Habit>(this as Habit, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Habit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdDate, createdDate) || other.createdDate == createdDate)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other.weeklyDays, weeklyDays)&&(identical(other.habitType, habitType) || other.habitType == habitType)&&(identical(other.targetTime, targetTime) || other.targetTime == targetTime)&&(identical(other.isArchived, isArchived) || other.isArchived == isArchived));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Habit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdDate, createdDate) || other.createdDate == createdDate)&&(identical(other.category, category) || other.category == category)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other.weeklyDays, weeklyDays)&&(identical(other.habitType, habitType) || other.habitType == habitType)&&(identical(other.targetTime, targetTime) || other.targetTime == targetTime)&&(identical(other.isArchived, isArchived) || other.isArchived == isArchived));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,createdDate,colorValue,frequencyType,const DeepCollectionEquality().hash(weeklyDays),habitType,targetTime,isArchived);
+int get hashCode => Object.hash(runtimeType,id,name,createdDate,category,frequencyType,const DeepCollectionEquality().hash(weeklyDays),habitType,targetTime,isArchived);
 
 @override
 String toString() {
-  return 'Habit(id: $id, name: $name, createdDate: $createdDate, colorValue: $colorValue, frequencyType: $frequencyType, weeklyDays: $weeklyDays, habitType: $habitType, targetTime: $targetTime, isArchived: $isArchived)';
+  return 'Habit(id: $id, name: $name, createdDate: $createdDate, category: $category, frequencyType: $frequencyType, weeklyDays: $weeklyDays, habitType: $habitType, targetTime: $targetTime, isArchived: $isArchived)';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $HabitCopyWith<$Res>  {
   factory $HabitCopyWith(Habit value, $Res Function(Habit) _then) = _$HabitCopyWithImpl;
 @useResult
 $Res call({
- int id, String name, DateTime createdDate, int? colorValue, FrequencyType frequencyType, Set<int> weeklyDays, HabitType habitType, int? targetTime, bool isArchived
+ int id, String name, DateTime createdDate, HabitCategory? category, FrequencyType frequencyType, Set<int> weeklyDays, HabitType habitType, int? targetTime, bool isArchived
 });
 
 
@@ -71,13 +71,13 @@ class _$HabitCopyWithImpl<$Res>
 
 /// Create a copy of Habit
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? createdDate = null,Object? colorValue = freezed,Object? frequencyType = null,Object? weeklyDays = null,Object? habitType = null,Object? targetTime = freezed,Object? isArchived = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? createdDate = null,Object? category = freezed,Object? frequencyType = null,Object? weeklyDays = null,Object? habitType = null,Object? targetTime = freezed,Object? isArchived = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,createdDate: null == createdDate ? _self.createdDate : createdDate // ignore: cast_nullable_to_non_nullable
-as DateTime,colorValue: freezed == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
-as int?,frequencyType: null == frequencyType ? _self.frequencyType : frequencyType // ignore: cast_nullable_to_non_nullable
+as DateTime,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as HabitCategory?,frequencyType: null == frequencyType ? _self.frequencyType : frequencyType // ignore: cast_nullable_to_non_nullable
 as FrequencyType,weeklyDays: null == weeklyDays ? _self.weeklyDays : weeklyDays // ignore: cast_nullable_to_non_nullable
 as Set<int>,habitType: null == habitType ? _self.habitType : habitType // ignore: cast_nullable_to_non_nullable
 as HabitType,targetTime: freezed == targetTime ? _self.targetTime : targetTime // ignore: cast_nullable_to_non_nullable
@@ -167,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  DateTime createdDate,  int? colorValue,  FrequencyType frequencyType,  Set<int> weeklyDays,  HabitType habitType,  int? targetTime,  bool isArchived)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  DateTime createdDate,  HabitCategory? category,  FrequencyType frequencyType,  Set<int> weeklyDays,  HabitType habitType,  int? targetTime,  bool isArchived)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Habit() when $default != null:
-return $default(_that.id,_that.name,_that.createdDate,_that.colorValue,_that.frequencyType,_that.weeklyDays,_that.habitType,_that.targetTime,_that.isArchived);case _:
+return $default(_that.id,_that.name,_that.createdDate,_that.category,_that.frequencyType,_that.weeklyDays,_that.habitType,_that.targetTime,_that.isArchived);case _:
   return orElse();
 
 }
@@ -188,10 +188,10 @@ return $default(_that.id,_that.name,_that.createdDate,_that.colorValue,_that.fre
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  DateTime createdDate,  int? colorValue,  FrequencyType frequencyType,  Set<int> weeklyDays,  HabitType habitType,  int? targetTime,  bool isArchived)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  DateTime createdDate,  HabitCategory? category,  FrequencyType frequencyType,  Set<int> weeklyDays,  HabitType habitType,  int? targetTime,  bool isArchived)  $default,) {final _that = this;
 switch (_that) {
 case _Habit():
-return $default(_that.id,_that.name,_that.createdDate,_that.colorValue,_that.frequencyType,_that.weeklyDays,_that.habitType,_that.targetTime,_that.isArchived);case _:
+return $default(_that.id,_that.name,_that.createdDate,_that.category,_that.frequencyType,_that.weeklyDays,_that.habitType,_that.targetTime,_that.isArchived);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +208,10 @@ return $default(_that.id,_that.name,_that.createdDate,_that.colorValue,_that.fre
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  DateTime createdDate,  int? colorValue,  FrequencyType frequencyType,  Set<int> weeklyDays,  HabitType habitType,  int? targetTime,  bool isArchived)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  DateTime createdDate,  HabitCategory? category,  FrequencyType frequencyType,  Set<int> weeklyDays,  HabitType habitType,  int? targetTime,  bool isArchived)?  $default,) {final _that = this;
 switch (_that) {
 case _Habit() when $default != null:
-return $default(_that.id,_that.name,_that.createdDate,_that.colorValue,_that.frequencyType,_that.weeklyDays,_that.habitType,_that.targetTime,_that.isArchived);case _:
+return $default(_that.id,_that.name,_that.createdDate,_that.category,_that.frequencyType,_that.weeklyDays,_that.habitType,_that.targetTime,_that.isArchived);case _:
   return null;
 
 }
@@ -223,7 +223,7 @@ return $default(_that.id,_that.name,_that.createdDate,_that.colorValue,_that.fre
 
 
 class _Habit implements Habit {
-  const _Habit({required this.id, required this.name, required this.createdDate, required this.colorValue, required this.frequencyType, required final  Set<int> weeklyDays, required this.habitType, required this.targetTime, this.isArchived = false}): _weeklyDays = weeklyDays;
+  const _Habit({required this.id, required this.name, required this.createdDate, required this.category, required this.frequencyType, required final  Set<int> weeklyDays, required this.habitType, required this.targetTime, this.isArchived = false}): _weeklyDays = weeklyDays;
   
 
 /// 一意なID。
@@ -232,8 +232,8 @@ class _Habit implements Habit {
 @override final  String name;
 /// 登録日。
 @override final  DateTime createdDate;
-/// テーマカラーの値（null時はデフォルト色を使用）。
-@override final  int? colorValue;
+/// カテゴリ（nullは未分類）。
+@override final  HabitCategory? category;
 /// 頻度種別。
 @override final  FrequencyType frequencyType;
 /// 曜日指定時の対象曜日（1=月〜7=日）。
@@ -262,16 +262,16 @@ _$HabitCopyWith<_Habit> get copyWith => __$HabitCopyWithImpl<_Habit>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Habit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdDate, createdDate) || other.createdDate == createdDate)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other._weeklyDays, _weeklyDays)&&(identical(other.habitType, habitType) || other.habitType == habitType)&&(identical(other.targetTime, targetTime) || other.targetTime == targetTime)&&(identical(other.isArchived, isArchived) || other.isArchived == isArchived));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Habit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.createdDate, createdDate) || other.createdDate == createdDate)&&(identical(other.category, category) || other.category == category)&&(identical(other.frequencyType, frequencyType) || other.frequencyType == frequencyType)&&const DeepCollectionEquality().equals(other._weeklyDays, _weeklyDays)&&(identical(other.habitType, habitType) || other.habitType == habitType)&&(identical(other.targetTime, targetTime) || other.targetTime == targetTime)&&(identical(other.isArchived, isArchived) || other.isArchived == isArchived));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,createdDate,colorValue,frequencyType,const DeepCollectionEquality().hash(_weeklyDays),habitType,targetTime,isArchived);
+int get hashCode => Object.hash(runtimeType,id,name,createdDate,category,frequencyType,const DeepCollectionEquality().hash(_weeklyDays),habitType,targetTime,isArchived);
 
 @override
 String toString() {
-  return 'Habit(id: $id, name: $name, createdDate: $createdDate, colorValue: $colorValue, frequencyType: $frequencyType, weeklyDays: $weeklyDays, habitType: $habitType, targetTime: $targetTime, isArchived: $isArchived)';
+  return 'Habit(id: $id, name: $name, createdDate: $createdDate, category: $category, frequencyType: $frequencyType, weeklyDays: $weeklyDays, habitType: $habitType, targetTime: $targetTime, isArchived: $isArchived)';
 }
 
 
@@ -282,7 +282,7 @@ abstract mixin class _$HabitCopyWith<$Res> implements $HabitCopyWith<$Res> {
   factory _$HabitCopyWith(_Habit value, $Res Function(_Habit) _then) = __$HabitCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name, DateTime createdDate, int? colorValue, FrequencyType frequencyType, Set<int> weeklyDays, HabitType habitType, int? targetTime, bool isArchived
+ int id, String name, DateTime createdDate, HabitCategory? category, FrequencyType frequencyType, Set<int> weeklyDays, HabitType habitType, int? targetTime, bool isArchived
 });
 
 
@@ -299,13 +299,13 @@ class __$HabitCopyWithImpl<$Res>
 
 /// Create a copy of Habit
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? createdDate = null,Object? colorValue = freezed,Object? frequencyType = null,Object? weeklyDays = null,Object? habitType = null,Object? targetTime = freezed,Object? isArchived = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? createdDate = null,Object? category = freezed,Object? frequencyType = null,Object? weeklyDays = null,Object? habitType = null,Object? targetTime = freezed,Object? isArchived = null,}) {
   return _then(_Habit(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,createdDate: null == createdDate ? _self.createdDate : createdDate // ignore: cast_nullable_to_non_nullable
-as DateTime,colorValue: freezed == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
-as int?,frequencyType: null == frequencyType ? _self.frequencyType : frequencyType // ignore: cast_nullable_to_non_nullable
+as DateTime,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as HabitCategory?,frequencyType: null == frequencyType ? _self.frequencyType : frequencyType // ignore: cast_nullable_to_non_nullable
 as FrequencyType,weeklyDays: null == weeklyDays ? _self._weeklyDays : weeklyDays // ignore: cast_nullable_to_non_nullable
 as Set<int>,habitType: null == habitType ? _self.habitType : habitType // ignore: cast_nullable_to_non_nullable
 as HabitType,targetTime: freezed == targetTime ? _self.targetTime : targetTime // ignore: cast_nullable_to_non_nullable
