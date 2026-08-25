@@ -1,5 +1,6 @@
 import 'package:habit_tracker/domain/habit/frequency_type.dart';
 import 'package:habit_tracker/domain/habit/habit.dart';
+import 'package:habit_tracker/domain/habit/habit_category.dart';
 import 'package:habit_tracker/domain/habit/habit_repository.dart';
 import 'package:habit_tracker/domain/habit/habit_type.dart';
 import 'package:habit_tracker/domain/result.dart';
@@ -44,7 +45,7 @@ class FakeHabitRepository implements HabitRepository {
   Future<Result<Habit>> create({
     required String name,
     required DateTime createdDate,
-    required int? colorValue,
+    required HabitCategory? category,
     required FrequencyType frequencyType,
     required Set<int> weeklyDays,
     required HabitType habitType,
@@ -55,7 +56,7 @@ class FakeHabitRepository implements HabitRepository {
       name: name,
       createdDate:
           DateTime(createdDate.year, createdDate.month, createdDate.day),
-      colorValue: colorValue,
+      category: category,
       frequencyType: frequencyType,
       weeklyDays: weeklyDays,
       habitType: habitType,
