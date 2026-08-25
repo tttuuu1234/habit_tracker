@@ -111,6 +111,15 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     defaultValue: const Constant(false),
   );
   @override
+  late final GeneratedColumnWithTypeConverter<HabitCategory?, String> category =
+      GeneratedColumn<String>(
+        'category',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<HabitCategory?>($HabitsTable.$convertercategoryn);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     name,
@@ -121,6 +130,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     habitType,
     targetTime,
     isArchived,
+    category,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -225,6 +235,12 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_archived'],
       )!,
+      category: $HabitsTable.$convertercategoryn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}category'],
+        ),
+      ),
     );
   }
 
@@ -239,6 +255,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
       const WeeklyDaysConverter();
   static TypeConverter<HabitType, String> $converterhabitType =
       const HabitTypeConverter();
+  static TypeConverter<HabitCategory, String> $convertercategory =
+      const HabitCategoryConverter();
+  static TypeConverter<HabitCategory?, String?> $convertercategoryn =
+      NullAwareTypeConverter.wrap($convertercategory);
 }
 
 class Habit extends DataClass implements Insertable<Habit> {
@@ -268,6 +288,9 @@ class Habit extends DataClass implements Insertable<Habit> {
 
   /// アーカイブ済みかどうか。
   final bool isArchived;
+
+  /// 習慣のカテゴリ。
+  final HabitCategory? category;
   const Habit({
     required this.id,
     required this.name,
@@ -278,6 +301,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.habitType,
     this.targetTime,
     required this.isArchived,
+    this.category,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -307,6 +331,11 @@ class Habit extends DataClass implements Insertable<Habit> {
       map['target_time'] = Variable<int>(targetTime);
     }
     map['is_archived'] = Variable<bool>(isArchived);
+    if (!nullToAbsent || category != null) {
+      map['category'] = Variable<String>(
+        $HabitsTable.$convertercategoryn.toSql(category),
+      );
+    }
     return map;
   }
 
@@ -325,6 +354,9 @@ class Habit extends DataClass implements Insertable<Habit> {
           ? const Value.absent()
           : Value(targetTime),
       isArchived: Value(isArchived),
+      category: category == null && nullToAbsent
+          ? const Value.absent()
+          : Value(category),
     );
   }
 
@@ -343,6 +375,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       habitType: serializer.fromJson<HabitType>(json['habitType']),
       targetTime: serializer.fromJson<int?>(json['targetTime']),
       isArchived: serializer.fromJson<bool>(json['isArchived']),
+      category: serializer.fromJson<HabitCategory?>(json['category']),
     );
   }
   @override
@@ -358,6 +391,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'habitType': serializer.toJson<HabitType>(habitType),
       'targetTime': serializer.toJson<int?>(targetTime),
       'isArchived': serializer.toJson<bool>(isArchived),
+      'category': serializer.toJson<HabitCategory?>(category),
     };
   }
 
@@ -371,6 +405,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     HabitType? habitType,
     Value<int?> targetTime = const Value.absent(),
     bool? isArchived,
+    Value<HabitCategory?> category = const Value.absent(),
   }) => Habit(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -381,6 +416,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     habitType: habitType ?? this.habitType,
     targetTime: targetTime.present ? targetTime.value : this.targetTime,
     isArchived: isArchived ?? this.isArchived,
+    category: category.present ? category.value : this.category,
   );
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
@@ -405,6 +441,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       isArchived: data.isArchived.present
           ? data.isArchived.value
           : this.isArchived,
+      category: data.category.present ? data.category.value : this.category,
     );
   }
 
@@ -419,7 +456,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('weeklyDays: $weeklyDays, ')
           ..write('habitType: $habitType, ')
           ..write('targetTime: $targetTime, ')
-          ..write('isArchived: $isArchived')
+          ..write('isArchived: $isArchived, ')
+          ..write('category: $category')
           ..write(')'))
         .toString();
   }
@@ -435,6 +473,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     habitType,
     targetTime,
     isArchived,
+    category,
   );
   @override
   bool operator ==(Object other) =>
@@ -448,7 +487,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.weeklyDays == this.weeklyDays &&
           other.habitType == this.habitType &&
           other.targetTime == this.targetTime &&
-          other.isArchived == this.isArchived);
+          other.isArchived == this.isArchived &&
+          other.category == this.category);
 }
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
@@ -461,6 +501,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<HabitType> habitType;
   final Value<int?> targetTime;
   final Value<bool> isArchived;
+  final Value<HabitCategory?> category;
   const HabitsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -471,6 +512,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.habitType = const Value.absent(),
     this.targetTime = const Value.absent(),
     this.isArchived = const Value.absent(),
+    this.category = const Value.absent(),
   });
   HabitsCompanion.insert({
     this.id = const Value.absent(),
@@ -482,6 +524,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.habitType = const Value.absent(),
     this.targetTime = const Value.absent(),
     this.isArchived = const Value.absent(),
+    this.category = const Value.absent(),
   }) : name = Value(name),
        createdDate = Value(createdDate),
        frequencyType = Value(frequencyType),
@@ -496,6 +539,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<String>? habitType,
     Expression<int>? targetTime,
     Expression<bool>? isArchived,
+    Expression<String>? category,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -507,6 +551,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (habitType != null) 'habit_type': habitType,
       if (targetTime != null) 'target_time': targetTime,
       if (isArchived != null) 'is_archived': isArchived,
+      if (category != null) 'category': category,
     });
   }
 
@@ -520,6 +565,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<HabitType>? habitType,
     Value<int?>? targetTime,
     Value<bool>? isArchived,
+    Value<HabitCategory?>? category,
   }) {
     return HabitsCompanion(
       id: id ?? this.id,
@@ -531,6 +577,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       habitType: habitType ?? this.habitType,
       targetTime: targetTime ?? this.targetTime,
       isArchived: isArchived ?? this.isArchived,
+      category: category ?? this.category,
     );
   }
 
@@ -570,6 +617,11 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (isArchived.present) {
       map['is_archived'] = Variable<bool>(isArchived.value);
     }
+    if (category.present) {
+      map['category'] = Variable<String>(
+        $HabitsTable.$convertercategoryn.toSql(category.value),
+      );
+    }
     return map;
   }
 
@@ -584,7 +636,8 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('weeklyDays: $weeklyDays, ')
           ..write('habitType: $habitType, ')
           ..write('targetTime: $targetTime, ')
-          ..write('isArchived: $isArchived')
+          ..write('isArchived: $isArchived, ')
+          ..write('category: $category')
           ..write(')'))
         .toString();
   }
@@ -901,6 +954,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<HabitType> habitType,
       Value<int?> targetTime,
       Value<bool> isArchived,
+      Value<HabitCategory?> category,
     });
 typedef $$HabitsTableUpdateCompanionBuilder =
     HabitsCompanion Function({
@@ -913,6 +967,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<HabitType> habitType,
       Value<int?> targetTime,
       Value<bool> isArchived,
+      Value<HabitCategory?> category,
     });
 
 final class $$HabitsTableReferences
@@ -1001,6 +1056,12 @@ class $$HabitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<HabitCategory?, HabitCategory, String>
+  get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
   Expression<bool> completionRecordsRefs(
     Expression<bool> Function($$CompletionRecordsTableFilterComposer f) f,
   ) {
@@ -1080,6 +1141,11 @@ class $$HabitsTableOrderingComposer
     column: $table.isArchived,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HabitsTableAnnotationComposer
@@ -1131,6 +1197,9 @@ class $$HabitsTableAnnotationComposer
     column: $table.isArchived,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<HabitCategory?, String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
 
   Expression<T> completionRecordsRefs<T extends Object>(
     Expression<T> Function($$CompletionRecordsTableAnnotationComposer a) f,
@@ -1196,6 +1265,7 @@ class $$HabitsTableTableManager
                 Value<HabitType> habitType = const Value.absent(),
                 Value<int?> targetTime = const Value.absent(),
                 Value<bool> isArchived = const Value.absent(),
+                Value<HabitCategory?> category = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
                 name: name,
@@ -1206,6 +1276,7 @@ class $$HabitsTableTableManager
                 habitType: habitType,
                 targetTime: targetTime,
                 isArchived: isArchived,
+                category: category,
               ),
           createCompanionCallback:
               ({
@@ -1218,6 +1289,7 @@ class $$HabitsTableTableManager
                 Value<HabitType> habitType = const Value.absent(),
                 Value<int?> targetTime = const Value.absent(),
                 Value<bool> isArchived = const Value.absent(),
+                Value<HabitCategory?> category = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
                 name: name,
@@ -1228,6 +1300,7 @@ class $$HabitsTableTableManager
                 habitType: habitType,
                 targetTime: targetTime,
                 isArchived: isArchived,
+                category: category,
               ),
           withReferenceMapper: (p0) => p0
               .map(

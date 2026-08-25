@@ -16,6 +16,6 @@ class CompletionRecords extends Table {
 
   @override
   List<Set<Column>> get uniqueKeys => [
-        {habitId, completedDate},
-      ];
+    {habitId, completedDate},
+  ];
 }

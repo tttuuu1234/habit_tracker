@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../../domain/habit/frequency_type.dart';
+import '../../domain/habit/habit_category.dart';
 import '../../domain/habit/habit_type.dart';
 import 'daos/completion_record_dao.dart';
 import 'daos/habit_dao.dart';
@@ -25,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -37,6 +38,9 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 3) {
             await m.addColumn(habits, habits.isArchived);
+          }
+          if (from < 4) {
+            await m.addColumn(habits, habits.category);
           }
         },
         beforeOpen: (details) async {
