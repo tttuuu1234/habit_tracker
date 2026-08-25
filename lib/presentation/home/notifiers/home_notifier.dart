@@ -78,7 +78,25 @@ class Home extends _$Home {
       await completionRepo.addCompletion(habitId, normalizedToday);
     }
 
-    state = AsyncData(await _loadHabits());
+    final currentState = state.value;
+    final loaded = await _loadHabits();
+    state = AsyncData(
+      loaded.copyWith(
+        isCompletedSectionCollapsed:
+            currentState?.isCompletedSectionCollapsed ?? false,
+      ),
+    );
+  }
+
+  /// 達成済みセクションの折りたたみ状態をトグルする。
+  void toggleCompletedSection() {
+    final currentState = state.value;
+    if (currentState == null) return;
+    state = AsyncData(
+      currentState.copyWith(
+        isCompletedSectionCollapsed: !currentState.isCompletedSectionCollapsed,
+      ),
+    );
   }
 
   /// データを再読み込みする。

@@ -18,13 +18,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _removeController;
   late final Animation<double> _removeOpacity;
   late final Animation<double> _removeSizeFactor;
 
+  late final AnimationController _completeController;
+  late final Animation<double> _completeOpacity;
+  late final Animation<double> _completeSizeFactor;
+
   /// 削除アニメーション中の習慣ID。
   int? _deletingHabitId;
+
+  /// 達成アニメーション中の習慣ID。
+  int? _completingHabitId;
 
   @override
   void initState() {
@@ -52,11 +59,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ref.invalidate(homeProvider);
       }
     });
+
+    _completeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _completeOpacity = Tween<double>(begin: 1, end: 0).animate(
+      CurvedAnimation(
+        parent: _completeController,
+        curve: const Interval(0.3, 0.7, curve: Curves.easeIn),
+      ),
+    );
+    _completeSizeFactor = Tween<double>(begin: 1, end: 0).animate(
+      CurvedAnimation(
+        parent: _completeController,
+        curve: const Interval(0.5, 1.0, curve: Curves.easeInOut),
+      ),
+    );
+    _completeController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        final habitId = _completingHabitId;
+        _completingHabitId = null;
+        _completeController.reset();
+        if (habitId != null) {
+          ref.read(homeProvider.notifier).toggleCompletion(habitId);
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _removeController.dispose();
+    _completeController.dispose();
     super.dispose();
   }
 
@@ -65,6 +100,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       _deletingHabitId = habitId;
     });
     _removeController.forward(from: 0);
+  }
+
+  void _startCompleteAnimation(int habitId) {
+    setState(() {
+      _completingHabitId = habitId;
+    });
+    _completeController.forward(from: 0);
   }
 
   @override
@@ -143,13 +185,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           child: Text('習慣がまだありません\n右上の＋ボタンから追加しましょう',
                               textAlign: TextAlign.center),
                         )
-                      : _HabitListView(
+                      : _SectionedHabitList(
                           habits: habits,
+                          isCompletedSectionCollapsed:
+                              state.isCompletedSectionCollapsed,
                           deletingHabitId: _deletingHabitId,
                           removeSizeFactor: _removeSizeFactor,
                           removeOpacity: _removeOpacity,
+                          completingHabitId: _completingHabitId,
+                          completeSizeFactor: _completeSizeFactor,
+                          completeOpacity: _completeOpacity,
                           onTap: _onHabitTap,
                           onLongPress: (habit) => _onHabitLongPress(habit),
+                          onToggleCompletedSection: () => ref
+                              .read(homeProvider.notifier)
+                              .toggleCompletedSection(),
                         ),
                 ),
               ],
@@ -200,27 +250,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       ),
     );
     if (confirmed == true) {
-      ref.read(homeProvider.notifier).toggleCompletion(habit.id);
+      _startCompleteAnimation(habit.id);
     }
   }
 }
 
-class _HabitListView extends ConsumerWidget {
-  const _HabitListView({
+class _SectionedHabitList extends ConsumerWidget {
+  const _SectionedHabitList({
     required this.habits,
+    required this.isCompletedSectionCollapsed,
     required this.deletingHabitId,
     required this.removeSizeFactor,
     required this.removeOpacity,
+    required this.completingHabitId,
+    required this.completeSizeFactor,
+    required this.completeOpacity,
     required this.onTap,
     required this.onLongPress,
+    required this.onToggleCompletedSection,
   });
 
   final List<HabitSummary> habits;
+  final bool isCompletedSectionCollapsed;
   final int? deletingHabitId;
   final Animation<double> removeSizeFactor;
   final Animation<double> removeOpacity;
+  final int? completingHabitId;
+  final Animation<double> completeSizeFactor;
+  final Animation<double> completeOpacity;
   final void Function(int habitId) onTap;
   final void Function(HabitSummary habit) onLongPress;
+  final VoidCallback onToggleCompletedSection;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -236,40 +296,91 @@ class _HabitListView extends ConsumerWidget {
       });
     }
 
-    return ListView.builder(
+    final incompleteHabits =
+        habits.where((h) => h.isCompleted == false).toList();
+    final completedHabits =
+        habits.where((h) => h.isCompleted == true).toList();
+
+    return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: habits.length,
-      itemBuilder: (context, index) {
-        final habit = habits[index];
-        final isDeleting = habit.id == deletingHabitId;
+      children: [
+        ...incompleteHabits.map((habit) {
+          final isAnimating = habit.id == deletingHabitId ||
+              habit.id == completingHabitId;
 
-        final tile = Padding(
-          padding: EdgeInsets.only(
-            top: index == 0 ? 0 : 8,
-            bottom: index == habits.length - 1 ? 16 : 0,
-          ),
-          child: HabitListTile(
-            habit: habit,
-            subtitle: _buildTimerSubtitle(context, ref, habit),
-            onTap: isDeleting ? null : () => onTap(habit.id),
-            onLongPress: isDeleting
-                ? null
-                : () => onLongPress(habit),
-          ),
-        );
-
-        if (isDeleting) {
-          return SizeTransition(
-            sizeFactor: removeSizeFactor,
-            child: FadeTransition(
-              opacity: removeOpacity,
-              child: tile,
+          final tile = Padding(
+            padding: EdgeInsets.only(
+              top: incompleteHabits.first == habit ? 0 : 8,
+            ),
+            child: HabitListTile(
+              habit: habit,
+              subtitle: _buildTimerSubtitle(context, ref, habit),
+              onTap: isAnimating ? null : () => onTap(habit.id),
+              onLongPress: isAnimating ? null : () => onLongPress(habit),
             ),
           );
-        }
 
-        return tile;
-      },
+          if (habit.id == deletingHabitId) {
+            return SizeTransition(
+              sizeFactor: removeSizeFactor,
+              child: FadeTransition(opacity: removeOpacity, child: tile),
+            );
+          }
+
+          if (habit.id == completingHabitId) {
+            return SizeTransition(
+              sizeFactor: completeSizeFactor,
+              child: FadeTransition(opacity: completeOpacity, child: tile),
+            );
+          }
+
+          return tile;
+        }),
+        if (completedHabits.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _CompletedSectionHeader(
+            count: completedHabits.length,
+            isCollapsed: isCompletedSectionCollapsed,
+            onToggle: onToggleCompletedSection,
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: isCompletedSectionCollapsed
+                ? const SizedBox.shrink()
+                : Column(
+                    children: completedHabits.map((habit) {
+                      final isDeleting = habit.id == deletingHabitId;
+
+                      final tile = Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: HabitListTile(
+                          habit: habit,
+                          onTap:
+                              isDeleting ? null : () => onTap(habit.id),
+                          onLongPress:
+                              isDeleting ? null : () => onLongPress(habit),
+                        ),
+                      );
+
+                      if (isDeleting) {
+                        return SizeTransition(
+                          sizeFactor: removeSizeFactor,
+                          child: FadeTransition(
+                            opacity: removeOpacity,
+                            child: tile,
+                          ),
+                        );
+                      }
+
+                      return tile;
+                    }).toList(),
+                  ),
+          ),
+        ],
+        const SizedBox(height: 16),
+      ],
     );
   }
 
@@ -310,6 +421,50 @@ class _HabitListView extends ConsumerWidget {
       style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Colors.grey,
           ),
+    );
+  }
+}
+
+class _CompletedSectionHeader extends StatelessWidget {
+  const _CompletedSectionHeader({
+    required this.count,
+    required this.isCollapsed,
+    required this.onToggle,
+  });
+
+  final int count;
+  final bool isCollapsed;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onToggle,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            AnimatedRotation(
+              turns: isCollapsed ? -0.25 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: const Icon(
+                Icons.keyboard_arrow_down,
+                size: 20,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '達成済み ($count)',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

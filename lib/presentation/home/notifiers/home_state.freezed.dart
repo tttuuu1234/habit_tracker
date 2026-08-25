@@ -17,7 +17,8 @@ mixin _$HomeState {
 /// 習慣サマリーのリスト。
  List<HabitSummary> get habits;/// 読み込み中かどうか。
  bool get isLoading;/// エラーメッセージ。
- String? get errorMessage;
+ String? get errorMessage;/// 達成済みセクションが折りたたまれているかどうか。
+ bool get isCompletedSectionCollapsed;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +29,16 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&const DeepCollectionEquality().equals(other.habits, habits)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&const DeepCollectionEquality().equals(other.habits, habits)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isCompletedSectionCollapsed, isCompletedSectionCollapsed) || other.isCompletedSectionCollapsed == isCompletedSectionCollapsed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(habits),isLoading,errorMessage);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(habits),isLoading,errorMessage,isCompletedSectionCollapsed);
 
 @override
 String toString() {
-  return 'HomeState(habits: $habits, isLoading: $isLoading, errorMessage: $errorMessage)';
+  return 'HomeState(habits: $habits, isLoading: $isLoading, errorMessage: $errorMessage, isCompletedSectionCollapsed: $isCompletedSectionCollapsed)';
 }
 
 
@@ -48,7 +49,7 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- List<HabitSummary> habits, bool isLoading, String? errorMessage
+ List<HabitSummary> habits, bool isLoading, String? errorMessage, bool isCompletedSectionCollapsed
 });
 
 
@@ -65,12 +66,13 @@ class _$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? habits = null,Object? isLoading = null,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? habits = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isCompletedSectionCollapsed = null,}) {
   return _then(_self.copyWith(
 habits: null == habits ? _self.habits : habits // ignore: cast_nullable_to_non_nullable
 as List<HabitSummary>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isCompletedSectionCollapsed: null == isCompletedSectionCollapsed ? _self.isCompletedSectionCollapsed : isCompletedSectionCollapsed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -155,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<HabitSummary> habits,  bool isLoading,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<HabitSummary> habits,  bool isLoading,  String? errorMessage,  bool isCompletedSectionCollapsed)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.habits,_that.isLoading,_that.errorMessage);case _:
+return $default(_that.habits,_that.isLoading,_that.errorMessage,_that.isCompletedSectionCollapsed);case _:
   return orElse();
 
 }
@@ -176,10 +178,10 @@ return $default(_that.habits,_that.isLoading,_that.errorMessage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<HabitSummary> habits,  bool isLoading,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<HabitSummary> habits,  bool isLoading,  String? errorMessage,  bool isCompletedSectionCollapsed)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
-return $default(_that.habits,_that.isLoading,_that.errorMessage);case _:
+return $default(_that.habits,_that.isLoading,_that.errorMessage,_that.isCompletedSectionCollapsed);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +198,10 @@ return $default(_that.habits,_that.isLoading,_that.errorMessage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<HabitSummary> habits,  bool isLoading,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<HabitSummary> habits,  bool isLoading,  String? errorMessage,  bool isCompletedSectionCollapsed)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.habits,_that.isLoading,_that.errorMessage);case _:
+return $default(_that.habits,_that.isLoading,_that.errorMessage,_that.isCompletedSectionCollapsed);case _:
   return null;
 
 }
@@ -211,7 +213,7 @@ return $default(_that.habits,_that.isLoading,_that.errorMessage);case _:
 
 
 class _HomeState implements HomeState {
-  const _HomeState({final  List<HabitSummary> habits = const [], this.isLoading = false, this.errorMessage = null}): _habits = habits;
+  const _HomeState({final  List<HabitSummary> habits = const [], this.isLoading = false, this.errorMessage = null, this.isCompletedSectionCollapsed = false}): _habits = habits;
   
 
 /// 習慣サマリーのリスト。
@@ -227,6 +229,8 @@ class _HomeState implements HomeState {
 @override@JsonKey() final  bool isLoading;
 /// エラーメッセージ。
 @override@JsonKey() final  String? errorMessage;
+/// 達成済みセクションが折りたたまれているかどうか。
+@override@JsonKey() final  bool isCompletedSectionCollapsed;
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
@@ -238,16 +242,16 @@ _$HomeStateCopyWith<_HomeState> get copyWith => __$HomeStateCopyWithImpl<_HomeSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&const DeepCollectionEquality().equals(other._habits, _habits)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&const DeepCollectionEquality().equals(other._habits, _habits)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.isCompletedSectionCollapsed, isCompletedSectionCollapsed) || other.isCompletedSectionCollapsed == isCompletedSectionCollapsed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_habits),isLoading,errorMessage);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_habits),isLoading,errorMessage,isCompletedSectionCollapsed);
 
 @override
 String toString() {
-  return 'HomeState(habits: $habits, isLoading: $isLoading, errorMessage: $errorMessage)';
+  return 'HomeState(habits: $habits, isLoading: $isLoading, errorMessage: $errorMessage, isCompletedSectionCollapsed: $isCompletedSectionCollapsed)';
 }
 
 
@@ -258,7 +262,7 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<HabitSummary> habits, bool isLoading, String? errorMessage
+ List<HabitSummary> habits, bool isLoading, String? errorMessage, bool isCompletedSectionCollapsed
 });
 
 
@@ -275,12 +279,13 @@ class __$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? habits = null,Object? isLoading = null,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? habits = null,Object? isLoading = null,Object? errorMessage = freezed,Object? isCompletedSectionCollapsed = null,}) {
   return _then(_HomeState(
 habits: null == habits ? _self._habits : habits // ignore: cast_nullable_to_non_nullable
 as List<HabitSummary>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isCompletedSectionCollapsed: null == isCompletedSectionCollapsed ? _self.isCompletedSectionCollapsed : isCompletedSectionCollapsed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
