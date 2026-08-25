@@ -15,32 +15,41 @@ class GraphScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('カテゴリ別グラフ')),
-      body: asyncState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('エラー: $error')),
-        data: (state) {
-          if (state.habitCountData.isEmpty &&
-              state.achievementCountData.isEmpty) {
-            return const Center(child: Text('表示するデータがありません'));
-          }
+      body: _buildBody(asyncState),
+    );
+  }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                if (state.habitCountData.isNotEmpty) ...[
-                  _ChartSection(title: '習慣数の割合', data: state.habitCountData),
-                  const SizedBox(height: 32),
-                ],
-                if (state.achievementCountData.isNotEmpty)
-                  _ChartSection(
-                    title: '達成回数の割合',
-                    data: state.achievementCountData,
-                  ),
-              ],
+  Widget _buildBody(AsyncValue<GraphState> asyncState) {
+    // 初回ロード中
+    if (asyncState is AsyncLoading && !asyncState.hasValue) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // エラー（前回データなし）
+    if (asyncState is AsyncError && !asyncState.hasValue) {
+      return Center(child: Text('エラー: ${asyncState.error}'));
+    }
+
+    final state = asyncState.requireValue;
+
+    if (state.habitCountData.isEmpty && state.achievementCountData.isEmpty) {
+      return const Center(child: Text('表示するデータがありません'));
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          if (state.habitCountData.isNotEmpty) ...[
+            _ChartSection(title: '習慣数の割合', data: state.habitCountData),
+            const SizedBox(height: 32),
+          ],
+          if (state.achievementCountData.isNotEmpty)
+            _ChartSection(
+              title: '達成回数の割合',
+              data: state.achievementCountData,
             ),
-          );
-        },
+        ],
       ),
     );
   }
@@ -69,6 +78,8 @@ class _ChartSection extends StatelessWidget {
         SizedBox(
           height: 200,
           child: PieChart(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
             PieChartData(
               sections: data.map((d) {
                 final percentage = total > 0

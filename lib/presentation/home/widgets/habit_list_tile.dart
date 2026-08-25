@@ -63,6 +63,7 @@ class HabitListTile extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 _buildStreakBadge(context, habitColor),
               ],
             ),
@@ -115,8 +116,10 @@ class HabitListTile extends StatelessWidget {
         spacing: 4,
         children: [
           if (habit.category != null) _buildCategoryLabel(context, habitColor),
-          ?subtitle,
-          if (habit is TimeHabitSummary)
+          if (subtitle != null) ...[
+            Spacer(),
+            subtitle!,
+          ] else if (habit is TimeHabitSummary)
             _buildTargetTimeLabel(
               context,
               (habit as TimeHabitSummary).targetTime,

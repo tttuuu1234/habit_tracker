@@ -56,7 +56,6 @@ class CategorySelector extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? color : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
           ),
         ),
         child: Row(
