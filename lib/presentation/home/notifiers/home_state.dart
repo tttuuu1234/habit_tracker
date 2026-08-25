@@ -16,5 +16,8 @@ abstract class HomeState with _$HomeState {
 
     /// エラーメッセージ。
     @Default(null) String? errorMessage,
+
+    /// 達成済みセクションが折りたたまれているかどうか。
+    @Default(false) bool isCompletedSectionCollapsed,
   }) = _HomeState;
 }
