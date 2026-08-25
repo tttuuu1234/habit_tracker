@@ -20,15 +20,16 @@ class Archive extends _$Archive {
     final result = await habitRepo.getArchived();
 
     return switch (result) {
-      Success(:final value) => value
-          .map(
-            (habit) => ArchivedHabit(
-              id: habit.id,
-              name: habit.name,
-              colorValue: habit.colorValue,
-            ),
-          )
-          .toList(),
+      Success(:final value) =>
+        value
+            .map(
+              (habit) => ArchivedHabit(
+                id: habit.id,
+                name: habit.name,
+                category: habit.category,
+              ),
+            )
+            .toList(),
       Failure() => [],
     };
   }

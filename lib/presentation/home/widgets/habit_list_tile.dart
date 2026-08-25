@@ -22,8 +22,9 @@ class HabitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final habitColor =
-        habit.colorValue != null ? Color(habit.colorValue!) : Colors.grey;
+    final habitColor = habit.category != null
+        ? Color(habit.category!.colorValue)
+        : Colors.grey;
 
     return Container(
       decoration: BoxDecoration(
@@ -85,15 +86,8 @@ class HabitListTile extends StatelessWidget {
       return Container(
         width: 32,
         height: 32,
-        decoration: BoxDecoration(
-          color: habitColor,
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.check,
-          color: Colors.white,
-          size: 20,
-        ),
+        decoration: BoxDecoration(color: habitColor, shape: BoxShape.circle),
+        child: const Icon(Icons.check, color: Colors.white, size: 20),
       );
     }
 
@@ -115,9 +109,9 @@ class HabitListTile extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '$targetTime分',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey.shade600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
         ),
       ],
     );
@@ -136,18 +130,18 @@ class HabitListTile extends StatelessWidget {
         child: Text(
           text,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: habitColor,
-                fontWeight: FontWeight.w600,
-              ),
+            color: habitColor,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       );
     }
 
     return Text(
       text,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
     );
   }
 }

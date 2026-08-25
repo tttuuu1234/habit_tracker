@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/habit/frequency_type.dart';
+import '../../../domain/habit/habit_category.dart';
 import '../../../domain/habit/habit_type.dart';
 
 part 'habit_form_state.freezed.dart';
@@ -21,8 +21,8 @@ abstract class HabitFormState with _$HabitFormState {
     /// 曜日指定時の対象曜日（1=月〜7=日）。
     @Default({}) Set<int> weeklyDays,
 
-    /// 選択中のカラー。
-    @Default(null) Color? color,
+    /// 選択中のカテゴリ。
+    @Default(null) HabitCategory? category,
 
     /// 編集対象の習慣ID（nullなら作成モード）。
     @Default(null) int? editingHabitId,

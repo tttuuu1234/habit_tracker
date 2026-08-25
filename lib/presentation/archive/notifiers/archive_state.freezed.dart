@@ -16,8 +16,8 @@ mixin _$ArchivedHabit {
 
 /// 習慣ID。
  int get id;/// 習慣名。
- String get name;/// テーマカラーの値。
- int? get colorValue;
+ String get name;/// カテゴリ。
+ HabitCategory? get category;
 /// Create a copy of ArchivedHabit
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ArchivedHabitCopyWith<ArchivedHabit> get copyWith => _$ArchivedHabitCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ArchivedHabit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ArchivedHabit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.category, category) || other.category == category));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,colorValue);
+int get hashCode => Object.hash(runtimeType,id,name,category);
 
 @override
 String toString() {
-  return 'ArchivedHabit(id: $id, name: $name, colorValue: $colorValue)';
+  return 'ArchivedHabit(id: $id, name: $name, category: $category)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ArchivedHabitCopyWith<$Res>  {
   factory $ArchivedHabitCopyWith(ArchivedHabit value, $Res Function(ArchivedHabit) _then) = _$ArchivedHabitCopyWithImpl;
 @useResult
 $Res call({
- int id, String name, int? colorValue
+ int id, String name, HabitCategory? category
 });
 
 
@@ -65,12 +65,12 @@ class _$ArchivedHabitCopyWithImpl<$Res>
 
 /// Create a copy of ArchivedHabit
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? colorValue = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? category = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,colorValue: freezed == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
-as int?,
+as String,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as HabitCategory?,
   ));
 }
 
@@ -155,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  int? colorValue)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  HabitCategory? category)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ArchivedHabit() when $default != null:
-return $default(_that.id,_that.name,_that.colorValue);case _:
+return $default(_that.id,_that.name,_that.category);case _:
   return orElse();
 
 }
@@ -176,10 +176,10 @@ return $default(_that.id,_that.name,_that.colorValue);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  int? colorValue)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  HabitCategory? category)  $default,) {final _that = this;
 switch (_that) {
 case _ArchivedHabit():
-return $default(_that.id,_that.name,_that.colorValue);case _:
+return $default(_that.id,_that.name,_that.category);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +196,10 @@ return $default(_that.id,_that.name,_that.colorValue);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  int? colorValue)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  HabitCategory? category)?  $default,) {final _that = this;
 switch (_that) {
 case _ArchivedHabit() when $default != null:
-return $default(_that.id,_that.name,_that.colorValue);case _:
+return $default(_that.id,_that.name,_that.category);case _:
   return null;
 
 }
@@ -211,15 +211,15 @@ return $default(_that.id,_that.name,_that.colorValue);case _:
 
 
 class _ArchivedHabit implements ArchivedHabit {
-  const _ArchivedHabit({required this.id, required this.name, required this.colorValue});
+  const _ArchivedHabit({required this.id, required this.name, required this.category});
   
 
 /// 習慣ID。
 @override final  int id;
 /// 習慣名。
 @override final  String name;
-/// テーマカラーの値。
-@override final  int? colorValue;
+/// カテゴリ。
+@override final  HabitCategory? category;
 
 /// Create a copy of ArchivedHabit
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +231,16 @@ _$ArchivedHabitCopyWith<_ArchivedHabit> get copyWith => __$ArchivedHabitCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ArchivedHabit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ArchivedHabit&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.category, category) || other.category == category));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,colorValue);
+int get hashCode => Object.hash(runtimeType,id,name,category);
 
 @override
 String toString() {
-  return 'ArchivedHabit(id: $id, name: $name, colorValue: $colorValue)';
+  return 'ArchivedHabit(id: $id, name: $name, category: $category)';
 }
 
 
@@ -251,7 +251,7 @@ abstract mixin class _$ArchivedHabitCopyWith<$Res> implements $ArchivedHabitCopy
   factory _$ArchivedHabitCopyWith(_ArchivedHabit value, $Res Function(_ArchivedHabit) _then) = __$ArchivedHabitCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name, int? colorValue
+ int id, String name, HabitCategory? category
 });
 
 
@@ -268,12 +268,12 @@ class __$ArchivedHabitCopyWithImpl<$Res>
 
 /// Create a copy of ArchivedHabit
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? colorValue = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? category = freezed,}) {
   return _then(_ArchivedHabit(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,colorValue: freezed == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
-as int?,
+as String,category: freezed == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as HabitCategory?,
   ));
 }
 

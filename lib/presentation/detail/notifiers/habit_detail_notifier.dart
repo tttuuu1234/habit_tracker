@@ -19,26 +19,27 @@ class HabitDetail extends _$HabitDetail {
 
     return switch (habitResult) {
       Success(:final value) => () async {
-          final completionResult =
-              await completionRepo.getCompletionDates(habitId);
-          final completionDates = switch (completionResult) {
-            Success(:final value) => value,
-            Failure() => <DateTime>{},
-          };
-          final now = DateTime.now();
-          final habitColor = value.colorValue != null
-              ? Color(value.colorValue!)
-              : null;
+        final completionResult = await completionRepo.getCompletionDates(
+          habitId,
+        );
+        final completionDates = switch (completionResult) {
+          Success(:final value) => value,
+          Failure() => <DateTime>{},
+        };
+        final now = DateTime.now();
+        final habitColor = value.category != null
+            ? Color(value.category!.colorValue)
+            : null;
 
-          return HabitDetailState(
-            habitName: value.name,
-            habitCreatedDate: value.createdDate,
-            habitColor: habitColor,
-            completionDates: completionDates,
-            displayMonth: DateTime(now.year, now.month),
-            isArchived: value.isArchived,
-          );
-        }(),
+        return HabitDetailState(
+          habitName: value.name,
+          habitCreatedDate: value.createdDate,
+          habitColor: habitColor,
+          completionDates: completionDates,
+          displayMonth: DateTime(now.year, now.month),
+          isArchived: value.isArchived,
+        );
+      }(),
       Failure(:final message) => throw Exception(message),
     };
   }
@@ -53,15 +54,15 @@ class HabitDetail extends _$HabitDetail {
 
     return switch (habitResult) {
       Success(:final value) => () async {
-          final updated = value.copyWith(isArchived: !value.isArchived);
-          final updateResult = await habitRepo.update(updated);
-          if (updateResult is Success) {
-            state = AsyncData(
-              currentState.copyWith(isArchived: updated.isArchived),
-            );
-          }
-          return updateResult;
-        }(),
+        final updated = value.copyWith(isArchived: !value.isArchived);
+        final updateResult = await habitRepo.update(updated);
+        if (updateResult is Success) {
+          state = AsyncData(
+            currentState.copyWith(isArchived: updated.isArchived),
+          );
+        }
+        return updateResult;
+      }(),
       Failure(:final message) => Result.failure(message),
     };
   }

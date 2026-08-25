@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/providers.dart';
 import '../../../domain/habit/frequency_type.dart';
+import '../../../domain/habit/habit_category.dart';
 import '../../../domain/habit/habit_type.dart';
 import '../../../domain/result.dart';
 import 'habit_form_state.dart';
@@ -28,19 +28,18 @@ class HabitForm extends _$HabitForm {
 
     return switch (result) {
       Success(:final value) => () {
-          final initial = HabitFormState(
-            name: value.name,
-            frequencyType: value.frequencyType,
-            weeklyDays: value.weeklyDays,
-            color:
-                value.colorValue != null ? Color(value.colorValue!) : null,
-            editingHabitId: editingHabitId,
-            habitType: value.habitType,
-            targetTime: value.targetTime,
-          );
-          _initialState = initial;
-          return initial;
-        }(),
+        final initial = HabitFormState(
+          name: value.name,
+          frequencyType: value.frequencyType,
+          weeklyDays: value.weeklyDays,
+          category: value.category,
+          editingHabitId: editingHabitId,
+          habitType: value.habitType,
+          targetTime: value.targetTime,
+        );
+        _initialState = initial;
+        return initial;
+      }(),
       Failure(:final message) => throw Exception(message),
     };
   }
@@ -72,11 +71,11 @@ class HabitForm extends _$HabitForm {
     state = AsyncData(currentState.copyWith(weeklyDays: days));
   }
 
-  /// カラーを更新する。
-  void updateColor(Color? color) {
+  /// カテゴリを更新する。
+  void updateCategory(HabitCategory? category) {
     final currentState = state.value;
     if (currentState == null) return;
-    state = AsyncData(currentState.copyWith(color: color));
+    state = AsyncData(currentState.copyWith(category: category));
   }
 
   /// 習慣の種別を更新する。
@@ -103,13 +102,12 @@ class HabitForm extends _$HabitForm {
 
     final repo = ref.read(habitRepositoryProvider);
     final trimmedName = currentState.name.trim();
-    final colorValue = currentState.color?.toARGB32();
 
     if (currentState.isCreateMode) {
       await repo.create(
         name: trimmedName,
         createdDate: DateTime.now(),
-        colorValue: colorValue,
+        category: currentState.category,
         frequencyType: currentState.frequencyType,
         weeklyDays: currentState.weeklyDays,
         habitType: currentState.habitType,
@@ -121,7 +119,7 @@ class HabitForm extends _$HabitForm {
         await repo.update(
           value.copyWith(
             name: trimmedName,
-            colorValue: colorValue,
+            category: currentState.category,
             frequencyType: currentState.frequencyType,
             weeklyDays: currentState.weeklyDays,
             habitType: currentState.habitType,
@@ -154,7 +152,7 @@ class HabitForm extends _$HabitForm {
         currentState.frequencyType != initial.frequencyType ||
         currentState.weeklyDays.length != initial.weeklyDays.length ||
         !currentState.weeklyDays.containsAll(initial.weeklyDays) ||
-        currentState.color != initial.color ||
+        currentState.category != initial.category ||
         currentState.habitType != initial.habitType ||
         currentState.targetTime != initial.targetTime;
   }
