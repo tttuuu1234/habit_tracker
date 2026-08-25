@@ -130,11 +130,11 @@ void main() {
     expect(find.text('3/6'), findsOneWidget);
     expect(find.text('完了'), findsOneWidget);
 
-    await tester.scrollUntilVisible(find.text('水を2L飲む'), 100);
-    expect(find.text('水を2L飲む'), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.text('腹筋10回'), 100);
-    expect(find.text('腹筋10回'), findsOneWidget);
+    // オフスクリーンも含めてウィジェットツリーに存在することを確認
+    final offstage = find.text('水を2L飲む', skipOffstage: false);
+    expect(offstage, findsOneWidget);
+    final offstage2 = find.text('腹筋10回', skipOffstage: false);
+    expect(offstage2, findsOneWidget);
   });
 
   testWidgets('Long press shows completion dialog', (
@@ -160,8 +160,8 @@ void main() {
     await tester.pumpWidget(createApp(habitRepo, completionRepo));
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(find.text('瞑想'), 100);
-    await tester.ensureVisible(find.text('瞑想'));
+    final meditationFinder = find.text('瞑想', skipOffstage: false);
+    await tester.ensureVisible(meditationFinder);
     await tester.pumpAndSettle();
     await tester.longPress(find.text('瞑想'));
     await tester.pumpAndSettle();

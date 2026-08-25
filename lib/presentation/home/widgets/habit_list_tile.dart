@@ -59,16 +59,7 @@ class HabitListTile extends StatelessWidget {
                         habit.name,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      if (subtitle != null) ...[
-                        const SizedBox(height: 2),
-                        subtitle!,
-                      ] else if (habit is TimeHabitSummary) ...[
-                        const SizedBox(height: 2),
-                        _buildTargetTimeLabel(
-                          context,
-                          (habit as TimeHabitSummary).targetTime,
-                        ),
-                      ],
+                      ..._buildInfoWidgets(context, habitColor),
                     ],
                   ),
                 ),
@@ -109,6 +100,44 @@ class HabitListTile extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '$targetTime分',
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildInfoWidgets(BuildContext context, Color habitColor) {
+    return [
+      const SizedBox(height: 2),
+      Row(
+        spacing: 4,
+        children: [
+          if (habit.category != null) _buildCategoryLabel(context, habitColor),
+          ?subtitle,
+          if (habit is TimeHabitSummary)
+            _buildTargetTimeLabel(
+              context,
+              (habit as TimeHabitSummary).targetTime,
+            ),
+        ],
+      ),
+    ];
+  }
+
+  Widget _buildCategoryLabel(BuildContext context, Color habitColor) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: habitColor, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          habit.category!.label,
           style: Theme.of(
             context,
           ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
