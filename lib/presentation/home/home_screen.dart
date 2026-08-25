@@ -27,11 +27,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   late final Animation<double> _completeOpacity;
   late final Animation<double> _completeSizeFactor;
 
+  late final AnimationController _appearController;
+  late final Animation<double> _appearOpacity;
+  late final Animation<double> _appearSizeFactor;
+
   /// 削除アニメーション中の習慣ID。
   int? _deletingHabitId;
 
   /// 達成アニメーション中の習慣ID。
   int? _completingHabitId;
+
+  /// タイマー経由の達成アニメーションかどうか。
+  bool _isTimerCompletion = false;
+
+  /// 達成直後で出現アニメーション対象の習慣ID。
+  int? _justCompletedHabitId;
 
   @override
   void initState() {
@@ -62,28 +72,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     _completeController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 500),
     );
     _completeOpacity = Tween<double>(begin: 1, end: 0).animate(
-      CurvedAnimation(
-        parent: _completeController,
-        curve: const Interval(0.3, 0.7, curve: Curves.easeIn),
-      ),
+      CurvedAnimation(parent: _completeController, curve: Curves.easeOut),
     );
     _completeSizeFactor = Tween<double>(begin: 1, end: 0).animate(
       CurvedAnimation(
         parent: _completeController,
-        curve: const Interval(0.5, 1.0, curve: Curves.easeInOut),
+        curve: const Interval(0.3, 1.0, curve: Curves.easeInOut),
       ),
     );
     _completeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         final habitId = _completingHabitId;
+        final isTimer = _isTimerCompletion;
         _completingHabitId = null;
+        _isTimerCompletion = false;
         _completeController.reset();
         if (habitId != null) {
-          ref.read(homeProvider.notifier).toggleCompletion(habitId);
+          _appearController.value = 0;
+          setState(() {
+            _justCompletedHabitId = habitId;
+          });
+          if (isTimer) {
+            // タイマー完了時はDBに既に記録済みなのでリロードのみ
+            ref.invalidate(homeProvider);
+          } else {
+            ref.read(homeProvider.notifier).toggleCompletion(habitId);
+          }
         }
+      }
+    });
+
+    _appearController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _appearOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _appearController,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
+      ),
+    );
+    _appearSizeFactor = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _appearController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+    _appearController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          _justCompletedHabitId = null;
+        });
       }
     });
   }
@@ -92,6 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void dispose() {
     _removeController.dispose();
     _completeController.dispose();
+    _appearController.dispose();
     super.dispose();
   }
 
@@ -105,6 +148,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void _startCompleteAnimation(int habitId) {
     setState(() {
       _completingHabitId = habitId;
+      _isTimerCompletion = false;
+    });
+    _completeController.forward(from: 0);
+  }
+
+  void _startTimerCompleteAnimation(int habitId) {
+    setState(() {
+      _completingHabitId = habitId;
+      _isTimerCompletion = true;
     });
     _completeController.forward(from: 0);
   }
@@ -113,6 +165,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final asyncState = ref.watch(homeProvider);
     final dateText = DateTime.now().toDisplayDate();
+
+    // 達成後のリビルドで出現アニメーションを開始する
+    if (_justCompletedHabitId != null) {
+      final habits = asyncState.valueOrNull?.habits ?? [];
+      final isInCompleted = habits.any(
+        (h) => h.id == _justCompletedHabitId && h.isCompleted,
+      );
+      if (isInCompleted && !_appearController.isAnimating) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _appearController.forward(from: 0);
+        });
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -195,8 +260,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           completingHabitId: _completingHabitId,
                           completeSizeFactor: _completeSizeFactor,
                           completeOpacity: _completeOpacity,
+                          justCompletedHabitId: _justCompletedHabitId,
+                          appearSizeFactor: _appearSizeFactor,
+                          appearOpacity: _appearOpacity,
                           onTap: _onHabitTap,
                           onLongPress: (habit) => _onHabitLongPress(habit),
+                          onTimerCompleted: _startTimerCompleteAnimation,
                           onToggleCompletedSection: () => ref
                               .read(homeProvider.notifier)
                               .toggleCompletedSection(),
@@ -265,8 +334,12 @@ class _SectionedHabitList extends ConsumerWidget {
     required this.completingHabitId,
     required this.completeSizeFactor,
     required this.completeOpacity,
+    required this.justCompletedHabitId,
+    required this.appearSizeFactor,
+    required this.appearOpacity,
     required this.onTap,
     required this.onLongPress,
+    required this.onTimerCompleted,
     required this.onToggleCompletedSection,
   });
 
@@ -278,8 +351,12 @@ class _SectionedHabitList extends ConsumerWidget {
   final int? completingHabitId;
   final Animation<double> completeSizeFactor;
   final Animation<double> completeOpacity;
+  final int? justCompletedHabitId;
+  final Animation<double> appearSizeFactor;
+  final Animation<double> appearOpacity;
   final void Function(int habitId) onTap;
   final void Function(HabitSummary habit) onLongPress;
+  final void Function(int habitId) onTimerCompleted;
   final VoidCallback onToggleCompletedSection;
 
   @override
@@ -290,8 +367,9 @@ class _SectionedHabitList extends ConsumerWidget {
       final provider = habitTimerProvider(habit.id);
       if (!ref.exists(provider)) continue;
       ref.listen(provider, (prev, next) {
-        if (next.valueOrNull?.isCompleted == true) {
-          ref.invalidate(homeProvider);
+        if (prev?.valueOrNull?.isCompleted != true &&
+            next.valueOrNull?.isCompleted == true) {
+          onTimerCompleted(habit.id);
         }
       });
     }
@@ -352,6 +430,7 @@ class _SectionedHabitList extends ConsumerWidget {
                 : Column(
                     children: completedHabits.map((habit) {
                       final isDeleting = habit.id == deletingHabitId;
+                      final isAppearing = habit.id == justCompletedHabitId;
 
                       final tile = Padding(
                         padding: const EdgeInsets.only(top: 8),
@@ -369,6 +448,16 @@ class _SectionedHabitList extends ConsumerWidget {
                           sizeFactor: removeSizeFactor,
                           child: FadeTransition(
                             opacity: removeOpacity,
+                            child: tile,
+                          ),
+                        );
+                      }
+
+                      if (isAppearing) {
+                        return SizeTransition(
+                          sizeFactor: appearSizeFactor,
+                          child: FadeTransition(
+                            opacity: appearOpacity,
                             child: tile,
                           ),
                         );
