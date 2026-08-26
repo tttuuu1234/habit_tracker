@@ -35,40 +35,39 @@ class Home extends _$Home {
                     h.weeklyDays.contains(todayWeekday),
               )
               .map((habit) async {
-            final completionResult = await completionRepo.getCompletionDates(
-              habit.id,
-            );
-            final completionDates = switch (completionResult) {
-              Success(:final value) => value,
-              Failure() => <DateTime>{},
-            };
-            final streakDays = _calculateStreak(completionDates);
-            final today = DateTime.now();
-            final normalizedToday = DateTime(
-              today.year,
-              today.month,
-              today.day,
-            );
-            final isCompleted = completionDates.contains(normalizedToday);
+                final completionResult = await completionRepo
+                    .getCompletionDates(habit.id);
+                final completionDates = switch (completionResult) {
+                  Success(:final value) => value,
+                  Failure() => <DateTime>{},
+                };
+                final streakDays = _calculateStreak(completionDates);
+                final today = DateTime.now();
+                final normalizedToday = DateTime(
+                  today.year,
+                  today.month,
+                  today.day,
+                );
+                final isCompleted = completionDates.contains(normalizedToday);
 
-            return switch (habit.habitType) {
-              HabitType.check => HabitSummary.check(
-                id: habit.id,
-                name: habit.name,
-                streakDays: streakDays,
-                isCompleted: isCompleted,
-                category: habit.category,
-              ),
-              HabitType.time => HabitSummary.time(
-                id: habit.id,
-                name: habit.name,
-                streakDays: streakDays,
-                isCompleted: isCompleted,
-                category: habit.category,
-                targetTime: habit.targetTime!,
-              ),
-            };
-          }),
+                return switch (habit.habitType) {
+                  HabitType.check => HabitSummary.check(
+                    id: habit.id,
+                    name: habit.name,
+                    streakDays: streakDays,
+                    isCompleted: isCompleted,
+                    category: habit.category,
+                  ),
+                  HabitType.time => HabitSummary.time(
+                    id: habit.id,
+                    name: habit.name,
+                    streakDays: streakDays,
+                    isCompleted: isCompleted,
+                    category: habit.category,
+                    targetTime: habit.targetTime!,
+                  ),
+                };
+              }),
         ),
       ),
       Failure(:final message) => HomeState(errorMessage: message),

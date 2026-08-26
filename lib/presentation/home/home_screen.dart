@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/extensions/date_time_extension.dart';
+import '../../domain/habit/habit_category.dart';
 import '../router/app_route.dart';
 import '../timer/notifiers/timer_notifier.dart';
 import 'notifiers/habit_summary.dart';
 import 'notifiers/home_notifier.dart';
+import 'widgets/category_filter_chips.dart';
 import 'widgets/habit_list_tile.dart';
 import 'widgets/progress_ring.dart';
 
@@ -42,6 +44,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   /// 達成直後で出現アニメーション対象の習慣ID。
   int? _justCompletedHabitId;
+
+  /// 選択中のカテゴリフィルター（nullですべて）。
+  /// _isCategoryFilterAll が true の場合は「すべて」を意味する。
+  HabitCategory? _filterCategory;
+  bool _isFilterAll = true;
 
   @override
   void initState() {
@@ -206,7 +213,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => Center(child: Text('エラー: $error')),
           data: (state) {
-            final habits = state.habits;
+            final allHabits = state.habits;
+
+            // 使われているカテゴリを収集する
+            final usedCategories = <HabitCategory?>{};
+            for (final h in allHabits) {
+              usedCategories.add(h.category);
+            }
+
+            // フィルタリング
+            final habits = _isFilterAll
+                ? allHabits
+                : allHabits
+                      .where((h) => h.category == _filterCategory)
+                      .toList();
+
             final completedCount =
                 habits.where((h) => h.isCompleted).length;
 
@@ -243,7 +264,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     total: habits.length,
                   ),
                 ),
-                const SizedBox(height: 24),
+                if (usedCategories.length > 1 ||
+                    (usedCategories.length == 1 &&
+                        !usedCategories.contains(null))) ...[
+                  const SizedBox(height: 16),
+                  CategoryFilterChips(
+                    usedCategories: usedCategories,
+                    isAllSelected: _isFilterAll,
+                    selectedCategory: _filterCategory,
+                    onAllSelected: () {
+                      setState(() {
+                        _isFilterAll = true;
+                        _filterCategory = null;
+                      });
+                    },
+                    onCategorySelected: (category) {
+                      setState(() {
+                        _isFilterAll = false;
+                        _filterCategory = category;
+                      });
+                    },
+                  ),
+                ],
+                const SizedBox(height: 16),
                 Expanded(
                   child: habits.isEmpty
                       ? const Center(
