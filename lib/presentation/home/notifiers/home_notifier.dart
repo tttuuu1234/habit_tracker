@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/providers.dart';
+import '../../../domain/habit/frequency_type.dart';
 import '../../../domain/habit/habit_type.dart';
 import '../../../domain/result.dart';
 import 'habit_summary.dart';
@@ -22,10 +23,18 @@ class Home extends _$Home {
     final completionRepo = ref.read(completionRecordRepositoryProvider);
     final result = await habitRepo.getActive();
 
+    final todayWeekday = DateTime.now().weekday;
+
     return switch (result) {
       Success(:final value) => HomeState(
         habits: await Future.wait(
-          value.map((habit) async {
+          value
+              .where(
+                (h) =>
+                    h.frequencyType == FrequencyType.daily ||
+                    h.weeklyDays.contains(todayWeekday),
+              )
+              .map((habit) async {
             final completionResult = await completionRepo.getCompletionDates(
               habit.id,
             );
