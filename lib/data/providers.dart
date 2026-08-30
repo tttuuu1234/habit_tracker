@@ -1,15 +1,24 @@
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/completion_record/completion_record_repository.dart';
 import '../domain/habit/habit_repository.dart';
+import '../domain/settings/settings_repository.dart';
 import '../domain/use_cases/get_category_statistics_use_case.dart';
 import 'database/app_database.dart';
 import 'database/daos/completion_record_dao.dart';
 import 'database/daos/habit_dao.dart';
 import 'repository/drift_completion_record_repository.dart';
 import 'repository/drift_habit_repository.dart';
+import 'repository/shared_preferences_settings_repository.dart';
 
 part 'providers.g.dart';
+
+/// SharedPreferencesのインスタンス。main.dartでoverrideして使用する。
+final sharedPreferencesProvider = Provider<SharedPreferences>(
+  (_) => throw UnimplementedError('sharedPreferencesProvider must be overridden'),
+);
 
 /// アプリケーションデータベースのインスタンス。
 @Riverpod(keepAlive: true)
@@ -49,6 +58,19 @@ Stream<void> completionRecordsTableChanged(
 ) {
   final db = ref.watch(appDatabaseProvider);
   return CompletionRecordDao(db).watchAll().map((_) {});
+}
+
+/// 設定リポジトリのインスタンス。
+@Riverpod(keepAlive: true)
+SettingsRepository settingsRepository(SettingsRepositoryRef ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return SharedPreferencesSettingsRepository(prefs);
+}
+
+/// FlutterRingtonePlayerのインスタンス。
+@Riverpod(keepAlive: true)
+FlutterRingtonePlayer flutterRingtonePlayer(FlutterRingtonePlayerRef ref) {
+  return FlutterRingtonePlayer();
 }
 
 /// カテゴリ別統計ユースケースのインスタンス。

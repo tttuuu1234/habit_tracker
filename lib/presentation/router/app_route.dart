@@ -18,7 +18,10 @@ enum AppRoute {
   timer('/timer'),
 
   /// アーカイブ一覧画面。
-  archive('/archive');
+  archive('/archive'),
+
+  /// 設定画面。
+  settings('/settings');
 
   const AppRoute(this.path);
   final String path;
