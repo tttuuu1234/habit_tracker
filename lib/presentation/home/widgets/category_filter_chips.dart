@@ -94,13 +94,15 @@ class CategoryFilterChips extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? (color ?? theme.colorScheme.primary)
-                : Colors.grey.shade300,
+                : theme.colorScheme.outline,
           ),
         ),
         child: Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: isSelected ? Colors.white : Colors.grey.shade700,
+            color: isSelected
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.w600 : null,
           ),
         ),

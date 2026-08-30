@@ -134,6 +134,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
         final notifier = ref.read(
           habitFormProvider(widget.editingHabitId).notifier,
         );
+        final colorScheme = Theme.of(context).colorScheme;
 
         return PopScope(
           canPop: false,
@@ -171,11 +172,11 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                         const SizedBox(height: 8),
                         Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
+                            color: colorScheme.surface,
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.06),
+                                color: colorScheme.shadow.withValues(alpha: 0.06),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),
@@ -187,7 +188,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                             decoration: InputDecoration(
                               hintText: '例: 30分読書',
                               filled: true,
-                              fillColor: Theme.of(context).colorScheme.surface,
+                              fillColor: colorScheme.surface,
                               border: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(8),
@@ -219,11 +220,11 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                           const SizedBox(height: 8),
                           Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
+                              color: colorScheme.surface,
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.06),
+                                  color: colorScheme.shadow.withValues(alpha: 0.06),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -301,12 +302,12 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                             ? _onSave
                             : null,
                         child: state.isSaving
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: colorScheme.onPrimary,
                                 ),
                               )
                             : const Text('保存'),

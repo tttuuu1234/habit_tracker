@@ -10,19 +10,21 @@ class StreakHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Text(
           '$streakDays',
           style: Theme.of(context).textTheme.displayLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.green.shade700,
+                color: colorScheme.primary,
               ),
         ),
         Text(
           '日連続達成中',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey.shade600,
+                color: colorScheme.onSurfaceVariant,
               ),
         ),
       ],

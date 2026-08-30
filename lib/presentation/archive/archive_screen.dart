@@ -90,16 +90,17 @@ class _ArchivedHabitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final habitColor = habit.category != null
         ? Color(habit.category!.colorValue)
-        : Colors.grey;
+        : colorScheme.outline;
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: colorScheme.shadow.withValues(alpha: 0.08),
             offset: const Offset(0, 4),
             blurRadius: 8,
           ),

@@ -18,14 +18,17 @@ class CategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
-        _buildItem(context, null, '未分類', Colors.grey),
+        _buildItem(context, colorScheme, null, '未分類', colorScheme.outline),
         ...HabitCategory.values.map(
           (category) => _buildItem(
             context,
+            colorScheme,
             category,
             category.label,
             Color(category.colorValue),
@@ -37,6 +40,7 @@ class CategorySelector extends StatelessWidget {
 
   Widget _buildItem(
     BuildContext context,
+    ColorScheme colorScheme,
     HabitCategory? category,
     String label,
     Color color,
@@ -55,7 +59,7 @@ class CategorySelector extends StatelessWidget {
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? color : Colors.grey.shade300,
+            color: isSelected ? color : colorScheme.outline,
           ),
         ),
         child: Row(
