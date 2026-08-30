@@ -107,6 +107,7 @@ class _ProgressRingState extends State<ProgressRing>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final progress = _progress;
 
     return TweenAnimationBuilder<double>(
@@ -130,8 +131,8 @@ class _ProgressRingState extends State<ProgressRing>
                 painter: _ProgressRingPainter(
                   progress: animatedProgress,
                   strokeWidth: widget.strokeWidth,
-                  progressColor: Colors.green.shade700,
-                  backgroundColor: Colors.grey.shade300,
+                  progressColor: colorScheme.primary,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
                 ),
               ),
               AnimatedBuilder(
@@ -170,7 +171,7 @@ class _ProgressRingState extends State<ProgressRing>
             Text(
               '完了',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
+                    color: colorScheme.onSurfaceVariant,
                   ),
             ),
           ],

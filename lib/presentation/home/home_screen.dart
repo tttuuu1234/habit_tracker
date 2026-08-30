@@ -170,6 +170,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final asyncState = ref.watch(homeProvider);
     final dateText = DateTime.now().toDisplayDate();
 
@@ -244,7 +245,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium
-                            ?.copyWith(color: Colors.grey),
+                            ?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -551,7 +554,7 @@ class _SectionedHabitList extends ConsumerWidget {
     return Text(
       '一時停止中 ${timerState.displayTime}',
       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey,
+            color: colorScheme.onSurfaceVariant,
           ),
     );
   }
@@ -570,6 +573,8 @@ class _CompletedSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return InkWell(
       onTap: onToggle,
       borderRadius: BorderRadius.circular(8),
@@ -580,17 +585,17 @@ class _CompletedSectionHeader extends StatelessWidget {
             AnimatedRotation(
               turns: isCollapsed ? -0.25 : 0,
               duration: const Duration(milliseconds: 200),
-              child: const Icon(
+              child: Icon(
                 Icons.keyboard_arrow_down,
                 size: 20,
-                color: Colors.grey,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '達成済み ($count)',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
+                    color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
                   ),
             ),

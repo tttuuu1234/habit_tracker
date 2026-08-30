@@ -131,7 +131,7 @@ class _TimerBody extends StatelessWidget {
                   value: animatedProgress,
                   strokeWidth: 12,
                   backgroundColor: colorScheme.surfaceContainerHighest,
-                  color: state.isCompleted ? Colors.green : colorScheme.primary,
+                  color: colorScheme.primary,
                   strokeCap: StrokeCap.round,
                 );
               },
@@ -141,12 +141,16 @@ class _TimerBody extends StatelessWidget {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.check_circle, size: 48, color: Colors.green),
+                Icon(
+                  Icons.check_circle,
+                  size: 48,
+                  color: colorScheme.primary,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   '達成！',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: Colors.green,
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

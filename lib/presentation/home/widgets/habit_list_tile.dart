@@ -22,16 +22,17 @@ class HabitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final habitColor = habit.category != null
         ? Color(habit.category!.colorValue)
-        : Colors.grey;
+        : colorScheme.outline;
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: colorScheme.shadow.withValues(alpha: 0.08),
             offset: const Offset(0, 4),
             blurRadius: 8,
           ),
@@ -48,7 +49,7 @@ class HabitListTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                _buildCheckIcon(habitColor),
+                _buildCheckIcon(colorScheme, habitColor),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -59,12 +60,12 @@ class HabitListTile extends StatelessWidget {
                         habit.name,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      ..._buildInfoWidgets(context, habitColor),
+                      ..._buildInfoWidgets(context, colorScheme, habitColor),
                     ],
                   ),
                 ),
                 const SizedBox(width: 12),
-                _buildStreakBadge(context, habitColor),
+                _buildStreakBadge(context, colorScheme, habitColor),
               ],
             ),
           ),
@@ -73,13 +74,13 @@ class HabitListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckIcon(Color habitColor) {
+  Widget _buildCheckIcon(ColorScheme colorScheme, Color habitColor) {
     if (habit.isCompleted) {
       return Container(
         width: 32,
         height: 32,
         decoration: BoxDecoration(color: habitColor, shape: BoxShape.circle),
-        child: const Icon(Icons.check, color: Colors.white, size: 20),
+        child: Icon(Icons.check, color: colorScheme.onPrimary, size: 20),
       );
     }
 
@@ -88,40 +89,54 @@ class HabitListTile extends StatelessWidget {
       height: 32,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.shade400, width: 2),
+        border: Border.all(color: colorScheme.outline, width: 2),
       ),
     );
   }
 
-  Widget _buildTargetTimeLabel(BuildContext context, int targetTime) {
+  Widget _buildTargetTimeLabel(
+    BuildContext context,
+    ColorScheme colorScheme,
+    int targetTime,
+  ) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.timer_outlined, size: 14, color: Colors.grey.shade600),
+        Icon(
+          Icons.timer_outlined,
+          size: 14,
+          color: colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 4),
         Text(
           '$targetTime分',
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
         ),
       ],
     );
   }
 
-  List<Widget> _buildInfoWidgets(BuildContext context, Color habitColor) {
+  List<Widget> _buildInfoWidgets(
+    BuildContext context,
+    ColorScheme colorScheme,
+    Color habitColor,
+  ) {
     return [
       const SizedBox(height: 2),
       Row(
         spacing: 4,
         children: [
-          if (habit.category != null) _buildCategoryLabel(context, habitColor),
+          if (habit.category != null)
+            _buildCategoryLabel(context, colorScheme, habitColor),
           if (subtitle != null) ...[
             Spacer(),
             subtitle!,
           ] else if (habit is TimeHabitSummary)
             _buildTargetTimeLabel(
               context,
+              colorScheme,
               (habit as TimeHabitSummary).targetTime,
             ),
         ],
@@ -129,7 +144,11 @@ class HabitListTile extends StatelessWidget {
     ];
   }
 
-  Widget _buildCategoryLabel(BuildContext context, Color habitColor) {
+  Widget _buildCategoryLabel(
+    BuildContext context,
+    ColorScheme colorScheme,
+    Color habitColor,
+  ) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -141,15 +160,19 @@ class HabitListTile extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           habit.category!.label,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
         ),
       ],
     );
   }
 
-  Widget _buildStreakBadge(BuildContext context, Color habitColor) {
+  Widget _buildStreakBadge(
+    BuildContext context,
+    ColorScheme colorScheme,
+    Color habitColor,
+  ) {
     final text = '${habit.streakDays}日';
 
     if (habit.isCompleted) {
@@ -171,9 +194,9 @@ class HabitListTile extends StatelessWidget {
 
     return Text(
       text,
-      style: Theme.of(
-        context,
-      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
     );
   }
 }

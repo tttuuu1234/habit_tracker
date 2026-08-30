@@ -59,6 +59,7 @@ class MonthlyCalendar extends StatelessWidget {
   }
 
   Widget _buildWeekdayHeaders(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     const weekdays = ['月', '火', '水', '木', '金', '土', '日'];
 
     return Row(
@@ -69,7 +70,7 @@ class MonthlyCalendar extends StatelessWidget {
                 child: Text(
                   day,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
+                        color: colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -180,18 +181,20 @@ class _CalendarCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SizedBox(
       height: 40,
       child: Center(
         child: Container(
           width: 32,
           height: 32,
-          decoration: _buildDecoration(),
+          decoration: _buildDecoration(colorScheme),
           child: Center(
             child: Text(
               '$day',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: _textColor,
+                    color: _textColor(colorScheme),
                     fontWeight: FontWeight.w500,
                   ),
             ),
@@ -201,23 +204,23 @@ class _CalendarCell extends StatelessWidget {
     );
   }
 
-  BoxDecoration _buildDecoration() {
+  BoxDecoration _buildDecoration(ColorScheme colorScheme) {
     switch (type) {
       case _CellType.completed:
         return BoxDecoration(
-          color: Colors.green.shade600,
+          color: colorScheme.primary,
           shape: BoxShape.circle,
         );
       case _CellType.missed:
         return BoxDecoration(
-          color: Colors.grey.shade300,
+          color: colorScheme.surfaceContainerHighest,
           shape: BoxShape.circle,
         );
       case _CellType.future:
         return BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.grey.shade400,
+            color: colorScheme.outline,
             style: BorderStyle.solid,
             width: 1,
           ),
@@ -225,14 +228,14 @@ class _CalendarCell extends StatelessWidget {
     }
   }
 
-  Color get _textColor {
+  Color _textColor(ColorScheme colorScheme) {
     switch (type) {
       case _CellType.completed:
-        return Colors.white;
+        return colorScheme.onPrimary;
       case _CellType.missed:
-        return Colors.grey.shade700;
+        return colorScheme.onSurfaceVariant;
       case _CellType.future:
-        return Colors.grey.shade500;
+        return colorScheme.outline;
     }
   }
 }
