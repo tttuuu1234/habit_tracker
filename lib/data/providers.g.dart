@@ -106,6 +106,46 @@ final completionRecordsTableChangedProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CompletionRecordsTableChangedRef = AutoDisposeStreamProviderRef<void>;
+String _$settingsRepositoryHash() =>
+    r'672b95c863db00408d598b507a68642a1b6f2fa2';
+
+/// 設定リポジトリのインスタンス。
+///
+/// Copied from [settingsRepository].
+@ProviderFor(settingsRepository)
+final settingsRepositoryProvider = Provider<SettingsRepository>.internal(
+  settingsRepository,
+  name: r'settingsRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$settingsRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SettingsRepositoryRef = ProviderRef<SettingsRepository>;
+String _$flutterRingtonePlayerHash() =>
+    r'12a6ea1c3a29f7f4c28e754c79ee26d3daeeea74';
+
+/// FlutterRingtonePlayerのインスタンス。
+///
+/// Copied from [flutterRingtonePlayer].
+@ProviderFor(flutterRingtonePlayer)
+final flutterRingtonePlayerProvider = Provider<FlutterRingtonePlayer>.internal(
+  flutterRingtonePlayer,
+  name: r'flutterRingtonePlayerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$flutterRingtonePlayerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FlutterRingtonePlayerRef = ProviderRef<FlutterRingtonePlayer>;
 String _$getCategoryStatisticsUseCaseHash() =>
     r'e77c33e3ee3f5f752c0a50e6a89469af2339ed15';
 

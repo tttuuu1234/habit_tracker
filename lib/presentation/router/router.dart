@@ -6,6 +6,7 @@ import '../detail/habit_detail_screen.dart';
 import '../graph/graph_screen.dart';
 import '../habit_form/habit_form_screen.dart';
 import '../home/home_screen.dart';
+import '../settings/settings_screen.dart';
 import '../shell/app_shell.dart';
 import '../timer/timer_screen.dart';
 import 'app_route.dart';
@@ -33,6 +34,14 @@ final router = GoRouter(
             GoRoute(
               path: AppRoute.graph.path,
               builder: (context, state) => const GraphScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoute.settings.path,
+              builder: (context, state) => const SettingsScreen(),
             ),
           ],
         ),

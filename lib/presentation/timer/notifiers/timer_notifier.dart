@@ -120,11 +120,18 @@ class HabitTimer extends _$HabitTimer {
     });
   }
 
-  /// 達成記録を保存する。
+  /// 達成記録を保存し、設定に応じてサウンドを再生する。
   Future<void> _recordCompletion() async {
     final completionRepo = ref.read(completionRecordRepositoryProvider);
     final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
     await completionRepo.addCompletion(_habitId, normalizedToday);
+
+    final settingsRepo = ref.read(settingsRepositoryProvider);
+    final soundEnabled = await settingsRepo.getTimerSoundEnabled();
+    if (soundEnabled) {
+      final player = ref.read(flutterRingtonePlayerProvider);
+      player.playAlarm();
+    }
   }
 }

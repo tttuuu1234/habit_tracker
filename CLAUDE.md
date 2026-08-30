@@ -67,6 +67,12 @@ lib/
 - `Result` has `Success<T>` and `Failure<T>` variants — exhaustive switch ensures no unhandled cases
 - Exceptions are reserved for truly unexpected/programmer errors only
 
+### DI（依存性注入）
+
+- クラス内で外部依存のインスタンスを直接生成しない。コンストラクタ引数またはRiverpod provider経由で注入する
+- テスト時にoverrideでモックを差し込めるようにする
+- 非同期初期化が必要なもの（例: `SharedPreferences`）は `main.dart` でプリロードし、`Provider` の `overrideWithValue` で注入する
+
 ### Conventions
 
 - Immutable data classes: use `freezed` for domain entities and state objects
