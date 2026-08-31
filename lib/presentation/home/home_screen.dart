@@ -45,6 +45,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   /// 達成直後で出現アニメーション対象の習慣ID。
   int? _justCompletedHabitId;
 
+  late final AppLifecycleListener _lifecycleListener;
+
   /// 選択中のカテゴリフィルター（nullですべて）。
   /// _isCategoryFilterAll が true の場合は「すべて」を意味する。
   HabitCategory? _filterCategory;
@@ -135,14 +137,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         });
       }
     });
+
+    _lifecycleListener = AppLifecycleListener(
+      onStateChange: _onAppLifecycleStateChange,
+    );
   }
 
   @override
   void dispose() {
+    _lifecycleListener.dispose();
     _removeController.dispose();
     _completeController.dispose();
     _appearController.dispose();
     super.dispose();
+  }
+
+  void _onAppLifecycleStateChange(AppLifecycleState state) {
+    final habits = ref.read(homeProvider).valueOrNull?.habits ?? [];
+
+    for (final habit in habits) {
+      if (habit is! TimeHabitSummary || habit.isCompleted) continue;
+
+      final provider = habitTimerProvider(habit.id);
+      if (!ref.exists(provider)) continue;
+
+      switch (state) {
+        case AppLifecycleState.hidden || AppLifecycleState.paused:
+          ref.read(provider.notifier).onBackground();
+        case AppLifecycleState.resumed:
+          ref.read(provider.notifier).onForeground();
+        default:
+          break;
+      }
+    }
   }
 
   void _startDeleteAnimation(int habitId) {
@@ -229,8 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       .where((h) => h.category == _filterCategory)
                       .toList();
 
-            final completedCount =
-                habits.where((h) => h.isCompleted).length;
+            final completedCount = habits.where((h) => h.isCompleted).length;
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,19 +268,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     children: [
                       Text(
                         dateText,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'お疲れさまです',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -293,8 +314,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 Expanded(
                   child: habits.isEmpty
                       ? const Center(
-                          child: Text('習慣がまだありません\n右上の＋ボタンから追加しましょう',
-                              textAlign: TextAlign.center),
+                          child: Text(
+                            '習慣がまだありません\n右上の＋ボタンから追加しましょう',
+                            textAlign: TextAlign.center,
+                          ),
                         )
                       : _SectionedHabitList(
                           habits: habits,
@@ -326,9 +349,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Future<void> _onHabitTap(int habitId) async {
-    final deletedId = await context.push<int?>(
-      AppRoute.detail.withId(habitId),
-    );
+    final deletedId = await context.push<int?>(AppRoute.detail.withId(habitId));
     if (!mounted) return;
     if (deletedId != null) {
       _startDeleteAnimation(deletedId);
@@ -372,7 +393,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final timerState = ref.read(provider).valueOrNull;
 
     // 一時停止中かどうかを判定する
-    final isPaused = timerState != null &&
+    final isPaused =
+        timerState != null &&
         !timerState.isRunning &&
         !timerState.isCompleted &&
         timerState.remainingSeconds < timerState.targetSeconds;
@@ -458,17 +480,17 @@ class _SectionedHabitList extends ConsumerWidget {
       });
     }
 
-    final incompleteHabits =
-        habits.where((h) => h.isCompleted == false).toList();
-    final completedHabits =
-        habits.where((h) => h.isCompleted == true).toList();
+    final incompleteHabits = habits
+        .where((h) => h.isCompleted == false)
+        .toList();
+    final completedHabits = habits.where((h) => h.isCompleted == true).toList();
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
         ...incompleteHabits.map((habit) {
-          final isAnimating = habit.id == deletingHabitId ||
-              habit.id == completingHabitId;
+          final isAnimating =
+              habit.id == deletingHabitId || habit.id == completingHabitId;
 
           final tile = Padding(
             padding: EdgeInsets.only(
@@ -520,10 +542,10 @@ class _SectionedHabitList extends ConsumerWidget {
                         padding: const EdgeInsets.only(top: 8),
                         child: HabitListTile(
                           habit: habit,
-                          onTap:
-                              isDeleting ? null : () => onTap(habit.id),
-                          onLongPress:
-                              isDeleting ? null : () => onLongPress(habit),
+                          onTap: isDeleting ? null : () => onTap(habit.id),
+                          onLongPress: isDeleting
+                              ? null
+                              : () => onLongPress(habit),
                         ),
                       );
 
@@ -579,9 +601,9 @@ class _SectionedHabitList extends ConsumerWidget {
       return Text(
         '残り ${timerState.displayTime}',
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w600,
+        ),
       );
     }
 
@@ -591,9 +613,9 @@ class _SectionedHabitList extends ConsumerWidget {
     // 一時停止中（開始済みだが実行中でない）
     return Text(
       '一時停止中 ${timerState.displayTime}',
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
     );
   }
 }
@@ -633,9 +655,9 @@ class _CompletedSectionHeader extends StatelessWidget {
             Text(
               '達成済み ($count)',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
