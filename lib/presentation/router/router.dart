@@ -8,7 +8,6 @@ import '../habit_form/habit_form_screen.dart';
 import '../home/home_screen.dart';
 import '../settings/settings_screen.dart';
 import '../shell/app_shell.dart';
-import '../timer/timer_screen.dart';
 import 'app_route.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -66,14 +65,6 @@ final router = GoRouter(
       builder: (context, state) {
         final habitId = int.parse(state.pathParameters['habitId']!);
         return HabitFormScreen(editingHabitId: habitId);
-      },
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: '${AppRoute.timer.path}/:habitId',
-      builder: (context, state) {
-        final habitId = int.parse(state.pathParameters['habitId']!);
-        return TimerScreen(habitId: habitId);
       },
     ),
     GoRoute(
