@@ -341,9 +341,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     if (habit.isCompleted) return;
 
     if (habit is TimeHabitSummary) {
-      await context.push(AppRoute.timer.withId(habit.id));
-      if (!mounted) return;
-      ref.invalidate(homeProvider);
+      _showTimerStartDialog(habit);
       return;
     }
 
@@ -367,6 +365,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     if (confirmed == true) {
       _startCompleteAnimation(habit.id);
     }
+  }
+
+  Future<void> _showTimerStartDialog(TimeHabitSummary habit) async {
+    final provider = habitTimerProvider(habit.id);
+    final timerState = ref.read(provider).valueOrNull;
+
+    // 一時停止中かどうかを判定する
+    final isPaused = timerState != null &&
+        !timerState.isRunning &&
+        !timerState.isCompleted &&
+        timerState.remainingSeconds < timerState.targetSeconds;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(isPaused ? 'タイマー再開' : 'タイマー開始'),
+        content: Text(
+          isPaused
+              ? '「${habit.name}」のタイマーを再開しますか？'
+              : '「${habit.name}」のタイマーを開始しますか？',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('キャンセル'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(isPaused ? '再開' : '開始'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    // 非同期の初期化完了を待ってからタイマーを開始する
+    await ref.read(provider.future);
+    ref.read(provider.notifier).start();
+    // プロバイダー未監視の状態からの初回開始時にサブタイトルを描画させる
+    setState(() {});
   }
 }
 

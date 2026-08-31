@@ -14,9 +14,6 @@ enum AppRoute {
   /// 習慣編集画面。
   edit('/edit'),
 
-  /// タイマー画面。
-  timer('/timer'),
-
   /// アーカイブ一覧画面。
   archive('/archive'),
 

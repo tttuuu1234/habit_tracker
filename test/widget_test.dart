@@ -152,7 +152,7 @@ void main() {
     expect(find.text('「ストレッチ」を達成済みにしますか？'), findsOneWidget);
   });
 
-  testWidgets('Long press on time habit navigates to timer screen', (
+  testWidgets('Long press on time habit shows timer start dialog', (
     WidgetTester tester,
   ) async {
     final habitRepo = createHabitRepository();
@@ -166,10 +166,10 @@ void main() {
     await tester.longPress(find.text('瞑想'));
     await tester.pumpAndSettle();
 
-    // ダイアログではなくタイマー画面に遷移する
-    expect(find.text('達成確認'), findsNothing);
-    expect(find.text('タイマー'), findsOneWidget);
-    expect(find.text('瞑想'), findsOneWidget);
-    expect(find.text('10:00'), findsOneWidget);
+    // タイマー画面に遷移せずダイアログが表示される
+    expect(find.text('タイマー開始'), findsOneWidget);
+    expect(find.text('「瞑想」のタイマーを開始しますか？'), findsOneWidget);
+    expect(find.text('開始'), findsOneWidget);
+    expect(find.text('キャンセル'), findsOneWidget);
   });
 }
