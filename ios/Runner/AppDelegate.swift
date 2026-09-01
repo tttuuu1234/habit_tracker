@@ -16,7 +16,8 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    setupMethodChannel(binaryMessenger: engineBridge.engine.binaryMessenger)
+    guard let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "LiveActivityChannel") else { return }
+    setupMethodChannel(binaryMessenger: registrar.messenger())
   }
 
   private func setupMethodChannel(binaryMessenger: FlutterBinaryMessenger) {
