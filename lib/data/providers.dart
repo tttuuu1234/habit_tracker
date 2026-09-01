@@ -17,7 +17,8 @@ part 'providers.g.dart';
 
 /// SharedPreferencesのインスタンス。main.dartでoverrideして使用する。
 final sharedPreferencesProvider = Provider<SharedPreferences>(
-  (_) => throw UnimplementedError('sharedPreferencesProvider must be overridden'),
+  (_) =>
+      throw UnimplementedError('sharedPreferencesProvider must be overridden'),
 );
 
 /// アプリケーションデータベースのインスタンス。
@@ -75,7 +76,9 @@ FlutterRingtonePlayer flutterRingtonePlayer(FlutterRingtonePlayerRef ref) {
 
 /// カテゴリ別統計ユースケースのインスタンス。
 @riverpod
-GetCategoryStatisticsUseCase getCategoryStatisticsUseCase(GetCategoryStatisticsUseCaseRef ref) {
+GetCategoryStatisticsUseCase getCategoryStatisticsUseCase(
+  GetCategoryStatisticsUseCaseRef ref,
+) {
   return GetCategoryStatisticsUseCase(
     ref.watch(habitRepositoryProvider),
     ref.watch(completionRecordRepositoryProvider),

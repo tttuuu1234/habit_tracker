@@ -17,6 +17,10 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		AA000001000000000000000A /* HabitTimerAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000000F /* HabitTimerAttributes.swift */; };
+		AA000002000000000000000A /* HabitTimerActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002000000000000000F /* HabitTimerActivityBundle.swift */; };
+		AA000003000000000000000A /* HabitTimerLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000003000000000000000F /* HabitTimerLiveActivity.swift */; };
+		AA00000E000000000000000A /* HabitTimerActivityExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = AA000004000000000000000F /* HabitTimerActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F4F53642C37DDE0AF85F3D92 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 429A2F08A596128B58319857 /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +31,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
 			remoteInfo = Runner;
+		};
+		AA00000C000000000000000A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA000005000000000000000A;
+			remoteInfo = HabitTimerActivityExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -39,6 +50,17 @@
 			files = (
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA00000F000000000000000A /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AA00000E000000000000000A /* HabitTimerActivityExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -68,6 +90,11 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0CB69BE7423F91AB01B92C8 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		AA000001000000000000000F /* HabitTimerAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTimerAttributes.swift; sourceTree = "<group>"; };
+		AA000002000000000000000F /* HabitTimerActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTimerActivityBundle.swift; sourceTree = "<group>"; };
+		AA000003000000000000000F /* HabitTimerLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTimerLiveActivity.swift; sourceTree = "<group>"; };
+		AA000004000000000000000F /* HabitTimerActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitTimerActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000005000000000000000F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F6B24BD99729CB6E4197E4C0 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,6 +105,13 @@
 			files = (
 				78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */,
 				87BCA8BF6F8312F1CB2642B2 /* Pods_Runner.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000006000000000000000A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +167,7 @@
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
 				331C8082294A63A400263BE5 /* RunnerTests */,
+				AA000007000000000000000A /* HabitTimerActivity */,
 				3CDD376BD09E4DF48654CA07 /* Pods */,
 				B287EB7944447C8F633291C6 /* Frameworks */,
 			);
@@ -143,8 +178,20 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				AA000004000000000000000F /* HabitTimerActivityExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AA000007000000000000000A /* HabitTimerActivity */ = {
+			isa = PBXGroup;
+			children = (
+				AA000001000000000000000F /* HabitTimerAttributes.swift */,
+				AA000002000000000000000F /* HabitTimerActivityBundle.swift */,
+				AA000003000000000000000F /* HabitTimerLiveActivity.swift */,
+				AA000005000000000000000F /* Info.plist */,
+			);
+			path = HabitTimerActivity;
 			sourceTree = "<group>";
 		};
 		97C146F01CF9000F007C117D /* Runner */ = {
@@ -206,10 +253,12 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				111179DCB19A2FD967FAFE95 /* [CP] Embed Pods Frameworks */,
+				AA00000F000000000000000A /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AA00000D000000000000000A /* PBXTargetDependency */,
 			);
 			name = Runner;
 			packageProductDependencies = (
@@ -218,6 +267,23 @@
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		AA000005000000000000000A /* HabitTimerActivityExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA00000B000000000000000A /* Build configuration list for PBXNativeTarget "HabitTimerActivityExtension" */;
+			buildPhases = (
+				AA000008000000000000000A /* Sources */,
+				AA000006000000000000000A /* Frameworks */,
+				AA000009000000000000000A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HabitTimerActivityExtension;
+			productName = HabitTimerActivityExtension;
+			productReference = AA000004000000000000000F /* HabitTimerActivityExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -236,6 +302,9 @@
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
+					};
+					AA000005000000000000000A = {
+						CreatedOnToolsVersion = 15.1;
 					};
 				};
 			};
@@ -257,6 +326,7 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
+				AA000005000000000000000A /* HabitTimerActivityExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -277,6 +347,13 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000009000000000000000A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +473,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA000008000000000000000A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001000000000000000A /* HabitTimerAttributes.swift in Sources */,
+				AA000002000000000000000A /* HabitTimerActivityBundle.swift in Sources */,
+				AA000003000000000000000A /* HabitTimerLiveActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -403,6 +490,11 @@
 			isa = PBXTargetDependency;
 			target = 97C146ED1CF9000F007C117D /* Runner */;
 			targetProxy = 331C8085294A63A400263BE5 /* PBXContainerItemProxy */;
+		};
+		AA00000D000000000000000A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA000005000000000000000A /* HabitTimerActivityExtension */;
+			targetProxy = AA00000C000000000000000A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -724,6 +816,89 @@
 			};
 			name = Release;
 		};
+		AA000010000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9J6YL687AH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitTimerActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitTimerActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tttuuu1234.habitTracker.HabitTimerActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA000011000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9J6YL687AH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitTimerActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitTimerActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tttuuu1234.habitTracker.HabitTimerActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA000012000000000000000A /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9J6YL687AH;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitTimerActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitTimerActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tttuuu1234.habitTracker.HabitTimerActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -753,6 +928,16 @@
 				97C147061CF9000F007C117D /* Debug */,
 				97C147071CF9000F007C117D /* Release */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA00000B000000000000000A /* Build configuration list for PBXNativeTarget "HabitTimerActivityExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000010000000000000000A /* Debug */,
+				AA000011000000000000000A /* Release */,
+				AA000012000000000000000A /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
