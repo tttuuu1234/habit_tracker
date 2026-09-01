@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/providers.dart';
 import '../../../data/providers.dart';
 import '../../../domain/result.dart';
 import 'timer_state.dart';
