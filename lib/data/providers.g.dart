@@ -146,6 +146,26 @@ final flutterRingtonePlayerProvider = Provider<FlutterRingtonePlayer>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FlutterRingtonePlayerRef = ProviderRef<FlutterRingtonePlayer>;
+String _$liveActivityServiceHash() =>
+    r'7947dde6630a8636f5f3311abbe3c3be0c116cb1';
+
+/// Live Activityサービスのインスタンス。
+///
+/// Copied from [liveActivityService].
+@ProviderFor(liveActivityService)
+final liveActivityServiceProvider = Provider<LiveActivityService>.internal(
+  liveActivityService,
+  name: r'liveActivityServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$liveActivityServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LiveActivityServiceRef = ProviderRef<LiveActivityService>;
 String _$getCategoryStatisticsUseCaseHash() =>
     r'e77c33e3ee3f5f752c0a50e6a89469af2339ed15';
 

@@ -39,6 +39,8 @@ class HabitTimer extends _$HabitTimer {
 
     state = AsyncData(currentState.copyWith(isRunning: true));
 
+    _startLiveActivity(currentState);
+
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       final s = state.value;
       if (s == null) return;
@@ -63,15 +65,21 @@ class HabitTimer extends _$HabitTimer {
     final currentState = state.value;
     if (currentState == null) return;
     state = AsyncData(currentState.copyWith(isRunning: false));
+    _updateLiveActivity(currentState.remainingSeconds, isPaused: true);
   }
 
   /// バックグラウンド移行時にタイマーを中断する。
   void onBackground() {
     final currentState = state.value;
-    if (currentState == null || !currentState.isRunning || currentState.pausedAt != null) return;
+    if (currentState == null ||
+        !currentState.isRunning ||
+        currentState.pausedAt != null) {
+      return;
+    }
 
     _timer?.cancel();
     state = AsyncData(currentState.copyWith(pausedAt: DateTime.now()));
+    // Live Activityはバックグラウンドでもカウントダウンを続ける
   }
 
   /// フォアグラウンド復帰時にバックグラウンド中の経過時間を反映する。
@@ -79,8 +87,7 @@ class HabitTimer extends _$HabitTimer {
     final currentState = state.value;
     if (currentState == null || currentState.pausedAt == null) return;
 
-    final elapsed =
-        DateTime.now().difference(currentState.pausedAt!).inSeconds;
+    final elapsed = DateTime.now().difference(currentState.pausedAt!).inSeconds;
     final newRemaining = currentState.remainingSeconds - elapsed;
 
     if (newRemaining <= 0) {
@@ -97,10 +104,7 @@ class HabitTimer extends _$HabitTimer {
     }
 
     state = AsyncData(
-      currentState.copyWith(
-        remainingSeconds: newRemaining,
-        pausedAt: null,
-      ),
+      currentState.copyWith(remainingSeconds: newRemaining, pausedAt: null),
     );
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       final s = state.value;
@@ -122,6 +126,8 @@ class HabitTimer extends _$HabitTimer {
 
   /// 達成記録を保存し、設定に応じてサウンドを再生する。
   Future<void> _recordCompletion() async {
+    _endLiveActivity();
+
     final completionRepo = ref.read(completionRecordRepositoryProvider);
     final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
@@ -133,5 +139,32 @@ class HabitTimer extends _$HabitTimer {
       final player = ref.read(flutterRingtonePlayerProvider);
       player.playAlarm();
     }
+  }
+
+  /// Live Activityを開始する。
+  void _startLiveActivity(TimerState timerState) {
+    final liveActivityService = ref.read(liveActivityServiceProvider);
+    liveActivityService.startActivity(
+      habitId: _habitId,
+      habitName: timerState.habitName,
+      targetSeconds: timerState.targetSeconds,
+      remainingSeconds: timerState.remainingSeconds,
+    );
+  }
+
+  /// Live Activityを更新する。
+  void _updateLiveActivity(int remainingSeconds, {required bool isPaused}) {
+    final liveActivityService = ref.read(liveActivityServiceProvider);
+    liveActivityService.updateActivity(
+      habitId: _habitId,
+      remainingSeconds: remainingSeconds,
+      isPaused: isPaused,
+    );
+  }
+
+  /// Live Activityを終了する。
+  void _endLiveActivity() {
+    final liveActivityService = ref.read(liveActivityServiceProvider);
+    liveActivityService.endActivity(habitId: _habitId);
   }
 }

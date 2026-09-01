@@ -2,6 +2,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/services/live_activity_service.dart';
 import '../domain/completion_record/completion_record_repository.dart';
 import '../domain/habit/habit_repository.dart';
 import '../domain/settings/settings_repository.dart';
@@ -17,7 +18,8 @@ part 'providers.g.dart';
 
 /// SharedPreferencesのインスタンス。main.dartでoverrideして使用する。
 final sharedPreferencesProvider = Provider<SharedPreferences>(
-  (_) => throw UnimplementedError('sharedPreferencesProvider must be overridden'),
+  (_) =>
+      throw UnimplementedError('sharedPreferencesProvider must be overridden'),
 );
 
 /// アプリケーションデータベースのインスタンス。
@@ -73,9 +75,17 @@ FlutterRingtonePlayer flutterRingtonePlayer(FlutterRingtonePlayerRef ref) {
   return FlutterRingtonePlayer();
 }
 
+/// Live Activityサービスのインスタンス。
+@Riverpod(keepAlive: true)
+LiveActivityService liveActivityService(LiveActivityServiceRef ref) {
+  return LiveActivityService();
+}
+
 /// カテゴリ別統計ユースケースのインスタンス。
 @riverpod
-GetCategoryStatisticsUseCase getCategoryStatisticsUseCase(GetCategoryStatisticsUseCaseRef ref) {
+GetCategoryStatisticsUseCase getCategoryStatisticsUseCase(
+  GetCategoryStatisticsUseCaseRef ref,
+) {
   return GetCategoryStatisticsUseCase(
     ref.watch(habitRepositoryProvider),
     ref.watch(completionRecordRepositoryProvider),
