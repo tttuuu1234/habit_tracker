@@ -48,7 +48,7 @@ import UIKit
   // MARK: - Live Activity ハンドラー
 
   private func handleStartActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard #available(iOS 16.1, *) else {
+    guard #available(iOS 16.2, *) else {
       result(nil)
       return
     }
@@ -93,7 +93,7 @@ import UIKit
   }
 
   private func handleUpdateActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard #available(iOS 16.1, *) else {
+    guard #available(iOS 16.2, *) else {
       result(nil)
       return
     }
@@ -139,7 +139,7 @@ import UIKit
   }
 
   private func handleEndActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard #available(iOS 16.1, *) else {
+    guard #available(iOS 16.2, *) else {
       result(nil)
       return
     }
@@ -157,7 +157,7 @@ import UIKit
     }
   }
 
-  @available(iOS 16.1, *)
+  @available(iOS 16.2, *)
   private func endExistingActivity(habitId: Int) {
     guard let activityId = activities.removeValue(forKey: habitId) else { return }
 
