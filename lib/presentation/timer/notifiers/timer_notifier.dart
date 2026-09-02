@@ -38,26 +38,15 @@ class HabitTimer extends _$HabitTimer {
     final currentState = state.value;
     if (currentState == null || currentState.isRunning) return;
 
-    state = AsyncData(currentState.copyWith(isRunning: true));
+    final endAt = DateTime.now().add(
+      Duration(seconds: currentState.remainingSeconds),
+    );
+    state = AsyncData(
+      currentState.copyWith(isRunning: true, endAt: endAt),
+    );
 
     _startLiveActivity(currentState);
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final s = state.value;
-      if (s == null) return;
-
-      final newRemaining = s.remainingSeconds - 1;
-      if (newRemaining <= 0) {
-        _timer?.cancel();
-        state = AsyncData(
-          s.copyWith(remainingSeconds: 0, isRunning: false, isCompleted: true),
-        );
-        _recordCompletion();
-        return;
-      }
-
-      state = AsyncData(s.copyWith(remainingSeconds: newRemaining));
-    });
+    _startPeriodicTimer();
   }
 
   /// タイマーを一時停止する。
@@ -88,8 +77,10 @@ class HabitTimer extends _$HabitTimer {
     final currentState = state.value;
     if (currentState == null || currentState.pausedAt == null) return;
 
-    final elapsed = DateTime.now().difference(currentState.pausedAt!).inSeconds;
-    final newRemaining = currentState.remainingSeconds - elapsed;
+    final endAt = currentState.endAt;
+    if (endAt == null) return;
+
+    final newRemaining = endAt.difference(DateTime.now()).inSeconds;
 
     if (newRemaining <= 0) {
       state = AsyncData(
@@ -105,24 +96,12 @@ class HabitTimer extends _$HabitTimer {
     }
 
     state = AsyncData(
-      currentState.copyWith(remainingSeconds: newRemaining, pausedAt: null),
+      currentState.copyWith(
+        remainingSeconds: newRemaining,
+        pausedAt: null,
+      ),
     );
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final s = state.value;
-      if (s == null) return;
-
-      final remaining = s.remainingSeconds - 1;
-      if (remaining <= 0) {
-        _timer?.cancel();
-        state = AsyncData(
-          s.copyWith(remainingSeconds: 0, isRunning: false, isCompleted: true),
-        );
-        _recordCompletion();
-        return;
-      }
-
-      state = AsyncData(s.copyWith(remainingSeconds: remaining));
-    });
+    _startPeriodicTimer();
   }
 
   /// 達成記録を保存し、設定に応じてサウンドを再生する。
@@ -140,6 +119,26 @@ class HabitTimer extends _$HabitTimer {
       final player = ref.read(flutterRingtonePlayerProvider);
       player.playAlarm();
     }
+  }
+
+  /// endAt基準で毎秒残り時間を更新するタイマーを開始する。
+  void _startPeriodicTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final s = state.value;
+      if (s == null || s.endAt == null) return;
+
+      final newRemaining = s.endAt!.difference(DateTime.now()).inSeconds;
+      if (newRemaining <= 0) {
+        _timer?.cancel();
+        state = AsyncData(
+          s.copyWith(remainingSeconds: 0, isRunning: false, isCompleted: true),
+        );
+        _recordCompletion();
+        return;
+      }
+
+      state = AsyncData(s.copyWith(remainingSeconds: newRemaining));
+    });
   }
 
   /// Live Activityを開始する。

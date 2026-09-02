@@ -11,7 +11,19 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    endAllActivities()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  /// アプリ起動時に残存しているLive Activityをすべて終了する。
+  private func endAllActivities() {
+    guard #available(iOS 16.2, *) else { return }
+
+    Task {
+      for activity in Activity<HabitTimerAttributes>.activities {
+        await activity.end(nil, dismissalPolicy: .immediate)
+      }
+    }
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
