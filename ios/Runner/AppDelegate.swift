@@ -11,12 +11,25 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    endAllActivities()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  /// アプリ起動時に残存しているLive Activityをすべて終了する。
+  private func endAllActivities() {
+    guard #available(iOS 16.2, *) else { return }
+
+    Task {
+      for activity in Activity<HabitTimerAttributes>.activities {
+        await activity.end(nil, dismissalPolicy: .immediate)
+      }
+    }
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    setupMethodChannel(binaryMessenger: engineBridge.engine.binaryMessenger)
+    guard let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "LiveActivityChannel") else { return }
+    setupMethodChannel(binaryMessenger: registrar.messenger())
   }
 
   private func setupMethodChannel(binaryMessenger: FlutterBinaryMessenger) {
@@ -47,7 +60,7 @@ import UIKit
   // MARK: - Live Activity ハンドラー
 
   private func handleStartActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard #available(iOS 16.1, *) else {
+    guard #available(iOS 16.2, *) else {
       result(nil)
       return
     }
@@ -92,7 +105,7 @@ import UIKit
   }
 
   private func handleUpdateActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard #available(iOS 16.1, *) else {
+    guard #available(iOS 16.2, *) else {
       result(nil)
       return
     }
@@ -138,7 +151,7 @@ import UIKit
   }
 
   private func handleEndActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard #available(iOS 16.1, *) else {
+    guard #available(iOS 16.2, *) else {
       result(nil)
       return
     }
@@ -156,7 +169,7 @@ import UIKit
     }
   }
 
-  @available(iOS 16.1, *)
+  @available(iOS 16.2, *)
   private func endExistingActivity(habitId: Int) {
     guard let activityId = activities.removeValue(forKey: habitId) else { return }
 
