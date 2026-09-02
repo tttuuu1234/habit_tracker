@@ -90,12 +90,12 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F0CB69BE7423F91AB01B92C8 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		AA000001000000000000000F /* HabitTimerAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTimerAttributes.swift; sourceTree = "<group>"; };
 		AA000002000000000000000F /* HabitTimerActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTimerActivityBundle.swift; sourceTree = "<group>"; };
 		AA000003000000000000000F /* HabitTimerLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTimerLiveActivity.swift; sourceTree = "<group>"; };
 		AA000004000000000000000F /* HabitTimerActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitTimerActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA000005000000000000000F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0CB69BE7423F91AB01B92C8 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		F6B24BD99729CB6E4197E4C0 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,7 +145,6 @@
 				0E5CB64FF1DF9929A45FF4F1 /* Pods-RunnerTests.release.xcconfig */,
 				F6B24BD99729CB6E4197E4C0 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -184,17 +183,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AA000007000000000000000A /* HabitTimerActivity */ = {
-			isa = PBXGroup;
-			children = (
-				AA000001000000000000000F /* HabitTimerAttributes.swift */,
-				AA000002000000000000000F /* HabitTimerActivityBundle.swift */,
-				AA000003000000000000000F /* HabitTimerLiveActivity.swift */,
-				AA000005000000000000000F /* Info.plist */,
-			);
-			path = HabitTimerActivity;
-			sourceTree = "<group>";
-		};
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
@@ -209,6 +197,17 @@
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		AA000007000000000000000A /* HabitTimerActivity */ = {
+			isa = PBXGroup;
+			children = (
+				AA000001000000000000000F /* HabitTimerAttributes.swift */,
+				AA000002000000000000000F /* HabitTimerActivityBundle.swift */,
+				AA000003000000000000000F /* HabitTimerLiveActivity.swift */,
+				AA000005000000000000000F /* Info.plist */,
+			);
+			path = HabitTimerActivity;
 			sourceTree = "<group>";
 		};
 		B287EB7944447C8F633291C6 /* Frameworks */ = {
@@ -822,9 +821,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9J6YL687AH;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9J6YL687AH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitTimerActivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HabitTimerActivity;
@@ -838,6 +839,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tttuuu1234.habitTracker.HabitTimerActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Dev Habit Tracker Live Activity";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -851,9 +854,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9J6YL687AH;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9J6YL687AH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitTimerActivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HabitTimerActivity;
@@ -867,6 +872,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tttuuu1234.habitTracker.HabitTimerActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Habit Tracker Live Activity";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -878,9 +885,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9J6YL687AH;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9J6YL687AH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HabitTimerActivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HabitTimerActivity;
@@ -894,6 +903,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tttuuu1234.habitTracker.HabitTimerActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Habit Tracker Live Activity";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
